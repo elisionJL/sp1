@@ -2,12 +2,13 @@
 class Entity
 {
 private:
-int Health;
-int Damage;
-int Resistance;
-int Speed;
+	int Health;
+	int Damage;
+	int Resistance;
+	int Speed;
 
 public:
+	Entity();
 	int getHealth();
 	void setHealth(int health);
 	int getDamage();
@@ -16,4 +17,5 @@ public:
 	void setResistance(int resistance);
 	int getSpeed();
 	void setSpeed(int speed);
-}
+	~Entity();
+};
