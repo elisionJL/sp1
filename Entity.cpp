@@ -12,7 +12,6 @@ void Entity::setHealth(int health)
 	this->Health = health;
 }
 
-
 int Entity::getDamage()
 {
 	return Damage;
