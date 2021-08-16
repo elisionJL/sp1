@@ -29,11 +29,7 @@ public:
 	void setSpeed(int speed);
 
 	//Move powers get/set func
-	string getMoveName(int MoveNo);
-	void setMoveName(int MoveNo,string Name);
-	int getMovePower(int MoveNo);
-	void setMovePower(int MoveNo,int Power);
+	virtual string getMoveName(int MoveNo) = 0;
+	virtual int getMovePower(int MoveNo) = 0;
 	~Entity();
-};
-
-
+}
