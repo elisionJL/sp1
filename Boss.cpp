@@ -9,16 +9,6 @@ Boss::Boss()
 	setSpeed(30);
 }
 
-string Boss::getMove4Name()
-{
-	return Move4;
-}
-
-void Boss::setMove4Name(string Name)
-{
-	Move4 = Name;
-}
-
 int Boss::getMove4Power()
 {
 	return Move4Power;
@@ -27,21 +17,6 @@ int Boss::getMove4Power()
 void Boss::setMove4Power(int Power)
 {
 	Move4Power = Power;
-}
-
-void Boss::ExecuteMove(int move)
-{
-	switch (move)
-	{
-	case 1:
-
-	case 2:
-
-	case 3:
-
-	case 4:
-
-	}
 }
 
 Boss::~Boss()
