@@ -44,35 +44,67 @@ void Entity::setSpeed(int speed)
 {
 	this->Speed = speed;
 }
-
-void Entity::setMove1Power(int Power)
+string Entity::getMoveName(int MoveNo)
 {
-	this->Move1Power = Power;
+	switch (MoveNo)
+	{
+	case 1:
+		return Move1;
+	case 2:
+		return Move2;
+	case 3:
+		return Move3;
+	default:
+		return ;
+	}
+}
+void Entity::setMoveName(int MoveNo,string Name)
+{
+	if (MoveNo == 1)
+	{
+		Move1 = Name;
+	}
+	else if (MoveNo == 2)
+	{
+		Move2=Name;
+	}
+	else if (MoveNo == 3)
+	{
+		Move3=Name;
+	}
 }
 
-int Entity::getMove1Power()
+int Entity::getMovePower(int MoveNo)
 {
-	return Move1Power;
+	if (MoveNo==1)
+	{
+		return Move1Power;
+	}
+	else if (MoveNo == 2)
+	{
+		return Move2Power;
+	}
+	else if (MoveNo == 3)
+	{
+		return Move3Power;
+	}
+	else
+	{
+	return 0;
+	}
 }
 
-void Entity::setMove2Power(int Power)
+void Entity::setMovePower(int MoveNo, int Power)
 {
-	this->Move2Power = Power;
-}
-
-int Entity::getMove2Power()
-{
-	return Move2Power;
-}
-
-void Entity::setMove3Power(int Power)
-{
-	this->Move3Power = Power;
-}
-
-int Entity::getMove3Power()
-{
-	return Move3Power;
+	switch (MoveNo)
+	{
+	case 1:
+		Move1Power = Power;
+	case 2:
+		Move2Power = Power;
+	case 3:
+		Move3Power = Power;
+	}
 }
 
 Entity::~Entity()
