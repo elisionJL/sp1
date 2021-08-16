@@ -8,13 +8,13 @@ private:
 	int Damage;
 	int Resistance;
 	int Speed;
-	string Move1Name;
-	string Move2Name;
-	string Move3Name;
-	string Move4Name;
+	int Move1Power;
+	int Move2Power;
+	int Move3Power;
 
 public:
 	Entity();
+
 	//stats accessor/mutator
 	int getHealth();
 	void setHealth(int health);
@@ -24,11 +24,14 @@ public:
 	void setResistance(int resistance);
 	int getSpeed();
 	void setSpeed(int speed);
-	//Move names get/set
-	string getMoveName(int MoveNo);
-	virtual void setMove1Name(string name);
-	virtual void setMove2Name(string name);
-	void setMove3Name(string name);
-	void setMove4Name(string name);
+
+	//Move powers get/set func
+
+	void setMove1Power(int Power);
+	int getMove1Power();
+	void setMove2Power(int Power);
+	int getMove2Power();
+	void setMove3Power(int Power);
+	int getMove3Power();
 	~Entity();
 };
