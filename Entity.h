@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+using namespace std;
 class Entity
 {
 private:
@@ -7,13 +8,14 @@ private:
 	int Damage;
 	int Resistance;
 	int Speed;
-	std::string Move1Name;
-	std::string Move2Name;
-	std::string Move3name;
-	std::string Move4name;
+	string Move1Name;
+	string Move2Name;
+	string Move3Name;
+	string Move4Name;
 
 public:
 	Entity();
+	//stats accessor/mutator
 	int getHealth();
 	void setHealth(int health);
 	int getDamage();
@@ -22,9 +24,11 @@ public:
 	void setResistance(int resistance);
 	int getSpeed();
 	void setSpeed(int speed);
-	virtual void setMove1Name(std::string name);
-	virtual void setMove2Name(std::string name);
-	void setMove3Name(std::string name);
-	void setMove4Name(std::string name);
+	//Move names get/set
+	string getMoveName(int MoveNo);
+	virtual void setMove1Name(string name);
+	virtual void setMove2Name(string name);
+	void setMove3Name(string name);
+	void setMove4Name(string name);
 	~Entity();
 };
