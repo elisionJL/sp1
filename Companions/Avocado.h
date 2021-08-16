@@ -5,6 +5,8 @@ class Avocado :
 {
 public:
     Avocado();
+    string getMoveName(int moveN);
+    int getMovePower(int MoveNo);
+    ~Avocado();
 private:
 };
-
