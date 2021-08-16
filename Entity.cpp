@@ -1,5 +1,9 @@
 #include "Entity.h"
 
+Entity::Entity()
+{
+}
+
 int Entity::getHealth()
 {
 	return Health;
@@ -9,6 +13,7 @@ void Entity::setHealth(int health)
 {
 	this->Health = health;
 }
+
 
 int Entity::getDamage()
 {
@@ -38,4 +43,8 @@ int Entity::getSpeed()
 void Entity::setSpeed(int speed)
 {
 	this->Speed = speed;
+}
+
+Entity::~Entity()
+{
 }
