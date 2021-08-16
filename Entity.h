@@ -8,12 +8,6 @@ private:
 	int Damage;
 	int Resistance;
 	int Speed;
-	int Move1Power;
-	string Move1;
-	int Move2Power;
-	string Move2;
-	int Move3Power;
-	string Move3;
 
 public:
 	Entity();
@@ -32,4 +26,4 @@ public:
 	virtual string getMoveName(int MoveNo) = 0;
 	virtual int getMovePower(int MoveNo) = 0;
 	~Entity();
-}
+};
