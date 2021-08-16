@@ -9,8 +9,11 @@ private:
 	int Resistance;
 	int Speed;
 	int Move1Power;
+	string Move1;
 	int Move2Power;
+	string Move2;
 	int Move3Power;
+	string Move3;
 
 public:
 	Entity();
@@ -26,12 +29,11 @@ public:
 	void setSpeed(int speed);
 
 	//Move powers get/set func
-
-	void setMove1Power(int Power);
-	int getMove1Power();
-	void setMove2Power(int Power);
-	int getMove2Power();
-	void setMove3Power(int Power);
-	int getMove3Power();
+	string getMoveName(int MoveNo);
+	void setMoveName(int MoveNo,string Name);
+	int getMovePower(int MoveNo);
+	void setMovePower(int MoveNo,int Power);
 	~Entity();
 };
+
+
