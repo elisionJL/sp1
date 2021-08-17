@@ -4,10 +4,10 @@ using namespace std;
 class Entity
 {
 private:
-	int Health;
-	int Damage;
-	int Resistance;
-	int Speed;
+	float Health;
+	float Damage;
+	float Resistance;
+	float Speed;
 
 public:
 	Entity();
@@ -22,6 +22,7 @@ public:
 	int getSpeed();
 	void setSpeed(int speed);
 
+	//Move powers get/set func
 	virtual string getMoveName(int MoveNo) = 0;
 	virtual int getMovePower(int MoveNo) = 0;
 	~Entity();
