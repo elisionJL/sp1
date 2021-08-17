@@ -1,6 +1,10 @@
 #include "SpinachBoss.h"
 #include <string>
 
+SpinachBoss::SpinachBoss()
+{
+}
+
 string SpinachBoss::getMoveName(int MoveNo)
 {
 	switch (MoveNo)
@@ -37,4 +41,8 @@ int SpinachBoss::getMovePower(int MoveNo)
 	default:
 		return 0;
 	}
+}
+
+SpinachBoss::~SpinachBoss()
+{
 }
