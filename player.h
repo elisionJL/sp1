@@ -8,7 +8,6 @@ class player
 		std::string name;
 		int charactersowned;
 		int coins;
-		int gems;
 		int characterlvlupmat;
 		std::string type;
 	public:
@@ -16,8 +15,7 @@ class player
 		~player();
 		void checklevelup();
 		void gacha(int x);
-		void buycoins(int x);
-		void stagecleared(int x, int y, int z,int a);
+		void stagecleared(int x, int y, int z);
 		void uselvlupmat(int x);
 		int getplayerinfo(int x);
 		std::string getplayerstrinfo(int x);
