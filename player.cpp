@@ -1,20 +1,20 @@
 #include "player.h"
-player::player(std::string a,std::string b)
+player::player(std::string a, std::string b)
 {
 	exp = 0;
 	name = a;
 	type = b;
 	level = 1;
-	charactersowned=0;
-	coins=10000;
-	characterlvlupmat=10;
+	charactersowned = 1;
+	coins = 10000;
+	characterlvlupmat = 10;
 }
 player::~player()
 {
 }
 void player::checklevelup()
 {
-	if (exp >= 100 * level)
+	while (exp >= 100 * level)
 	{
 		exp -= 100 * level;
 		level++;
@@ -34,21 +34,22 @@ void player::stagecleared(int x, int y, int z)
 }
 void player::uselvlupmat(int x)
 {
-	coins -= x*500;
+	coins -= x * 500;
 	characterlvlupmat -= x;
 }
 int player::getplayerinfo(int x)
 {
 	if (x == 1)
 		return level;
-	if (x==2)
+	if (x == 2)
 		return exp;
-	if (x==3)
+	if (x == 3)
 		return charactersowned;
-	if (x==4)
+	if (x == 4)
 		return coins;
-	if (x==5)
+	if (x == 5)
 		return characterlvlupmat;
+	return 0;
 }
 std::string player::getplayerstrinfo(int x)
 {
@@ -56,4 +57,5 @@ std::string player::getplayerstrinfo(int x)
 		return name;
 	if (x == 2)
 		return type;
+	return "0";
 }
