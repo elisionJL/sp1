@@ -5,7 +5,7 @@ player::player(std::string a, std::string b)
 	name = a;
 	type = b;
 	level = 1;
-	charactersowned = 1;
+	charactersowned = 0;
 	coins = 10000;
 }
 player::~player()
