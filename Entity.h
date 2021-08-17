@@ -13,14 +13,14 @@ public:
 	Entity();
 
 	//stats accessor/mutator
-	int getHealth();
-	void setHealth(int health);
-	int getDamage();
-	void setDamage(int dmg);
-	int getResistance();
-	void setResistance(int resistance);
-	int getSpeed();
-	void setSpeed(int speed);
+	float getHealth();
+	void setHealth(float health);
+	float getDamage();
+	void setDamage(float dmg);
+	float getResistance();
+	void setResistance(float resistance);
+	float getSpeed();
+	void setSpeed(float speed);
 
 	//Move powers get/set func
 	virtual string getMoveName(int MoveNo) = 0;
