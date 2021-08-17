@@ -21,7 +21,7 @@ string Beet::getMoveName(int MoveNo)
 	}
 }
 
-int Beet::getMovePower(int MoveNo)
+double Beet::getMovePower(int MoveNo)
 {
 	switch (MoveNo)
 	{
