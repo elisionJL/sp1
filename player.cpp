@@ -43,6 +43,8 @@ int player::getplayerinfo(int x)
 		return charactersowned;
 	case 4:
 		return coins;
+	case 5:
+		return highestclearedstage;
 	}
 	return 0;
 }
@@ -61,15 +63,7 @@ void player::clearednewstage()
 {
 	highestclearedstage++;
 }
-int player::gethighestclearedstage()
-{
-	return highestclearedstage;
-}
 void player::companionupgrade(int x)
 {
 	coins -= x;
-}
-int player::getcoins()
-{
-	return coins;
 }
