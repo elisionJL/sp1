@@ -2,51 +2,46 @@
 
 Companion::Companion()
 {
+	companionId = 0;
+	MovePower = 0;
 }
 
 Companion::Companion(int companionsID)
 {
 	companionId = companionsID;
-	setHealth(rand() % 50 + 50);
-	setDamage(rand() % 15 + 15);
-	setResistance(rand() % 15 + 15);
-	setSpeed(rand() % 20 + 20);
+	setHealth((rand() % 50) + 50.0);
+	setDamage((rand() % 15) + 15.0);
+	setResistance((rand() % 15) + 15.0);
+	setSpeed((rand() % 20) + 20.0);
+	MovePower = 0;
 }
 
-
-int Companion::getStat()
+void Companion::setMovePower(float pwr)
 {
-	return 0;
+	MovePower = pwr;
 }
 
-int Companion::getType()
-{
-	return 0;
-}
 
 Companion::~Companion()
 {
 }
 int buff(int id) {
-	int typeId = 0;
-	if (id == 1 || 2) {
+	if (id == 1 || id == 2) {
 		return 1;
 	}
-	else if (id == 3 || 4) {
+	else if (id == 3 || id == 4) {
 		return 2;
 	}
-	else if (id == 5 || 6) {
+	else if (id == 5 || id == 6) {
 		return 3;
 	}
-	else if (id == 7 || 8) {
+	else if (id == 7 || id == 8) {
 		return 4;
 	}
-	switch (id == 9 || 10) {
+	else if (id == 9 || id == 10) {
 		return 5;
-	default:
-		return 1;
 	}
-	
+	return 0;
 }
 
 string Companion::getMoveName(int MoveNo)
@@ -69,12 +64,13 @@ string Companion::getMoveName(int MoveNo)
 		case 5:
 			return "heal";
 		}
-
+	default:
+		return "error";
 	}
 
 }
 
-float Companion::getMovePower(int MoveNo)
+double Companion::getMovePower(int MoveNo)
 {
 	switch (MoveNo) {
 	case 1:
@@ -84,16 +80,19 @@ float Companion::getMovePower(int MoveNo)
 	case 3:
 		switch (buff(companionId)) {
 		case 1:
-			return 1.5;
+			return MovePower*1.5;
 		case 2:
-			return 1.5;
+			return 0.25;
 		case 3:
-			return 1.5;
+			return MovePower * 1.5;
 		case 4:
-			return 1.5;
+			return MovePower * 1.5;
 		case 5:
 			return 1;
+		default:
+			return 1;
 		}
-
+	default:
+		return 1;
 	}
 }
