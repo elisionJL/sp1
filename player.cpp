@@ -65,3 +65,7 @@ int player::gethighestclearedstage()
 {
 	return highestclearedstage;
 }
+void player::companionupgrade(int x)
+{
+	coins -= x;
+}
