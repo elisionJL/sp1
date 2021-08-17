@@ -26,7 +26,7 @@ string SpinachBoss::getMoveName(int MoveNo)
 	}
 }
 
-int SpinachBoss::getMovePower(int MoveNo)
+double SpinachBoss::getMovePower(int MoveNo)
 {
 	switch (MoveNo)
 	{
