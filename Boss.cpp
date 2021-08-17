@@ -14,7 +14,7 @@ string Boss::getMoveName(int MoveNo)
 	return "BossGETNAME";
 }
 
-int Boss::getMovePower(int MoveNo)
+double Boss::getMovePower(int MoveNo)
 {
 	return 0;
 }
