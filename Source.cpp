@@ -122,6 +122,7 @@ int enhancecompanion(player p, Companion* cptr[10])
 			std::cout << "" << std::endl;
 		}
 	}
+	return 0;
 }
 int summon(player p, Companion* cptr[10],std::string namelist[10])
 {
@@ -180,6 +181,7 @@ int summon(player p, Companion* cptr[10],std::string namelist[10])
 			}
 		}
 	}
+	return 0;
 }
 int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string namelist[10])
 {
@@ -206,6 +208,7 @@ int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string 
 		while (backloop == 1)
 		{
 			std::cout << "-------------------------" << std::endl;
+			std::cout << "Player Level: " << p.getplayerinfo(1) << std::endl;
 			std::cout << "1. Stages" << std::endl;
 			std::cout << "2. Party" << std::endl;
 			std::cout << "3. Companions" << std::endl;
@@ -263,6 +266,7 @@ int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string 
 			}
 		}
 	}
+	return 0;
 }
 int main(void)
 {
