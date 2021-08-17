@@ -5,16 +5,15 @@ class Companion :
     public Entity
 {
 private:
-    std::string type;
+    float MovePower;
     int companionId;
 public:
     Companion();
     Companion(int companionId);
-    int getStat();
-    int getType();
+    void setMovePower(float pwr);
     ~Companion();
     string getMoveName(int MoveNo);
-    float getMovePower(int MoveNo);
+    double getMovePower(int MoveNo);
 
 };
 
