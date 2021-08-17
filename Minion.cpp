@@ -1,12 +1,17 @@
 #include "Minion.h"
-
-Minion::Minion()
+Minion::Minion(int x)
+{
+    setHealth(((rand() % 50) + 50.0)*x*0.05);
+    setDamage(((rand() % 15) + 15.0)* x * 0.05);
+    setResistance(((rand() % 15) + 15.0)* x * 0.05);
+    setSpeed(((rand() % 20) + 20.0)* x * 0.05);
+}
+Minion::~Minion()
 {
 }
-
 string Minion::getMoveName(int MoveNo)
 {
-    switch(MoveNo)
+    switch (MoveNo)
     {
     case 1:
         return "Attack";
@@ -14,8 +19,6 @@ string Minion::getMoveName(int MoveNo)
         return "Defend";
     case 3:
         return "Heal";
-    default:
-        return "Nothing";
     }
 }
 
@@ -29,11 +32,5 @@ double Minion::getMovePower(int MoveNo)
         return 25;
     case 3:
         return 0;
-    default:
-        return 0;
     }
-}
-
-Minion::~Minion()
-{
 }
