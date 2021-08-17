@@ -9,16 +9,6 @@ Boss::Boss()
 	setSpeed(30);
 }
 
-int Boss::getMove4Power()
-{
-	return Move4Power;
-}
-
-void Boss::setMove4Power(int Power)
-{
-	Move4Power = Power;
-}
-
 Boss::~Boss()
 {
 }
