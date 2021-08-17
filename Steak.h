@@ -2,8 +2,6 @@
 #include "Boss.h"
 class Steak :public Boss
 {
-private:
-
 public:
 	Steak();
 	string getMoveName(int MoveNo);
