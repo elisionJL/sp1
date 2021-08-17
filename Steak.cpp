@@ -28,7 +28,7 @@ string Steak::getMoveName(int MoveNo)
 	}
 }
 
-int Steak::getMovePower(int MoveNo)
+double Steak::getMovePower(int MoveNo)
 {
 	switch (MoveNo)
 	{
