@@ -2,9 +2,9 @@
 #include "Boss.h"
 class Beet : public Boss
 {
-public:
-
 private:
+
+public:
 	Beet();
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
