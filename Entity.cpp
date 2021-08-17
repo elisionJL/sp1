@@ -1,43 +1,49 @@
+#include "Entity.h"
 Entity::Entity()
 {
+	Health = 0;
+	Damage = 0;
+	Speed = 0;
+	Resistance = 0;
+
 }
 
-int Entity::getHealth()
+float Entity::getHealth()
 {
 	return Health;
 }
 
-void Entity::setHealth(int health)
+void Entity::setHealth(float health)
 {
 	this->Health = health;
 }
 
-int Entity::getDamage()
+float Entity::getDamage()
 {
 	return Damage;
 }
 
-void Entity::setDamage(int dmg)
+void Entity::setDamage(float dmg)
 {
 	this->Damage = dmg;
 }
 
-int Entity::getResistance()
+float Entity::getResistance()
 {
 	return Resistance;
 }
 
-void Entity::setResistance(int resistance)
+void Entity::setResistance(float resistance)
 {
 	this->Resistance = resistance;
 }
 
-int Entity::getSpeed()
+float Entity::getSpeed()
 {
 	return Speed;
 }
 
-void Entity::setSpeed(int speed)
+void Entity::setSpeed(float speed)
 {
 	this->Speed = speed;
 }
