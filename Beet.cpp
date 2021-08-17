@@ -21,6 +21,16 @@ string Beet::getMoveName(int MoveNo)
 
 int Beet::getMovePower(int MoveNo)
 {
-	
+	switch (MoveNo)
+	{
+	case 1:
+		return 1;
+	case 2:
+		return 1;
+	case 3:
+		return 0;
+	case 4:
+		return 0;
+	}
 }
 
