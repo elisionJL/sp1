@@ -8,6 +8,6 @@ private:
 public:
 	Boss();
 	string getMoveName(int MoveNo);
-	int getMovePower(int MoveNo);
+	double getMovePower(int MoveNo);
 	~Boss();
 };
