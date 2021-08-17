@@ -21,12 +21,27 @@ void setparty(Companion* cptr[10], Boss* bptr[4], player p,int party[3])
 	}
 	std::cout << p.getplayerinfo(3) + 1 << ". None" << std::endl;
 	int createparty = 0;
+	int companionid;
 	while (createparty == 0)
 	{
 		for (int i = 0; i < p.getplayerinfo(3); i++)
 		{
 			std::cout << "Choose Companion " << i + 1 << ": ";
-			std::cin >> party[i];
+			std::cin >> companionid;
+			int errorcheck = 0;
+			for (int l = 0; l < 3; l++)
+			{
+				if (party[l] == companionid)
+				{
+					std::cout << "Cannot use the same party members" << std::endl;
+					i--;
+					errorcheck++;
+				}
+			}
+			if (errorcheck == 0)
+			{
+				party[i] = companionid;
+			}
 		}
 		int checkmembers=0;
 		for (int i = 0; i < p.getplayerinfo(3); i++)
