@@ -16,6 +16,8 @@ string Beet::getMoveName(int MoveNo)
 	case 4:
 		return "Can you beet this?";
 		//Raise attack a lot for next attack
+	default:
+		return "NOTHING";
 	}
 }
 
@@ -31,6 +33,9 @@ int Beet::getMovePower(int MoveNo)
 		return 0;
 	case 4:
 		return 0;
+	default:
+		return 0;
 	}
 }
+
 
