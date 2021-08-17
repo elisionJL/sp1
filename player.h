@@ -21,4 +21,5 @@ public:
 	void clearednewstage();
 	int gethighestclearedstage();
 	void companionupgrade(int x);
+	int getcoins();
 };
