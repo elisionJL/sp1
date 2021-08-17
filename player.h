@@ -19,7 +19,6 @@ public:
 	int getplayerinfo(int x);
 	std::string getplayerstrinfo(int x);
 	void clearednewstage();
-	int gethighestclearedstage();
 	void companionupgrade(int x);
-	int getcoins();
 };
+
