@@ -4,26 +4,26 @@ using namespace std;
 class Entity
 {
 private:
-	float Health;
-	float Damage;
-	float Resistance;
-	float Speed;
+	double Health;
+	double Damage;
+	double Resistance;
+	double Speed;
 
 public:
 	Entity();
 
 	//stats accessor/mutator
-	float getHealth();
-	void setHealth(float health);
-	float getDamage();
-	void setDamage(float dmg);
-	float getResistance();
-	void setResistance(float resistance);
-	float getSpeed();
-	void setSpeed(float speed);
+	double getHealth();
+	void setHealth(double health);
+	double getDamage();
+	void setDamage(double dmg);
+	double getResistance();
+	void setResistance(double resistance);
+	double getSpeed();
+	void setSpeed(double speed);
 
 	//Move powers get/set func
 	virtual string getMoveName(int MoveNo) = 0;
-	virtual float getMovePower(int MoveNo) = 0;
+	virtual double getMovePower(int MoveNo) = 0;
 	~Entity();
 };
