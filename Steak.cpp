@@ -19,6 +19,8 @@ string Steak::getMoveName(int MoveNo)
 	case 5:
 		return "Steak Out";
 		//Decrease resistance,increase speed and attack,skips next turn
+	default:
+		return "NOTHING";
 	}
 }
 
@@ -33,6 +35,8 @@ int Steak::getMovePower(int MoveNo)
 	case 3:
 		return 1;
 	case 4:
+		return 0;
+	default:
 		return 0;
 	}
 }
