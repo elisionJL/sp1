@@ -19,7 +19,7 @@ string Minion::getMoveName(int MoveNo)
     }
 }
 
-int Minion::getMovePower(int MoveNo)
+double Minion::getMovePower(int MoveNo)
 {
     switch (MoveNo)
     {
