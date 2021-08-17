@@ -1,10 +1,14 @@
 #include "Minion.h"
 Minion::Minion(int x)
 {
-    setHealth(((rand() % 50) + 50.0)*x*0.05);
-    setDamage(((rand() % 15) + 15.0)* x * 0.05);
-    setResistance(((rand() % 15) + 15.0)* x * 0.05);
-    setSpeed(((rand() % 20) + 20.0)* x * 0.05);
+    setHealth(((rand() % 50) + 50.0) * (x * 1.05));
+    setDamage(((rand() % 15) + 15.0) * (x * 1.05));
+    setResistance(((rand() % 15) + 15.0) * (x * 1.05));
+    setSpeed(((rand() % 20) + 20.0) * (x * 1.05));
+    setcurrentHealth(getHealth());
+    setcurrentDamage(getDamage());
+    setcurrentResistance(getResistance());
+    setcurrentSpeed(getSpeed());
 }
 Minion::~Minion()
 {
@@ -20,6 +24,7 @@ string Minion::getMoveName(int MoveNo)
     case 3:
         return "Heal";
     }
+    return "0";
 }
 
 double Minion::getMovePower(int MoveNo)
@@ -33,4 +38,5 @@ double Minion::getMovePower(int MoveNo)
     case 3:
         return 0;
     }
+    return 0;
 }

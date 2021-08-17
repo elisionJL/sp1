@@ -3,6 +3,14 @@
 
 Eggplant::Eggplant()
 {
+	setHealth(100);
+	setDamage(30);
+	setResistance(30);
+	setSpeed(40);
+	setcurrentHealth(getHealth());
+	setcurrentDamage(getDamage());
+	setcurrentResistance(getResistance());
+	setcurrentSpeed(getSpeed());
 }
 
 string Eggplant::getMoveName(int MoveNo)

@@ -8,3 +8,4 @@ public:
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
 };
+

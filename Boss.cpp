@@ -2,11 +2,10 @@
 
 Boss::Boss()
 {
-	//Base boss stats
-	setHealth(200);
-	setDamage(50);
-	setResistance(20);
-	setSpeed(30);
+	setHealth(0);
+	setDamage(0);
+	setResistance(0);
+	setSpeed(0);
 }
 
 string Boss::getMoveName(int MoveNo)

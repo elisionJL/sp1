@@ -6,7 +6,7 @@ player::player(std::string a, std::string b)
 	type = b;
 	level = 1;
 	charactersowned = 0;
-	coins = 10000;
+	coins = 3000;
 	highestclearedstage = 0;
 }
 player::~player()
@@ -20,11 +20,9 @@ void player::checklevelup()
 		level++;
 	}
 }
-void player::gacha(int x)
+void player::gacha()
 {
 	coins -= 1500;
-	if (x == 1)
-		charactersowned += 1;
 }
 void player::stagecleared(int x, int y)
 {
@@ -66,4 +64,12 @@ void player::clearednewstage()
 void player::companionupgrade(int x)
 {
 	coins -= x;
+}
+void player::newcompanion()
+{
+	charactersowned++;
+}
+void player::setcompanionno(int x)
+{
+	charactersowned = x;
 }

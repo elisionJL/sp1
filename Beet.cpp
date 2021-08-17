@@ -1,4 +1,15 @@
 #include "Beet.h"
+Beet::Beet()
+{
+	setHealth(100);
+	setDamage(30);
+	setResistance(30);
+	setSpeed(40);
+	setcurrentHealth(getHealth());
+	setcurrentDamage(getDamage());
+	setcurrentResistance(getResistance());
+	setcurrentSpeed(getSpeed());
+}
 
 string Beet::getMoveName(int MoveNo)
 {
@@ -38,4 +49,6 @@ double Beet::getMovePower(int MoveNo)
 	}
 }
 
-
+Beet::~Beet()
+{
+}
