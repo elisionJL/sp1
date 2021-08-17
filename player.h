@@ -14,11 +14,13 @@ public:
 	player(std::string a, std::string b);
 	~player();
 	void checklevelup();
-	void gacha(int x);
+	void gacha();
 	void stagecleared(int x, int y);
 	int getplayerinfo(int x);
 	std::string getplayerstrinfo(int x);
 	void clearednewstage();
 	void companionupgrade(int x);
+	void newcompanion();
+	void setcompanionno(int x);
 };
 
