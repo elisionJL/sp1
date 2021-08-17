@@ -2,9 +2,9 @@
 #include "Entity.h"
 class Minion :public Entity
 {
-public:
-
 private:
+
+public:
 	Minion();
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
