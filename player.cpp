@@ -7,6 +7,7 @@ player::player(std::string a, std::string b)
 	level = 1;
 	charactersowned = 0;
 	coins = 10000;
+	highestclearedstage = 0;
 }
 player::~player()
 {
@@ -55,4 +56,12 @@ std::string player::getplayerstrinfo(int x)
 		return type;
 	}
 	return "0";
+}
+void player::clearednewstage()
+{
+	highestclearedstage++;
+}
+int player::gethighestclearedstage()
+{
+	return highestclearedstage;
 }
