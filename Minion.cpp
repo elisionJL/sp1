@@ -1,5 +1,9 @@
 #include "Minion.h"
 
+Minion::Minion()
+{
+}
+
 string Minion::getMoveName(int MoveNo)
 {
     switch(MoveNo)
@@ -10,6 +14,8 @@ string Minion::getMoveName(int MoveNo)
         return "Defend";
     case 3:
         return "Heal";
+    default:
+        return "Nothing";
     }
 }
 
@@ -18,10 +24,16 @@ int Minion::getMovePower(int MoveNo)
     switch (MoveNo)
     {
     case 1:
-        return 1;
+        return 20;
     case 2:
-        return 0;
+        return 25;
     case 3:
         return 0;
+    default:
+        return 0;
     }
+}
+
+Minion::~Minion()
+{
 }
