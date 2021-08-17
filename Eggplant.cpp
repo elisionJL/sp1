@@ -26,7 +26,7 @@ string Eggplant::getMoveName(int MoveNo)
 	}
 }
 
-int Eggplant::getMovePower(int MoveNo)
+double Eggplant::getMovePower(int MoveNo)
 {
 	switch (MoveNo)
 	{
