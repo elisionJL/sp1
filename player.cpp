@@ -69,3 +69,7 @@ void player::companionupgrade(int x)
 {
 	coins -= x;
 }
+int player::getcoins()
+{
+	return coins;
+}
