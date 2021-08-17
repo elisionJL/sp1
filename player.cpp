@@ -25,10 +25,10 @@ void player::gacha(int x)
 	if (x == 1)
 		charactersowned += 1;
 }
-void player::stagecleared(int x, int y, int z)
+void player::stagecleared(int x, int y)
 {
 	coins += x;
-	exp += z;
+	exp += y;
 }
 int player::getplayerinfo(int x)
 {
