@@ -18,9 +18,9 @@ int Minion::getMovePower(int MoveNo)
     switch (MoveNo)
     {
     case 1:
-        return 20;
+        return 1;
     case 2:
-        return 25;
+        return 0;
     case 3:
         return 0;
     }
