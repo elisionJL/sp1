@@ -1,4 +1,4 @@
-#include "Eggplant.h""
+#include "Eggplant.h"
 #include <string>
 
 string Eggplant::getMoveName(int MoveNo)
@@ -17,6 +17,8 @@ string Eggplant::getMoveName(int MoveNo)
 	case 4:
 		return "Purple plague";
 		//Decrease a stat of all player's party members by a little
+	default:
+		return "NOTHING";
 	}
 }
 
@@ -31,6 +33,8 @@ int Eggplant::getMovePower(int MoveNo)
 	case 3:
 		return 0;
 	case 4:
+		return 0;
+	default:
 		return 0;
 	}
 }
