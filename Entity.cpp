@@ -49,10 +49,12 @@ void Entity::setSpeed(float speed)
 }
 string Entity::getMoveName(int MoveNo)
 {
+	return "EntityMoveName";
 }
 
 int Entity::getMovePower(int MoveNo)
 {
+	return 0;
 }
 
 Entity::~Entity()
