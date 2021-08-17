@@ -24,6 +24,6 @@ public:
 
 	//Move powers get/set func
 	virtual string getMoveName(int MoveNo) = 0;
-	virtual int getMovePower(int MoveNo) = 0;
+	virtual float getMovePower(int MoveNo) = 0;
 	~Entity();
 };
