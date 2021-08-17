@@ -7,7 +7,6 @@ player::player(std::string a, std::string b)
 	level = 1;
 	charactersowned = 1;
 	coins = 10000;
-	characterlvlupmat = 10;
 }
 player::~player()
 {
@@ -29,13 +28,7 @@ void player::gacha(int x)
 void player::stagecleared(int x, int y, int z)
 {
 	coins += x;
-	characterlvlupmat += y;
 	exp += z;
-}
-void player::uselvlupmat(int x)
-{
-	coins -= x * 500;
-	characterlvlupmat -= x;
 }
 int player::getplayerinfo(int x)
 {
@@ -47,8 +40,6 @@ int player::getplayerinfo(int x)
 		return charactersowned;
 	if (x == 4)
 		return coins;
-	if (x == 5)
-		return characterlvlupmat;
 	return 0;
 }
 std::string player::getplayerstrinfo(int x)
