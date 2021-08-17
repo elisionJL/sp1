@@ -8,53 +8,44 @@ Entity::Entity()
 
 }
 
-float Entity::getHealth()
+double Entity::getHealth()
 {
 	return Health;
 }
 
-void Entity::setHealth(float health)
+void Entity::setHealth(double health)
 {
 	this->Health = health;
 }
 
-float Entity::getDamage()
+double Entity::getDamage()
 {
 	return Damage;
 }
 
-void Entity::setDamage(float dmg)
+void Entity::setDamage(double dmg)
 {
 	this->Damage = dmg;
 }
 
-float Entity::getResistance()
+double Entity::getResistance()
 {
 	return Resistance;
 }
 
-void Entity::setResistance(float resistance)
+void Entity::setResistance(double resistance)
 {
 	this->Resistance = resistance;
 }
 
-float Entity::getSpeed()
+double Entity::getSpeed()
 {
 	return Speed;
 }
 
-void Entity::setSpeed(float speed)
+void Entity::setSpeed(double speed)
 {
 	this->Speed = speed;
-}
-string Entity::getMoveName(int MoveNo)
-{
-	return "EntityMoveName";
-}
-
-int Entity::getMovePower(int MoveNo)
-{
-	return 0;
 }
 
 Entity::~Entity()
