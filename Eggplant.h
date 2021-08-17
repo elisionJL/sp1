@@ -2,9 +2,9 @@
 #include "Boss.h"
 class Eggplant :    public Boss
 {
-public:
-
 private:
+
+public:
 	Eggplant();
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
