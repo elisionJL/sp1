@@ -1,5 +1,9 @@
 #include "Steak.h"
 
+Steak::Steak()
+{
+}
+
 string Steak::getMoveName(int MoveNo)
 {
 	switch (MoveNo)
@@ -39,4 +43,8 @@ int Steak::getMovePower(int MoveNo)
 	default:
 		return 0;
 	}
+}
+
+Steak::~Steak()
+{
 }
