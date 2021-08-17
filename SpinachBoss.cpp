@@ -13,10 +13,12 @@ string SpinachBoss::getMoveName(int MoveNo)
 		//Decrease 1 of player's party member's attack
 	case 3:
 		return "Greens are good!";
-		//boost defense 
+		//increase resistance
 	case 4:
 		return "Popeye Special";
 		//Increase own attack
+	default:
+		return "NOTHING";
 	}
 }
 
@@ -31,6 +33,8 @@ int SpinachBoss::getMovePower(int MoveNo)
 	case 3:
 		return 0;
 	case 4:
+		return 0;
+	default:
 		return 0;
 	}
 }
