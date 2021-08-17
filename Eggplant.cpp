@@ -1,6 +1,10 @@
 #include "Eggplant.h"
 #include <string>
 
+Eggplant::Eggplant()
+{
+}
+
 string Eggplant::getMoveName(int MoveNo)
 {
 	switch (MoveNo)
@@ -37,4 +41,8 @@ int Eggplant::getMovePower(int MoveNo)
 	default:
 		return 0;
 	}
+}
+
+Eggplant::~Eggplant()
+{
 }
