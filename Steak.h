@@ -2,9 +2,9 @@
 #include "Boss.h"
 class Steak :public Boss
 {
-public:
-
 private:
+
+public:
 	Steak();
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
