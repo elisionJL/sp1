@@ -32,21 +32,27 @@ void player::stagecleared(int x, int y)
 }
 int player::getplayerinfo(int x)
 {
-	if (x == 1)
+	switch (x)
+	{
+	case 1:
 		return level;
-	if (x == 2)
+	case 2:
 		return exp;
-	if (x == 3)
+	case 3:
 		return charactersowned;
-	if (x == 4)
+	case 4:
 		return coins;
+	}
 	return 0;
 }
 std::string player::getplayerstrinfo(int x)
 {
-	if (x == 1)
+	switch (x)
+	{
+	case 1:
 		return name;
-	if (x == 2)
+	case 2:
 		return type;
+	}
 	return "0";
 }
