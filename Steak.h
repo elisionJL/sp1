@@ -7,6 +7,6 @@ public:
 private:
 	Steak();
 	string getMoveName(int MoveNo);
-	int getMovePower(int MoveNo);
+	double getMovePower(int MoveNo);
 	~Steak();
 };
