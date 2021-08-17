@@ -2,8 +2,6 @@
 #include "Boss.h"
 class Beet : public Boss
 {
-private:
-
 public:
 	Beet();
 	string getMoveName(int MoveNo);
