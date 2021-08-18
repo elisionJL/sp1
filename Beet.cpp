@@ -1,14 +1,15 @@
 #include "Beet.h"
-Beet::Beet()
+Beet::Beet(int x)
 {
-	setHealth(100);
-	setDamage(30);
-	setResistance(30);
-	setSpeed(40);
+	setHealth(100*(x*1.05));
+	setDamage(30 * (x * 1.05));
+	setResistance(30 * (x * 1.05));
+	setSpeed(40 * (x * 1.05));
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
 	setcurrentSpeed(getSpeed());
+	setname("Beet");
 }
 
 string Beet::getMoveName(int MoveNo)
@@ -19,31 +20,36 @@ string Beet::getMoveName(int MoveNo)
 		return "Beetbox";
 		//Low dmg affects all player's party members
 	case 2:
-		return "Grounded";
+		return "Grounded, lowering Speed while increasing Defence";
 		//Lowers speed,raise resistance
 	case 3:
-		return "Beauty and a beet";
-		//Raise player's speed,raises own attack
+		return "Beauty and a beet, sacrificing Speed for Attack";
+		//Lowers speed,raises own attack
 	case 4:
 		return "Can you beet this?";
-		//Raise attack a lot for next attack
+		//Big dmg
 	default:
 		return "NOTHING";
 	}
 }
 
-double Beet::getMovePower(int MoveNo)
+int Beet::skill(int x)
 {
-	switch (MoveNo)
+	switch (x)
 	{
 	case 1:
 		return 1;
 	case 2:
-		return 1;
+		setcurrentSpeed(getSpeed()*0.5);
+		setcurrentResistance(getResistance() * 2.75);
+		return 0;
 	case 3:
+		setcurrentSpeed(getSpeed() * 0.5);
+		setcurrentDamage(getDamage() * 1.75);
 		return 0;
 	case 4:
-		return 0;
+		setcurrentDamage(getDamage() * 2.5);
+		return 2;
 	default:
 		return 0;
 	}

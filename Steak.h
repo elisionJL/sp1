@@ -3,7 +3,7 @@
 class Steak :public Boss
 {
 public:
-	Steak();
+	Steak(int x);
 	string getMoveName(int MoveNo);
 	double getMovePower(int MoveNo);
 	~Steak();

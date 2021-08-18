@@ -1,5 +1,5 @@
 #include "Minion.h"
-Minion::Minion(int x)
+Minion::Minion(int x,std::string y)
 {
     setHealth(((rand() % 50) + 50.0) * (x * 1.05));
     setDamage(((rand() % 15) + 15.0) * (x * 1.05));
@@ -9,6 +9,7 @@ Minion::Minion(int x)
     setcurrentDamage(getDamage());
     setcurrentResistance(getResistance());
     setcurrentSpeed(getSpeed());
+    setname(y);
 }
 Minion::~Minion()
 {

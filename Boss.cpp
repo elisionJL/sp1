@@ -13,9 +13,8 @@ string Boss::getMoveName(int MoveNo)
 	return "BossGETNAME";
 }
 
-double Boss::getMovePower(int MoveNo)
+void Boss::skill(int x)
 {
-	return 0;
 }
 
 Boss::~Boss()

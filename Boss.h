@@ -6,6 +6,6 @@ class Boss : public Entity
 public:
 	Boss();
 	string getMoveName(int MoveNo);
-	double getMovePower(int MoveNo);
+	virtual int skill(int x);
 	~Boss();
 };

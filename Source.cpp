@@ -30,23 +30,22 @@ void setparty(Companion* cptr[10],  player p,int party[3])
 			int errorcheck = 0;
 			for (int l = 0; l < 3; l++)
 			{
-				if (party[l] == companionchoice)
+				if ((party[l] == companionchoice)&&(companionchoice!= p.getplayerinfo(3)+1))
 				{
 					std::cout << "Cannot use the same party members" << std::endl;
 					i--;
 					errorcheck++;
 				}
 			}
-			if (errorcheck == 0)
+			if ((errorcheck == 0) && (companionchoice != p.getplayerinfo(3)+1))
 			{
 				party[i] = companionchoice;
-				std::cout << cptr[party[i]-1]->getname() << std::endl;
 			}
 		}
 		int checkmembers=0;
 		for (int i = 0; i < p.getplayerinfo(3); i++)
 		{
-			if (party[i] != p.getplayerinfo(3) + 1)
+			if (party[i] !=0)
 				checkmembers++;
 		}
 		if (checkmembers != 0)
@@ -199,6 +198,7 @@ void battle(int party[3], Companion* cptr[10], Boss* bptr[3], player p, int stag
 	{
 		std::cout << "Party cannot be empty" << std::endl;
 		setparty(cptr, p, party);
+		std::cout << "" << std::endl;
 	}
 	for (int i = 0; i < 3; i++)
 	{
@@ -367,6 +367,8 @@ int menu(Companion* cptr[10], Boss* bptr[3], player p, int party[3],std::string 
 			}
 			else if (choice == 2)
 			{
+				for (int i = 0; i < 3; i++)
+					party[i] = 0;
 				setparty(cptr, p, party);
 				std::cout << "" << std::endl;
 				backloop--;

@@ -6,6 +6,7 @@ Companion::Companion()
 	MovePower = 0;
 	lvl = 0;
 	upgradecost = 0;
+	timespulled = 0;
 }
 
 Companion::Companion(int companionsID,std::string x)
@@ -20,9 +21,10 @@ Companion::Companion(int companionsID,std::string x)
 	setcurrentResistance(getResistance());
 	setcurrentSpeed(getSpeed());
 	MovePower = 0;
-	name = x;
+	setname(x);
 	upgradecost = 200;
 	lvl = 1;
+	timespulled = 1;
 }
 
 void Companion::setMovePower(float pwr)
@@ -106,11 +108,6 @@ double Companion::getMovePower(int MoveNo)
 	}
 }
 
-std::string Companion::getname()
-{
-	return name;
-}
-
 void Companion::summonedagain()
 {
 	setHealth(getHealth() * 1.1);
@@ -118,6 +115,7 @@ void Companion::summonedagain()
 	setResistance(getResistance() * 1.1);
 	setSpeed(getSpeed() * 1.1);
 	upgradecost += upgradecost * 1;
+	timespulled++;
 }
 
 void Companion::lvlup()
@@ -142,4 +140,8 @@ double Companion::getupgradecost()
 int Companion::getid()
 {
 	return companionId;
+}
+int Companion::gettimespulled()
+{
+	return timespulled;
 }

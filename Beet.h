@@ -3,8 +3,8 @@
 class Beet : public Boss
 {
 public:
-	Beet();
+	Beet(int x);
 	string getMoveName(int MoveNo);
-	double getMovePower(int MoveNo);
+	int skill(int x);
 	~Beet();
 };

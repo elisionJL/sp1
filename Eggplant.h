@@ -3,8 +3,8 @@
 class Eggplant : public Boss
 {
 public:
-	Eggplant();
+	Eggplant(int x);
 	string getMoveName(int MoveNo);
-	double getMovePower(int MoveNo);
+	int skill(int x);
 	~Eggplant();
 };

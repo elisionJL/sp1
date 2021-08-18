@@ -1,16 +1,17 @@
 #include "Eggplant.h"
 #include <string>
 
-Eggplant::Eggplant()
+Eggplant::Eggplant(int x)
 {
-	setHealth(100);
-	setDamage(30);
-	setResistance(30);
-	setSpeed(40);
+	setHealth(100 * (x * 1.05));
+	setDamage(30 * (x * 1.05));
+	setResistance(30 * (x * 1.05));
+	setSpeed(40 * (x * 1.05));
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
 	setcurrentSpeed(getSpeed());
+	setname("Eggplant");
 }
 
 string Eggplant::getMoveName(int MoveNo)
@@ -22,7 +23,7 @@ string Eggplant::getMoveName(int MoveNo)
 		//Basic damage ability
 	case 2:
 		return " Rollout";
-		//Low damage,hits 2 members
+		//Low damage on all
 	case 3:
 		return "Nightshade";
 		//Decrease 1 of player's party member's resistance
@@ -34,18 +35,19 @@ string Eggplant::getMoveName(int MoveNo)
 	}
 }
 
-double Eggplant::getMovePower(int MoveNo)
+int Eggplant::skill(int x)
 {
-	switch (MoveNo)
+	switch (x)
 	{
 	case 1:
-		return 1;
+		setcurrentDamage(getDamage() * 2.5);
+		return 2;
 	case 2:
 		return 1;
 	case 3:
-		return 0;
+		return 5;
 	case 4:
-		return 0;
+		return 7;
 	default:
 		return 0;
 	}

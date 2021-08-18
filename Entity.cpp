@@ -102,6 +102,37 @@ void Entity::resetstats(int x)
 	}
 }
 
+void Entity::setname(std::string x)
+{
+	name = x;
+}
+
+std::string Entity::getname()
+{
+	return name;
+}
+
+int Entity::attack(int x)
+{
+	return currentDamage - x * 0.5;
+}
+
+void Entity::block()
+{
+	currentResistance += currentResistance * 2;
+}
+
+int Entity::skill(int x)
+{
+}
+
+void Entity::takedmg(int x)
+{
+	currentHealth -= x;
+	if (currentHealth > 0)
+		currentHealth == 0;
+}
+
 Entity::~Entity()
 {
 }

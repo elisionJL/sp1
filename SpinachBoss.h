@@ -3,8 +3,8 @@
 class SpinachBoss : public Boss
 {
 public:
-	SpinachBoss();
+	SpinachBoss(int x);
 	string getMoveName(int MoveNo);
-	double getMovePower(int MoveNo);
+	int skill(int x);
 	~SpinachBoss();
 };
