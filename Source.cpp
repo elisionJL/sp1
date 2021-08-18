@@ -9,29 +9,28 @@
 #include "Steak.h"
 #include<string>
 #include<iostream>
-void setparty(Companion* cptr[10], Boss* bptr[4], player p,int party[3])
+void setparty(Companion* cptr[10],  player p,int party[3])
 {
 	for (int i = 0; i < 10; i++)
 	{
 		if (cptr[i] != nullptr)
 		{
-			cptr[i]->resetstats(5);
 			std::cout << i + 1 << ". " << cptr[i]->getname() << std::endl;
 		}
 	}
 	std::cout << p.getplayerinfo(3) + 1 << ". None" << std::endl;
 	int createparty = 0;
-	int companionid;
+	int companionchoice;
 	while (createparty == 0)
 	{
 		for (int i = 0; i < p.getplayerinfo(3); i++)
 		{
 			std::cout << "Choose Companion " << i + 1 << ": ";
-			std::cin >> companionid;
+			std::cin >> companionchoice;
 			int errorcheck = 0;
 			for (int l = 0; l < 3; l++)
 			{
-				if (party[l] == companionid)
+				if (party[l] == companionchoice)
 				{
 					std::cout << "Cannot use the same party members" << std::endl;
 					i--;
@@ -40,7 +39,8 @@ void setparty(Companion* cptr[10], Boss* bptr[4], player p,int party[3])
 			}
 			if (errorcheck == 0)
 			{
-				party[i] = companionid;
+				party[i] = companionchoice;
+				std::cout << cptr[party[i]-1]->getname() << std::endl;
 			}
 		}
 		int checkmembers=0;
@@ -68,7 +68,6 @@ int enhancecompanion(player p, Companion* cptr[10])
 			{
 				if (cptr[i] != nullptr)
 				{
-					cptr[i]->resetstats(5);
 					std::cout << i + 1 << ". " << cptr[i]->getname() << std::endl;
 				}
 			}
@@ -91,6 +90,7 @@ int enhancecompanion(player p, Companion* cptr[10])
 			std::cout << "Defence: " << int(cptr[choice]->getResistance()) << std::endl;
 			std::cout << "Speed: " << int(cptr[choice]->getSpeed()) << std::endl;
 			std::cout << "Skill: " << cptr[choice]->getMoveName(3) << std::endl;
+			std::cout << "Enhanced Level: " << cptr[choice]->gettimespulled()-1 << std::endl;
 			std::cout << "" << std::endl;
 			std::cout << "1. Upgrade (" << cptr[choice]->getupgradecost()<<" coins)" << std::endl;
 			std::cout << "2. Back" << std::endl;
@@ -161,7 +161,7 @@ int summon(player p, Companion* cptr[10],std::string namelist[10])
 							if (pull == cptr[i]->getid())
 							{
 								std::cout << "You summoned another " << namelist[pull - 1] << "!" << std::endl;
-								std::cout << namelist[pull - 1] << " has gained a 10% boost in stats" << std::endl;
+								std::cout << namelist[pull - 1] << "'s Enhanced Level has increased" << std::endl;
 								cptr[i]->summonedagain();
 								p.gacha();
 								repeat++;
@@ -183,7 +183,126 @@ int summon(player p, Companion* cptr[10],std::string namelist[10])
 	}
 	return 0;
 }
-int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string namelist[10])
+void battle(int party[3], Companion* cptr[10], Boss* bptr[3], player p, int stagepicked)
+{
+	int result=0;
+	int checkparty = 0;
+	int partysize = 0;
+	for (int i = 0; i < 3; i++)
+	{
+		if (party[i] == 0)
+		{
+			checkparty++;
+		}
+	}
+	if (checkparty == 3)
+	{
+		std::cout << "Party cannot be empty" << std::endl;
+		setparty(cptr, p, party);
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (party[i] != 0)
+		{
+			cptr[i]->resetstats(5);
+			partysize++;
+		}
+	}
+	int enemyno=0;
+	int minionno=0;
+	int bossno=0;
+	Minion* mptr[2] = { nullptr,nullptr };
+	switch (stagepicked)
+	{
+	case 1:
+		bptr[0] = new SpinachBoss(5);
+		enemyno = 1;
+		bossno = 1;
+	case 2:
+		bptr[0] = new Eggplant(10);
+		mptr[0] = new Minion(10,"Cabbage");
+		mptr[1] = new Minion(10,"Garlic");
+		enemyno = 3;
+		bossno = 1;
+		minionno = 2;
+	case 3:
+		bptr[0] = new Beet(15);
+		mptr[0] = new Minion(15,"Onion");
+		mptr[1] = new Minion(15,"Peas");
+		enemyno = 3;
+		bossno = 1;
+		minionno = 2;
+	case 4:
+		bptr[0] = new Steak(20);
+		mptr[0] = new Minion(20,"Mutton");
+		mptr[1] = new Minion(20,"Venison");
+		enemyno = 3;
+		bossno = 1;
+		minionno = 2;
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		if (party[i] != 0)
+		{
+			for (int l = 0; l < 10; l++)
+			{
+				if (cptr[l] != nullptr)
+				{
+					if (l == party[i]-1)
+					{
+						int choice;
+						char target;
+						int checktarget=0;
+						std::cout << "-------------------------" << std::endl;
+						std::cout << "Companion: " << cptr[l]->getname() << std::endl;
+						int targeterrorcheck = 0;
+						while (targeterrorcheck == 0)
+						{
+							std::cout << "Target: ";
+							std::cin >> target;
+							for (int k = 0; k < bossno; k++)
+							{
+								if (toupper(target) != (bptr[k]->getname())[0])
+								{
+									checktarget++;
+								}
+							}
+							for (int k = 0; k < minionno; k++)
+							{
+								if (toupper(target) != (mptr[k]->getname()).front())
+								{
+									checktarget++;
+								}
+							}
+							if (checktarget == enemyno)
+							{
+								std::cout << "Invalid target" << std::endl;
+							}
+							else
+								targeterrorcheck++;
+						}
+						for (int f = 1; f < 4; f++)
+							std::cout << f << ". " << cptr[l]->getMoveName(f) << std::endl;
+						std::cout << "Prompt: ";
+						std::cin >> choice;
+						std::cout << "" << std::endl;
+					}
+				}
+			}
+		}
+	}
+	if (result == 0)
+	{
+		std::cout << "You lost!" << std::endl;
+		std::cout << "Tip: Upgrade your companions" << std::endl;
+		std::cout << "" << std::endl;
+	}
+	if (result == 1)
+	{
+		std::cout << "You won!" << std::endl;
+	}
+}
+int menu(Companion* cptr[10], Boss* bptr[3], player p, int party[3],std::string namelist[10])
 {
 	int choice;
 	int backloop = 0;
@@ -227,7 +346,7 @@ int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string 
 			std::cout << "-------------------------" << std::endl;
 			if (choice == 1)
 			{
-				std::string stages[4] = { "I'm not going to just spin around and leave!", "That went eggcellently well","We are unbeetable","Everything at steak" };
+				std::string stages[4] = { "I'm not going to just spin around and leave!", "That went eggcellently well","No time to beet about the bush","Everything at steak" };
 				std::cout << "Stages:" << std::endl;
 				for (int i = 0; i <= p.getplayerinfo(5); i++)
 				{
@@ -242,11 +361,13 @@ int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string 
 					backloop--;
 				}
 				else
-					return choice;
+				{
+					battle(party, cptr, bptr, p, choice);
+				}
 			}
 			else if (choice == 2)
 			{
-				setparty(cptr, bptr, p, party);
+				setparty(cptr, p, party);
 				std::cout << "" << std::endl;
 				backloop--;
 			}
@@ -268,21 +389,22 @@ int menu(Companion* cptr[10], Boss* bptr[4], player p, int party[3],std::string 
 	}
 	return 0;
 }
+
 int main(void)
 {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	std::string namelist[10] = { "Lolipop","Honey","Milk","Yohgurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
 	Companion* cptr[10] = { nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	Boss* bptr[4] = { nullptr,nullptr,nullptr,nullptr };
-	bptr[0] = new SpinachBoss();
-	bptr[1] = new Eggplant();
-	bptr[2] = new Beet();
-	bptr[3] = new Steak();
+	Boss* bptr[3] = { nullptr,nullptr,nullptr };
 	player p("Wapples", "Apple");
 	cptr[p.getplayerinfo(3)] = new Companion(3,"Milk");
 	p.newcompanion();
 	int party[3] = { 0,0,0 };
-	int stagepicked = menu(cptr, bptr, p, party,namelist);
-	if (stagepicked == 0)
-		return 0;
+	int running = 0;
+	while (running == 0)
+	{
+		int stagepicked = menu(cptr, bptr, p, party, namelist);
+		if (stagepicked == 0)
+			return 0;
+	}
 }
