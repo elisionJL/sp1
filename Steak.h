@@ -1,5 +1,5 @@
 #pragma once
-#include "Boss.h"
+#include "Entity.h"
 class Steak :public Entity
 {
 public:
