@@ -1,6 +1,6 @@
 #pragma once
-#include "Boss.h"
-class Beet : public Boss
+#include "Entity.h"
+class Beet : public Entity
 {
 public:
 	Beet(int x);

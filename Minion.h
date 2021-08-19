@@ -7,6 +7,6 @@ public:
 	Minion(int x,std::string y);
 	~Minion();
 	string getMoveName(int MoveNo);
-	double getMovePower(int MoveNo);
+	int skill(int x);
 };
 

@@ -9,19 +9,26 @@ private:
     int lvl;
     double upgradecost;
     int timespulled;
+    double bonusHealth;
+    double bonusDamage;
+    double bonusResistance;
+    double bonusSpeed;
+    double bonushealing;
 
 public:
     Companion();
     Companion(int companionId,std::string x);
-    void setMovePower(float pwr);
     ~Companion();
-    string getMoveName(int MoveNo);
-    double getMovePower(int MoveNo);
+    string getMoveName(int x);
+    int buff();
     void summonedagain();
     void lvlup();
     int getlvl();
     double getupgradecost();
     int getid();
     int gettimespulled();
+    int skill();
+    void resonance(int x);
+    void removeresonace(int x);
 };
 

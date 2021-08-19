@@ -13,6 +13,8 @@ private:
 	double currentResistance;
 	double currentSpeed;
 	std::string name;
+	int skillcd;
+	std::string atktarget;
 
 public:
 	Entity();
@@ -36,13 +38,15 @@ public:
 	void setcurrentSpeed(double speed);
 	void resetstats(int x);
 	void setname(std::string x);
+	int getskillcd();
+	void setskillcd(int x);
+	std::string getatktarget();
+	void setatktarget(std::string x);
 	std::string getname();
-
-	//Move powers get/set func
 	virtual string getMoveName(int MoveNo) = 0;
-	int attack(int x);
-	void block();
 	virtual int skill(int x);
-	void takedmg(int x);
+	double attack(double x);
+	void block();
+	void takedmg(double x);
 	~Entity();
 };

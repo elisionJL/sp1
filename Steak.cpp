@@ -3,15 +3,17 @@
 
 Steak::Steak(int x)
 {
-	setHealth(100 * (x * 1.05));
-	setDamage(30 * (x * 1.05));
-	setResistance(30 * (x * 1.05));
-	setSpeed(40 * (x * 1.05));
+	setHealth(100 * (x * 0.05 + 1));
+	setDamage(30 * (x * 0.05 + 1));
+	setResistance(30 * (x * 0.05 + 1));
+	setSpeed(40 * (x * 0.05 + 1));
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
 	setcurrentSpeed(getSpeed());
 	setname("Steak");
+	setskillcd(0);
+	setatktarget ("0");
 }
 
 string Steak::getMoveName(int MoveNo)
@@ -19,17 +21,17 @@ string Steak::getMoveName(int MoveNo)
 	switch (MoveNo)
 	{
 	case 1:
+		return "Tender Loving Care, dealing damage to all Companions";
+		//Deals slight damage to all
+	case 2:
+		return "Beef Up, highly damaging ";
+		//Deals moderate damage to 1 
+	case 3:
 		return "Well Done, slightly increasing all stats";
 		//raises all stats a little
-	case 2:
+	case 4:
 		return "Misteak, healing slightly";
 		//Heal a little
-	case 3:
-		return "Beef Up";
-		//Deals moderate damage to 1 
-	case 4:
-		return "Tender Loving Care";
-		//Deals slight damage to all
 	case 5:
 		return "Steak Out, sacrificing Defence for Attack and Speed";
 		//Decrease resistance,increase speed and attack
@@ -43,6 +45,11 @@ double Steak::getMovePower(int MoveNo)
 	switch (MoveNo)
 	{
 	case 1:
+		return 1;
+	case 2:
+		setcurrentDamage(getDamage() * 1.75);
+		return 2;
+	case 3:
 		setcurrentHealth( getcurrentHealth()+getHealth() * 0.05);
 		if (getcurrentHealth() > getHealth())
 			setcurrentHealth(getHealth());
@@ -50,16 +57,11 @@ double Steak::getMovePower(int MoveNo)
 		setcurrentResistance(getResistance()* 1.5);
 		setcurrentSpeed(getSpeed() * 1.5);
 		return 0;
-	case 2:
+	case 4:
 		setcurrentHealth(getcurrentHealth() + getHealth() * 0.15);
 		if (getcurrentHealth() > getHealth())
 			setcurrentHealth(getHealth());
 		return 0;
-	case 3:
-		setcurrentDamage(getDamage() * 1.75);
-		return 2;
-	case 4:
-		return 1;
 	case 5:
 		setcurrentDamage(getDamage() * 2);
 		setcurrentResistance(getResistance() * 0.25);

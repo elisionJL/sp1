@@ -7,6 +7,11 @@ Companion::Companion()
 	lvl = 0;
 	upgradecost = 0;
 	timespulled = 0;
+	bonusHealth=0;
+	bonusDamage=0;
+	bonusResistance=0;
+	bonusSpeed=0;
+	bonushealing=0;
 }
 
 Companion::Companion(int companionsID,std::string x)
@@ -25,31 +30,28 @@ Companion::Companion(int companionsID,std::string x)
 	upgradecost = 200;
 	lvl = 1;
 	timespulled = 1;
+	setskillcd(0);
+	setatktarget("0");
 }
-
-void Companion::setMovePower(float pwr)
-{
-	MovePower = pwr;
-}
-
 
 Companion::~Companion()
 {
 }
-int buff(int id) {
-	if (id == 1 || id == 2) {
+int Companion::buff() 
+{
+	if (companionId == 1 || companionId == 2) {
 		return 1;
 	}
-	else if (id == 3 || id == 4) {
+	else if (companionId == 3 || companionId == 4) {
 		return 2;
 	}
-	else if (id == 5 || id == 6) {
+	else if (companionId == 5 || companionId == 6) {
 		return 3;
 	}
-	else if (id == 7 || id == 8) {
+	else if (companionId == 7 || companionId == 8) {
 		return 4;
 	}
-	else if (id == 9 || id == 10) {
+	else if (companionId == 9 || companionId == 10) {
 		return 5;
 	}
 	return 0;
@@ -57,54 +59,53 @@ int buff(int id) {
 
 string Companion::getMoveName(int MoveNo)
 {
-	switch (MoveNo) {
+	switch (MoveNo) 
+	{
 	case 1:
 		return "Attack";
 	case 2:
 		return "Defend";
 	case 3:
-		switch (buff(companionId)) {
+		switch (buff()) 
+		{
 		case 1:
 			return "Buff Speed";
 		case 2:
-			return "Shield";
+			return "Debuff";
 		case 3:
 			return "Buff Attack";
 		case 4:
-			return "Buff Shield";
+			return "Buff Defence";
 		case 5:
 			return "Heal";
 		}
 	default:
 		return "error";
 	}
-
 }
 
-double Companion::getMovePower(int MoveNo)
+int Companion::skill()
 {
-	switch (MoveNo) {
+	switch (buff())
+	{
 	case 1:
-		return 1;
+		setcurrentSpeed(getSpeed() * 2);
+		return 0;
 	case 2:
 		return 1;
 	case 3:
-		switch (buff(companionId)) {
-		case 1:
-			return MovePower * 1.5;
-		case 2:
-			return 0.25;
-		case 3:
-			return MovePower * 1.5;
-		case 4:
-			return MovePower * 1.5;
-		case 5:
-			return 1;
-		default:
-			return 1;
-		}
+		setcurrentDamage(getDamage() * 2);
+		return 0;
+	case 4:
+		setcurrentResistance(getResistance() * 2);
+		return 0;
+	case 5:
+		setcurrentHealth(getcurrentHealth() + getHealth() * (0.15+bonushealing));
+		if (getcurrentHealth() > getHealth())
+			setcurrentHealth(getHealth());
+		return 0;
 	default:
-		return 1;
+		return 0;
 	}
 }
 
@@ -144,4 +145,54 @@ int Companion::getid()
 int Companion::gettimespulled()
 {
 	return timespulled;
+}
+void Companion::resonance(int x)
+{
+	switch (x)
+	{
+	case 1:
+		bonusSpeed = getSpeed() * 0.2;
+		setSpeed(getSpeed() * 1.2);
+		break;
+	case 2:
+		bonusHealth = getHealth() * 0.2;
+		setHealth(getHealth() * 1.2);
+		break;
+	case 3:
+		bonusDamage = getDamage() * 0.2;
+		setDamage(getDamage() * 1.2);
+		break;
+	case 4:
+		bonusResistance = getResistance() * 0.2;
+		setResistance(getResistance() * 1.2);
+		break;
+	case 5:
+		bonushealing = 0.1;
+		break;
+	}
+}
+void Companion::removeresonace(int x)
+{
+	switch (x)
+	{
+	case 1:
+		setSpeed(getSpeed() -bonusSpeed);
+		bonusSpeed = 0;
+		break;
+	case 2:
+		setHealth(getHealth()-bonusHealth);
+		bonusHealth =0;
+		break;
+	case 3:
+		setDamage(getDamage()-bonusDamage);
+		bonusDamage = 0;
+		break;
+	case 4:
+		setResistance(getResistance() -bonusResistance);
+		bonusResistance = 0;
+		break;
+	case 5:
+		bonushealing = 0;
+		break;
+	}
 }

@@ -1,5 +1,4 @@
 #include "Beet.h"
-#include "Boss.h"
 #include "Companion.h"
 #include "Eggplant.h"
 #include "Entity.h"
@@ -9,7 +8,8 @@
 #include "Steak.h"
 #include<string>
 #include<iostream>
-void setparty(Companion* cptr[10],  player p,int party[3])
+#include<algorithm>
+void setparty(Companion* cptr[10],  player p,Companion*party[3])
 {
 	for (int i = 0; i < 10; i++)
 	{
@@ -30,7 +30,7 @@ void setparty(Companion* cptr[10],  player p,int party[3])
 			int errorcheck = 0;
 			for (int l = 0; l < 3; l++)
 			{
-				if ((party[l] == companionchoice)&&(companionchoice!= p.getplayerinfo(3)+1))
+				if ((party[l] == cptr[companionchoice-1])&&(companionchoice!= p.getplayerinfo(3)+1))
 				{
 					std::cout << "Cannot use the same party members" << std::endl;
 					i--;
@@ -39,13 +39,13 @@ void setparty(Companion* cptr[10],  player p,int party[3])
 			}
 			if ((errorcheck == 0) && (companionchoice != p.getplayerinfo(3)+1))
 			{
-				party[i] = companionchoice;
+				party[i] = cptr[companionchoice-1];
 			}
 		}
 		int checkmembers=0;
-		for (int i = 0; i < p.getplayerinfo(3); i++)
+		for (int i = 0; i < 3; i++)
 		{
-			if (party[i] !=0)
+			if (party[i] !=nullptr)
 				checkmembers++;
 		}
 		if (checkmembers != 0)
@@ -182,127 +182,453 @@ int summon(player p, Companion* cptr[10],std::string namelist[10])
 	}
 	return 0;
 }
-void battle(int party[3], Companion* cptr[10], Boss* bptr[3], player p, int stagepicked)
+player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicked)
 {
-	int result=0;
+	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
+	Entity* eptr[3] = { nullptr,nullptr,nullptr };
+	int speedlist[6] = { 0,0,0,0,0,0 };
+	int result = 0;
 	int checkparty = 0;
 	int partysize = 0;
+	int enemyno = 0;
+	int bossno = 0;
+	int minionno = 0;
+	int deadcompanion = 0;
+	int deadenemies = 0;
 	for (int i = 0; i < 3; i++)
 	{
-		if (party[i] == 0)
+		if (party[i] == nullptr)
 		{
 			checkparty++;
 		}
 	}
 	if (checkparty == 3)
 	{
+		std::cout << "-------------------------" << std::endl;
 		std::cout << "Party cannot be empty" << std::endl;
 		setparty(cptr, p, party);
 		std::cout << "" << std::endl;
 	}
+	int sametype=0;
 	for (int i = 0; i < 3; i++)
 	{
-		if (party[i] != 0)
+		if (party[i] != nullptr)
 		{
-			cptr[i]->resetstats(5);
-			partysize++;
-		}
-	}
-	int enemyno=0;
-	int minionno=0;
-	int bossno=0;
-	Minion* mptr[2] = { nullptr,nullptr };
-	switch (stagepicked)
-	{
-	case 1:
-		bptr[0] = new SpinachBoss(5);
-		enemyno = 1;
-		bossno = 1;
-	case 2:
-		bptr[0] = new Eggplant(10);
-		mptr[0] = new Minion(10,"Cabbage");
-		mptr[1] = new Minion(10,"Garlic");
-		enemyno = 3;
-		bossno = 1;
-		minionno = 2;
-	case 3:
-		bptr[0] = new Beet(15);
-		mptr[0] = new Minion(15,"Onion");
-		mptr[1] = new Minion(15,"Peas");
-		enemyno = 3;
-		bossno = 1;
-		minionno = 2;
-	case 4:
-		bptr[0] = new Steak(20);
-		mptr[0] = new Minion(20,"Mutton");
-		mptr[1] = new Minion(20,"Venison");
-		enemyno = 3;
-		bossno = 1;
-		minionno = 2;
-	}
-	for (int i = 0; i < 3; i++)
-	{
-		if (party[i] != 0)
-		{
-			for (int l = 0; l < 10; l++)
+			for (int l = 0; l < 3; l++)
 			{
-				if (cptr[l] != nullptr)
+				if ((party[l] != nullptr)&&(party[l]!=party[i]))
 				{
-					if (l == party[i]-1)
+					if (party[l]->buff() == party[i]->buff())
 					{
-						int choice;
-						char target;
-						int checktarget=0;
-						std::cout << "-------------------------" << std::endl;
-						std::cout << "Companion: " << cptr[l]->getname() << std::endl;
-						int targeterrorcheck = 0;
-						while (targeterrorcheck == 0)
-						{
-							std::cout << "Target: ";
-							std::cin >> target;
-							for (int k = 0; k < bossno; k++)
-							{
-								if (toupper(target) != (bptr[k]->getname())[0])
-								{
-									checktarget++;
-								}
-							}
-							for (int k = 0; k < minionno; k++)
-							{
-								if (toupper(target) != (mptr[k]->getname()).front())
-								{
-									checktarget++;
-								}
-							}
-							if (checktarget == enemyno)
-							{
-								std::cout << "Invalid target" << std::endl;
-							}
-							else
-								targeterrorcheck++;
-						}
-						for (int f = 1; f < 4; f++)
-							std::cout << f << ". " << cptr[l]->getMoveName(f) << std::endl;
-						std::cout << "Prompt: ";
-						std::cin >> choice;
-						std::cout << "" << std::endl;
+						sametype = party[l]->buff();
 					}
 				}
 			}
 		}
 	}
-	if (result == 0)
+	for (int i = 0; i < 3; i++)
 	{
-		std::cout << "You lost!" << std::endl;
-		std::cout << "Tip: Upgrade your companions" << std::endl;
-		std::cout << "" << std::endl;
+		if (party[i] != nullptr)
+		{
+			if (sametype != 0)
+			{
+				party[i]->resonance(sametype);
+			}
+			partysize++;
+			cptr[i]->resetstats(5);
+		}
 	}
-	if (result == 1)
+	switch (stagepicked)
 	{
-		std::cout << "You won!" << std::endl;
+	case 1:
+		eptr[0] = new SpinachBoss(5);
+		enemyno++;
+		bossno++;
+		break;
+	case 2:
+		eptr[0] = new Eggplant(10);
+		eptr[1] = new Minion(10, minionnames[0]);
+		eptr[2] = new Minion(10, minionnames[1]);
+		enemyno += 3;
+		bossno++;
+		minionno += 2;
+		break;
+	case 3:
+		eptr[0] = new Beet(15);
+		eptr[1] = new Minion(15, minionnames[2]);
+		eptr[2] = new Minion(15, minionnames[3]);
+		enemyno += 3;
+		bossno++;
+		minionno += 2;
+		break;
+	case 4:
+		eptr[0] = new Steak(20);
+		eptr[1] = new Minion(20, minionnames[4]);
+		eptr[2] = new Minion(20, minionnames[5]);
+		enemyno += 3;
+		bossno++;
+		minionno += 2;
+		break;
 	}
+	while (result == 0)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (party[i] != nullptr)
+			{
+				if (party[i]->getcurrentHealth() > 0)
+				{
+					int choice;
+					int target;
+					std::cout << "-------------------------" << std::endl;
+					std::cout << "Enemies: " << std::endl;
+					for (int f = 0; f < 3; f++)
+					{
+						if (eptr[f] != nullptr)
+							std::cout << f + 1 << ". " << eptr[f]->getname() << "    Health: " << int(eptr[f]->getcurrentHealth()) << std::endl;
+					}
+					std::cout << "" << std::endl;
+					std::cout << "Companion: " << party[i]->getname() << "    Health: " << int(party[i]->getcurrentHealth()) << std::endl;
+					std::cout << "Target: ";
+					std::cin >> target;
+					target--;
+					for (int f = 1; f < 4; f++)
+						std::cout << f << ". " << party[i]->getMoveName(f) << std::endl;
+					int choosemove = 0;
+					while (choosemove == 0)
+					{
+						std::cout << "Prompt: ";
+						std::cin >> choice;
+						if (choice == 1)
+						{
+							party[i]->setatktarget(eptr[target]->getname());
+							choosemove++;
+						}
+						else if (choice == 2)
+						{
+							party[i]->block();
+							std::cout << party[i]->getname() << " used Block, increasing Defence" << std::endl;
+							choosemove++;
+						}
+						else if ((choice == 3) && (party[i]->getskillcd() == 0))
+						{
+							int skillused = party[i]->skill();
+							if (skillused == 1)
+							{
+								eptr[target]->setcurrentDamage(eptr[target]->getcurrentDamage() * 0.85);
+								eptr[target]->setcurrentResistance(eptr[target]->getcurrentResistance() * 0.85);
+								eptr[target]->setcurrentSpeed(eptr[target]->getcurrentSpeed() * 0.85);
+								std::cout << party[i]->getname() << " used Debuff on " << eptr[target]->getname() << std::endl;
+							}
+							else
+								std::cout << party[i]->getname() << " used " << party[i]->getMoveName(3) << std::endl;
+							party[i]->setskillcd(4);
+						}
+						else if ((choice == 3) && (party[i]->getskillcd() != 0))
+						{
+							std::cout << "Skill is on " << party[i]->getskillcd() << " turn cooldown" << std::endl;
+						}
+					}
+					if (party[i]->getskillcd() > 0)
+					{
+						party[i]->setskillcd(party[i]->getskillcd() - 1);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			if (eptr[i] != nullptr)
+			{
+				int targetcheck = 0;
+				int target=0;
+				while (targetcheck == 0)
+				{
+					target = rand() % 3;
+					if ((party[target] != nullptr)&&(party[target]->getcurrentHealth()>0))
+					{
+						targetcheck++;
+					}
+				}
+				std::cout << "" << std::endl;
+				int choosemove = 0;
+				while (choosemove == 0)
+				{
+					int choice = rand()%3+1;
+					if (choice == 1)
+					{
+						eptr[i]->setatktarget(party[target]->getname());
+						choosemove++;
+					}
+					if (choice == 2)
+					{
+						eptr[i]->block();
+						std::cout << eptr[i]->getname() << " used Block, increasing Defence" << std::endl;
+						choosemove++;
+					}
+					else if ((choice == 3) && (eptr[i]->getskillcd() == 0))
+					{
+						int skillused;
+						if (eptr[i]->getname() == "Steak")
+							skillused = eptr[i]->skill(rand() % 5 + 1);
+						else
+							skillused = eptr[i]->skill(rand()%4+1);
+						if (skillused == 1)
+						{
+							for (int l = 0; l < 3; l++)
+							{
+								if (party[l] != nullptr)
+								{
+									party[l]->takedmg(eptr[i]->attack(party[l]->getcurrentResistance()));
+								}
+							}
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(1) << std::endl;
+							for (int f = 0; f < 3; f++)
+							{
+								if (party[f] != nullptr)
+								{
+									if (party[f]->getcurrentHealth() <= 0)
+									{
+										deadcompanion++;
+										std::cout << party[f]->getname() << " has died" << std::endl;
+									}
+								}
+							}
+							if (deadcompanion == partysize)
+							{
+								result = 2;
+								break;
+							}
+						}
+						else if (skillused == 2)
+						{
+							party[target]->takedmg(eptr[i]->attack(party[target]->getcurrentResistance()));
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(2) << party[target]->getname() << std::endl;
+							for (int f = 0; f < 3; f++)
+							{
+								if (party[f] != nullptr)
+								{
+									if (party[f]->getcurrentHealth() <= 0)
+									{
+										deadcompanion++;
+										std::cout << party[f]->getname() << " has died" << std::endl;
+									}
+								}
+							}
+							if (deadcompanion == partysize)
+							{
+								result = 2;
+								break;
+							}
+						}
+						else if (skillused == 3)
+						{
+							party[target]->setcurrentResistance(party[target]->getcurrentResistance() * 0.3);
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(3) << party[target]->getname() << std::endl;
+						}
+						else if (skillused == 4)
+						{
+							for (int l = 0; l < 3; l++)
+							{
+								if (party[l] != 0)
+								{
+									int statdecrease = rand() % 3 + 1;
+									if (statdecrease == 1)
+										party[target]->setcurrentDamage(party[target]->getcurrentDamage() * 0.8);
+									if (statdecrease == 2)
+										party[target]->setcurrentResistance(party[target]->getcurrentResistance() * 0.8);
+									if (statdecrease == 1)
+										party[target]->setcurrentSpeed(party[target]->getcurrentSpeed() * 0.8);
+								}
+							}
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(4) << std::endl;
+						}
+						else if (skillused == 5)
+						{
+							party[target]->setcurrentDamage(cptr[target]->getcurrentDamage() * 0.3);
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(1) << party[target]->getname() << std::endl;
+						}
+						else
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(3) << std::endl;
+						eptr[i]->setskillcd(4);
+					}
+				}
+				if (eptr[i]->getskillcd() > 0)
+				{
+					eptr[i]->setskillcd(eptr[i]->getskillcd() - 1);
+				}
+			}
+		}
+		if (result == 0)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (party[i] != nullptr)
+				{
+					if (party[i]->getatktarget() != "0")
+					{
+						speedlist[i] = int(party[i]->getcurrentSpeed());
+					}
+				}
+				if (eptr[i] != nullptr)
+				{
+					if (eptr[i]->getatktarget() != "0")
+					{
+						speedlist[i + 3] = int(eptr[i]->getcurrentSpeed());
+					}
+				}
+
+			}
+			std::sort(speedlist, speedlist + 6, greater<int>());
+			for (int i = 0; i < 6; i++)
+			{
+				if (speedlist[i] != 0)
+				{
+					for (int l = 0; l < 3; l++)
+					{
+						if ((eptr[l] != nullptr)&&(result==0))
+						{
+							if ((speedlist[i] == int(eptr[l]->getcurrentSpeed())) && (eptr[l]->getatktarget() != "0"))
+							{
+								for (int f = 0; f < 3; f++)
+								{
+									if (party[f] != nullptr)
+									{
+										if ((party[f]->getname() == eptr[l]->getatktarget())&&(party[f]->getcurrentHealth()>0))
+										{
+											party[f]->takedmg(eptr[l]->attack(party[f]->getcurrentResistance()));
+											std::cout << eptr[l]->getname() << " attacked " << party[f]->getname() << std::endl;
+											eptr[l]->setatktarget("0");
+											if (party[f]->getcurrentHealth() == 0)
+											{
+												deadcompanion++;
+												std::cout << party[f]->getname() << " has died" << std::endl;
+											}
+										}
+										else if ((party[f]->getname() == eptr[l]->getatktarget()) && (party[f]->getcurrentHealth() <= 0))
+										{
+											int difftarget = 0;
+											while (difftarget == 0)
+											{
+												int newtarget = rand() % 3;
+												if ((newtarget != f) && (party[newtarget] != nullptr))
+												{
+													eptr[l]->setatktarget(party[newtarget]->getname());
+													difftarget++;
+												}
+												f--;
+											}
+										}
+									}	
+								}
+								if (deadcompanion == partysize)
+								{
+									result = 2;
+								}
+							}
+						}
+						if ((party[l] != nullptr)&&(result==0))
+						{
+							if ((speedlist[i] == int(party[l]->getcurrentSpeed())) && (party[l]->getatktarget() != "0")&&(party[l]->getcurrentHealth()>0))
+							{
+								for (int f = 0; f < 3; f++)
+								{
+									if (eptr[f] != nullptr)
+									{
+										if ((eptr[f]->getname() == party[l]->getatktarget())&&(eptr[f]->getcurrentHealth()))
+										{
+											eptr[f]->takedmg(party[l]->attack(eptr[f]->getcurrentResistance()));
+											std::cout << party[l]->getname() << " attacked " << eptr[f]->getname() << std::endl;
+											party[l]->setatktarget("0");
+											if (eptr[f]->getcurrentHealth() == 0)
+											{
+												deadenemies++;
+												std::cout << eptr[f]->getname() << " has died" << std::endl;
+											}
+										}
+										else if ((eptr[f]->getname() == party[l]->getatktarget()) && (eptr[f]->getcurrentHealth() <= 0))
+										{
+											int difftarget = 0;
+											while (difftarget == 0)
+											{
+												int newtarget = rand() % 3;
+												if ((newtarget != f) && (eptr[newtarget] != nullptr))
+												{
+													party[l]->setatktarget(eptr[newtarget]->getname());
+													difftarget++;
+												}
+												f--;
+											}
+										}
+									}
+								}
+								if (deadenemies == enemyno)
+								{
+									result = 1;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			if (party[i] != nullptr)
+			{
+				for (int l = 1; l < 5;l++)
+					party[i]->resetstats(l);
+			}
+			if (eptr[i] != nullptr)
+			{
+				for (int l = 1; l < 5; l++)
+					eptr[i]->resetstats(l);
+			}
+		}
+		if (result == 2)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (sametype != 0)
+				{
+					if (party[i] != nullptr)
+					{
+						party[i]->removeresonace(sametype);
+						party[i]->resetstats(5);
+					}
+				}	
+			}
+			std::cout << "You lost!" << std::endl;
+			std::cout << "Tip: Upgrade your companions" << std::endl;
+			std::cout << "" << std::endl;
+			return p;
+		}
+		if (result == 1)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (sametype != 0)
+				{
+					if (party[i] != nullptr)
+					{
+						party[i]->removeresonace(sametype);
+					}
+				}
+				party[i]->resetstats(5);
+			}
+			std::cout << "You won!" << std::endl;
+			int exp = bossno * 50 + minionno * 25;
+			int coins = bossno * 500 + minionno * 250;
+			p.stagecleared(coins,exp);
+			p.checklevelup();
+			if (p.getplayerinfo(5) + 1 == stagepicked)
+				p.clearednewstage();
+			return p;
+		}
+	}
+	return p;
 }
-int menu(Companion* cptr[10], Boss* bptr[3], player p, int party[3],std::string namelist[10])
+int menu(Companion* cptr[10], player p, Companion*party[3],std::string namelist[10])
 {
 	int choice;
 	int backloop = 0;
@@ -362,7 +688,7 @@ int menu(Companion* cptr[10], Boss* bptr[3], player p, int party[3],std::string 
 				}
 				else
 				{
-					battle(party, cptr, bptr, p, choice);
+					p=battle(party, cptr, p, choice);
 				}
 			}
 			else if (choice == 2)
@@ -391,22 +717,20 @@ int menu(Companion* cptr[10], Boss* bptr[3], player p, int party[3],std::string 
 	}
 	return 0;
 }
-
 int main(void)
 {
 	srand((unsigned int)time(NULL));
 	std::string namelist[10] = { "Lolipop","Honey","Milk","Yohgurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
 	Companion* cptr[10] = { nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	Boss* bptr[3] = { nullptr,nullptr,nullptr };
 	player p("Wapples", "Apple");
 	cptr[p.getplayerinfo(3)] = new Companion(3,"Milk");
 	p.newcompanion();
-	int party[3] = { 0,0,0 };
+	Companion* party[3] = { nullptr,nullptr,nullptr };
 	int running = 0;
 	while (running == 0)
 	{
-		int stagepicked = menu(cptr, bptr, p, party, namelist);
-		if (stagepicked == 0)
+		int done = menu(cptr, p, party, namelist);
+		if (done == 0)
 			return 0;
 	}
 }

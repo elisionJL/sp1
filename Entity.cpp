@@ -9,6 +9,7 @@ Entity::Entity()
 	currentDamage = Damage;
 	currentResistance = Resistance;
 	currentSpeed = Speed;
+	skillcd = 0;
 }
 
 double Entity::getHealth()
@@ -87,7 +88,7 @@ void Entity::resetstats(int x)
 	switch (x)
 	{
 	case 1:
-		currentHealth = Health;
+		setatktarget("0");
 		break;
 	case 2:
 		currentDamage = Damage;
@@ -103,6 +104,8 @@ void Entity::resetstats(int x)
 		currentDamage = Damage;
 		currentResistance = Resistance;
 		currentSpeed = Speed;
+		setatktarget("0");
+		setskillcd(0);
 		break;
 	}
 }
@@ -112,30 +115,54 @@ void Entity::setname(std::string x)
 	name = x;
 }
 
+int Entity::getskillcd()
+{
+	return skillcd;
+}
+
+void Entity::setskillcd(int x)
+{
+	skillcd = x;
+}
+
+int Entity::skill(int x)
+{
+	return 0;
+}
+
+std::string Entity::getatktarget()
+{
+	return atktarget;
+}
+
+void Entity::setatktarget(std::string x)
+{
+	atktarget = x;
+}
+
 std::string Entity::getname()
 {
 	return name;
 }
 
-int Entity::attack(int x)
+double Entity::attack(double x)
 {
-	return currentDamage - x * 0.5;
+	double dmgdone = currentDamage - (x * 0.2);
+	if (dmgdone < 0)
+		dmgdone = 0;
+	return dmgdone;
 }
 
 void Entity::block()
 {
-	currentResistance += currentResistance * 2;
+	currentResistance += currentResistance * 0.5;
 }
 
-int Entity::skill(int x)
-{
-}
-
-void Entity::takedmg(int x)
+void Entity::takedmg(double x)
 {
 	currentHealth -= x;
-	if (currentHealth > 0)
-		currentHealth == 0;
+	if (currentHealth < 0)
+		currentHealth = 0;
 }
 
 Entity::~Entity()

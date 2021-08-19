@@ -1,6 +1,6 @@
 #pragma once
-#include "Boss.h"
-class Eggplant : public Boss
+#include "Entity.h"
+class Eggplant : public Entity
 {
 public:
 	Eggplant(int x);
