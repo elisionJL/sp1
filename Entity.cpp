@@ -88,17 +88,22 @@ void Entity::resetstats(int x)
 	{
 	case 1:
 		currentHealth = Health;
+		break;
 	case 2:
 		currentDamage = Damage;
+		break;
 	case 3:
 		currentResistance = Resistance;
+		break;
 	case 4:
 		currentSpeed = Speed;
+		break;
 	case 5:
 		currentHealth = Health;
 		currentDamage = Damage;
 		currentResistance = Resistance;
 		currentSpeed = Speed;
+		break;
 	}
 }
 
