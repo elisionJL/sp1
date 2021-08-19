@@ -1,6 +1,6 @@
 #pragma once
 #include "Boss.h"
-class Steak :public Boss
+class Steak :public Entity
 {
 public:
 	Steak(int x);
