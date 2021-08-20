@@ -809,10 +809,21 @@ int menu(Companion* cptr[10], player p, Companion*party[3],std::string namelist[
 }
 int main(void)
 {
+	std::string fruits[3] = { "Apple","Banana","Watermelon" };
+	std::string name;
+	std::cout << "Enter your name: ";
+	std::cin >> name;
+	int fruit;
+	for (int i = 0; i < 3; i++)
+	{
+		std::cout << i + 1 << ". " << fruits[i];
+	}
+	std::cout << "Choose your fruit: ";
+	std::cin >> fruit;
+	player p(name, fruits[fruit - 1]);
 	srand((unsigned int)time(NULL));
 	std::string namelist[10] = { "Lolipop","Honey","Milk","Yogurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
 	Companion* cptr[10] = { nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	player p("Wapples", "Apple");
 	cptr[p.getplayerinfo(3)] = new Companion(3,"Milk");
 	p.newcompanion();
 	Companion* party[3] = { nullptr,nullptr,nullptr };
