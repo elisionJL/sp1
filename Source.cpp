@@ -9,6 +9,10 @@
 #include<string>
 #include<iostream>
 #include<algorithm>
+void story(int x, int y)
+{
+
+}
 void setparty(Companion* cptr[10],  player p,Companion*party[3])
 {
 	for (int i = 0; i < 10; i++)
@@ -816,7 +820,7 @@ int main(void)
 	int fruit;
 	for (int i = 0; i < 3; i++)
 	{
-		std::cout << i + 1 << ". " << fruits[i];
+		std::cout << i + 1 << ". " << fruits[i] << std::endl;
 	}
 	std::cout << "Choose your fruit: ";
 	std::cin >> fruit;
