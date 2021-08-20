@@ -185,6 +185,7 @@ int summon(player p, Companion* cptr[10],std::string namelist[10])
 player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicked)
 {
 	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
+	std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
 	Entity* eptr[3] = { nullptr,nullptr,nullptr };
 	int speedlist[6] = { 0,0,0,0,0,0 };
 	int result = 0;
@@ -195,12 +196,24 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 	int minionno = 0;
 	int deadcompanion = 0;
 	int deadenemies = 0;
+	double dmg;
 	for (int i = 0; i < 3; i++)
 	{
 		if (party[i] == nullptr)
 		{
 			checkparty++;
 		}
+	}
+	int difficulty=1;
+	if (stagepicked != 0)
+	{
+		std::cout << "1. Easy" << std::endl;
+		std::cout << "2. Normal" << std::endl;
+		std::cout << "3. Hard" << std::endl;
+		std::cout << "4. Extreme" << std::endl;
+		std::cout << "5. Death" << std::endl;
+		std::cout << "Prompt: ";
+		std::cin >> difficulty;
 	}
 	if (checkparty == 3)
 	{
@@ -238,33 +251,95 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 			cptr[i]->resetstats(5);
 		}
 	}
+	int allgood = 0;
 	switch (stagepicked)
 	{
+	case 0:
+		std::cout << "Enemies:" << std::endl;
+		int enemychoice;
+		int enemylvl;
+		for (int i = 0; i < 5; i++)
+		{
+			std::cout << i + 1 << ". " << enemynames[i] << std::endl;
+		}
+		std::cout << "6. None" << std::endl;
+		while (allgood==0)
+		{
+			int error = 0;
+			for (int i = 0; i < 3; i++)
+			{
+				std::cout << "Enemy " << i + 1 << ": ";
+				std::cin >> enemychoice;
+				if (enemychoice != 6)
+				{
+					std::cout << "Level (1-9999): ";
+					std::cin >> enemylvl;
+				}
+				switch (enemychoice)
+				{
+				case 1:
+					eptr[i] = new SpinachBoss(enemylvl);
+					bossno++;
+					enemyno++;
+					break;
+				case 2:
+					eptr[i] = new Eggplant(enemylvl);
+					bossno++;
+					enemyno++;
+					break;
+				case 3:
+					eptr[i] = new Beet(enemylvl);
+					bossno++;
+					enemyno++;
+					break;
+				case 4:
+					eptr[i] = new Steak(enemylvl);
+					bossno++;
+					enemyno++;
+					break;
+				case 5:
+					eptr[i] = new Minion(enemylvl, minionnames[rand() % 6]);
+					bossno++;
+					enemyno++;
+					break;
+				case 6:
+					error++;
+					break;
+				}
+			}
+			if (error == 3)
+			{
+				std::cout << "Requires at least 1 enemy" << std::endl;
+			}
+			else
+				allgood++;
+		}
+		break;
 	case 1:
-		eptr[0] = new SpinachBoss(5);
+		eptr[0] = new SpinachBoss(5*difficulty);
 		enemyno++;
 		bossno++;
 		break;
 	case 2:
-		eptr[0] = new Eggplant(10);
-		eptr[1] = new Minion(10, minionnames[0]);
-		eptr[2] = new Minion(10, minionnames[1]);
+		eptr[0] = new Eggplant(10 * difficulty);
+		eptr[1] = new Minion(10 * difficulty, minionnames[0]);
+		eptr[2] = new Minion(10 * difficulty, minionnames[1]);
 		enemyno += 3;
 		bossno++;
 		minionno += 2;
 		break;
 	case 3:
-		eptr[0] = new Beet(15);
-		eptr[1] = new Minion(15, minionnames[2]);
-		eptr[2] = new Minion(15, minionnames[3]);
+		eptr[0] = new Beet(15 * difficulty);
+		eptr[1] = new Minion(15 * difficulty, minionnames[2]);
+		eptr[2] = new Minion(15 * difficulty, minionnames[3]);
 		enemyno += 3;
 		bossno++;
 		minionno += 2;
 		break;
 	case 4:
-		eptr[0] = new Steak(20);
-		eptr[1] = new Minion(20, minionnames[4]);
-		eptr[2] = new Minion(20, minionnames[5]);
+		eptr[0] = new Steak(20 * difficulty);
+		eptr[1] = new Minion(20 * difficulty, minionnames[4]);
+		eptr[2] = new Minion(20 * difficulty, minionnames[5]);
 		enemyno += 3;
 		bossno++;
 		minionno += 2;
@@ -368,21 +443,29 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 					}
 					else if ((choice == 3) && (eptr[i]->getskillcd() == 0))
 					{
+						int whichskill;
 						int skillused;
 						if (eptr[i]->getname() == "Steak")
-							skillused = eptr[i]->skill(rand() % 5 + 1);
+						{
+							whichskill = rand() % 5 + 1;
+							skillused = eptr[i]->skill(whichskill);
+						}
 						else
-							skillused = eptr[i]->skill(rand()%4+1);
+						{
+							whichskill = rand() % 4 + 1;
+							skillused = eptr[i]->skill(whichskill);
+						}
 						if (skillused == 1)
 						{
 							for (int l = 0; l < 3; l++)
 							{
 								if (party[l] != nullptr)
 								{
-									party[l]->takedmg(eptr[i]->attack(party[l]->getcurrentResistance()));
+									dmg = eptr[i]->attack(party[l]->getcurrentResistance());
+									party[l]->takedmg(dmg);
 								}
 							}
-							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(1) << std::endl;
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(1)<<int(dmg) << std::endl;
 							for (int f = 0; f < 3; f++)
 							{
 								if (party[f] != nullptr)
@@ -402,8 +485,9 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 						}
 						else if (skillused == 2)
 						{
-							party[target]->takedmg(eptr[i]->attack(party[target]->getcurrentResistance()));
-							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(2) << party[target]->getname() << std::endl;
+							dmg = eptr[i]->attack(party[target]->getcurrentResistance());
+							party[target]->takedmg(dmg);
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(2) <<int(dmg)<<" damage to "<< party[target]->getname() << std::endl;
 							for (int f = 0; f < 3; f++)
 							{
 								if (party[f] != nullptr)
@@ -449,7 +533,9 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(1) << party[target]->getname() << std::endl;
 						}
 						else
-							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(3) << std::endl;
+						{
+							std::cout << eptr[i]->getname() << " used " << eptr[i]->getMoveName(whichskill) << std::endl;
+						}
 						eptr[i]->setskillcd(4);
 					}
 				}
@@ -486,18 +572,19 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 				{
 					for (int l = 0; l < 3; l++)
 					{
-						if ((eptr[l] != nullptr)&&(result==0))
+						if ((eptr[l] != nullptr) && (result == 0))
 						{
-							if ((speedlist[i] == int(eptr[l]->getcurrentSpeed())) && (eptr[l]->getatktarget() != "0"))
+							if ((speedlist[i] == int(eptr[l]->getcurrentSpeed())) && (eptr[l]->getatktarget() != "0") && (eptr[l]->getcurrentHealth() > 0))
 							{
 								for (int f = 0; f < 3; f++)
 								{
 									if (party[f] != nullptr)
 									{
-										if ((party[f]->getname() == eptr[l]->getatktarget())&&(party[f]->getcurrentHealth()>0))
+										if ((party[f]->getname() == eptr[l]->getatktarget()) && (party[f]->getcurrentHealth()))
 										{
-											party[f]->takedmg(eptr[l]->attack(party[f]->getcurrentResistance()));
-											std::cout << eptr[l]->getname() << " attacked " << party[f]->getname() << std::endl;
+											dmg = eptr[l]->attack(party[f]->getcurrentResistance());
+											party[f]->takedmg(dmg);
+											std::cout << eptr[l]->getname() << " attacked " << party[f]->getname() << " for " << int(dmg) << std::endl;
 											eptr[l]->setatktarget("0");
 											if (party[f]->getcurrentHealth() == 0)
 											{
@@ -519,9 +606,9 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 												f--;
 											}
 										}
-									}	
+									}
 								}
-								if (deadcompanion == partysize)
+								if (deadcompanion==partysize)
 								{
 									result = 2;
 								}
@@ -537,8 +624,9 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 									{
 										if ((eptr[f]->getname() == party[l]->getatktarget())&&(eptr[f]->getcurrentHealth()))
 										{
-											eptr[f]->takedmg(party[l]->attack(eptr[f]->getcurrentResistance()));
-											std::cout << party[l]->getname() << " attacked " << eptr[f]->getname() << std::endl;
+											dmg = party[l]->attack(eptr[f]->getcurrentResistance());
+											eptr[f]->takedmg(dmg);
+											std::cout << party[l]->getname() << " attacked " << eptr[f]->getname() <<" for "<<int(dmg)<< std::endl;
 											party[l]->setatktarget("0");
 											if (eptr[f]->getcurrentHealth() == 0)
 											{
@@ -612,13 +700,13 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 					if (party[i] != nullptr)
 					{
 						party[i]->removeresonace(sametype);
+						party[i]->resetstats(5);
 					}
 				}
-				party[i]->resetstats(5);
 			}
 			std::cout << "You won!" << std::endl;
-			int exp = bossno * 50 + minionno * 25;
-			int coins = bossno * 500 + minionno * 250;
+			int exp = (bossno * 50* + minionno * 25)*difficulty;
+			int coins = (bossno * 500 + minionno * 250)*difficulty;
 			p.stagecleared(coins,exp);
 			p.checklevelup();
 			if (p.getplayerinfo(5) + 1 == stagepicked)
@@ -674,6 +762,7 @@ int menu(Companion* cptr[10], player p, Companion*party[3],std::string namelist[
 			{
 				std::string stages[4] = { "I'm not going to just spin around and leave!", "That went eggcellently well","No time to beet about the bush","Everything at steak" };
 				std::cout << "Stages:" << std::endl;
+				std::cout << "0. Custom Stage" << std::endl;
 				for (int i = 0; i <= p.getplayerinfo(5); i++)
 				{
 					std::cout << i + 1 << ". " << stages[i] << std::endl;
@@ -689,6 +778,7 @@ int menu(Companion* cptr[10], player p, Companion*party[3],std::string namelist[
 				else
 				{
 					p=battle(party, cptr, p, choice);
+					choice = 1;
 				}
 			}
 			else if (choice == 2)
@@ -720,7 +810,7 @@ int menu(Companion* cptr[10], player p, Companion*party[3],std::string namelist[
 int main(void)
 {
 	srand((unsigned int)time(NULL));
-	std::string namelist[10] = { "Lolipop","Honey","Milk","Yohgurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
+	std::string namelist[10] = { "Lolipop","Honey","Milk","Yogurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
 	Companion* cptr[10] = { nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	player p("Wapples", "Apple");
 	cptr[p.getplayerinfo(3)] = new Companion(3,"Milk");
