@@ -315,7 +315,14 @@ void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Com
 		if (gachanum == 0) {//for when user does not have enough coins
 			g_Console.writeToBuffer(58, 13, "You do not have enough coins", 91);
 		}
-		if (gachanum > 0) {
+		if (gachanum > 0 && gachanum < 11) {
+			
+			if (cptr[gachanum] == nullptr) {
+				cptr[p.getplayerinfo(3)] = new Companion(gachanum, namelist[gachanum - 1]);
+				p.gacha();
+				p.newcompanion();
+				std::cout << "You summoned " << namelist[gachanum - 1] << "!" << std::endl;
+			}
 			for (int i = 0; i < 10; i++)//to check for dupes
 			{
 				if (cptr[i] != nullptr)
@@ -333,14 +340,7 @@ void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Com
 					}
 				}
 			}
-			if (cptr[gachanum] == nullptr) {
-				cptr[p.getplayerinfo(3)] = new Companion(gachanum, namelist[gachanum - 1]);
-				p.gacha();
-				p.newcompanion();
-				std::cout << "You summoned " << namelist[gachanum - 1] << "!" << std::endl;
-			}
 		}
-		p.setcompanionno(gachanum);
 	}
 }
 
