@@ -13,7 +13,7 @@ Steak::Steak(int x)
 	setcurrentSpeed(getSpeed());
 	setname("Steak");
 	setskillcd(0);
-	setatktarget ("0");
+	setatktarget (-1);
 }
 
 string Steak::getMoveName(int MoveNo)
@@ -21,10 +21,10 @@ string Steak::getMoveName(int MoveNo)
 	switch (MoveNo)
 	{
 	case 1:
-		return "Tender Loving Care, dealing damage to all Companions";
+		return "Tender Loving Care, damaging all Companions";
 		//Deals slight damage to all
 	case 2:
-		return "Beef Up, highly damaging ";
+		return "Beef Up, dealing ";
 		//Deals moderate damage to 1 
 	case 3:
 		return "Well Done, slightly increasing all stats";

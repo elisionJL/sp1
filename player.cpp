@@ -16,6 +16,7 @@ void player::checklevelup()
 {
 	while (exp >= 100 * level)
 	{
+		coins += 1000;
 		exp -= 100 * level;
 		level++;
 	}
