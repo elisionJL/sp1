@@ -2,7 +2,9 @@
 #define _GAME_H
 
 #include "Framework\timer.h"
-
+#include "player.h"
+#include "Companion.h"
+#include <string>
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
 
@@ -12,15 +14,6 @@ struct SKeyEvent
 {
     bool keyDown;
     bool keyReleased;
-};
-
-// struct to store mouse events
-// a small subset of MOUSE_EVENT_RECORD
-struct SMouseEvent
-{
-    COORD mousePosition;
-    DWORD buttonState;
-    DWORD eventFlags;
 };
 
 // Enumeration to store the control keys that your game will have
@@ -33,6 +26,7 @@ enum EKEYS
     K_ESCAPE,
     K_SPACE,
     K_ENTER,
+    K_Q,
     K_COUNT
 };
 
@@ -42,6 +36,7 @@ enum EGAMESTATES
     S_SPLASHSCREEN,
     S_MENU,
     S_BATTLE,
+    S_BATTLEN,
     S_GAME,
     S_COUNT
 };
@@ -69,8 +64,8 @@ void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
+void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Companion* party[3], std::string namelist[10]);
    // renders the status of input events
-void renderMenuEvents(int choice, int screen);
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
 
