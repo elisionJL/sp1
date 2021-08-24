@@ -1,3 +1,6 @@
+// This is the main file for the game logic and function
+//
+//
 #include "Beet.h"
 #include "Companion.h"
 #include "Eggplant.h"
@@ -7,10 +10,10 @@
 #include "SpinachBoss.h"
 #include "Steak.h"
 #include<string>
-#include<iostream>
 #include<algorithm>
 #include "game.h"
 #include "Framework\console.h"
+#include <iostream>
 #include <iomanip>
 #include <sstream>
 
@@ -29,77 +32,78 @@ SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
-Console g_Console(80, 25, "SP1 Framework");
+Console g_Console(175, 35, "SP1 Framework");
 
-void init( void )
+void init(void)
 {
-    // Set precision for floating point output
-    g_dElapsedTime = 0.0;    
-    // sets the initial state for the game
-    g_eGameState = S_MENU;
+	// Set precision for floating point output
+	g_dElapsedTime = 0.0;
+	// sets the initial state for the game
+	g_eGameState = S_MENU;
 	cptr[p.getplayerinfo(3)] = new Companion(3, "Milk");
 	p.newcompanion();
 
-    //g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    //g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
-    //g_sChar.m_bActive = true;
-    //// sets the width, height and the font name to use in the console
-    //g_Console.setConsoleFont(0, 16, L"Consolas");
+	g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
+	g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
+	g_sChar.m_bActive = true;
+	// sets the width, height and the font name to use in the console
+	g_Console.setConsoleFont(0, 16, L"Consolas");
 
-    // remember to set your keyboard handler, so that your functions can be notified of input events
-    g_Console.setKeyboardHandler(keyboardHandler);
+	// remember to set your keyboard handler, so that your functions can be notified of input events
+	g_Console.setKeyboardHandler(keyboardHandler);
 }
 
-void shutdown( void )
+void shutdown(void)
 {
-    // Reset to white text on black background
-    colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
+	// Reset to white text on black background
+	colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
-    g_Console.clearBuffer();
+	g_Console.clearBuffer();
 }
 
-void getInput( void )
+void getInput(void)
 {
-    // resets all the keyboard events
-    memset(g_skKeyEvent, 0, K_COUNT * sizeof(*g_skKeyEvent));
-    // then call the console to detect input from user
-    g_Console.readConsoleInput();    
+	// resets all the keyboard events
+	memset(g_skKeyEvent, 0, K_COUNT * sizeof(*g_skKeyEvent));
+	// then call the console to detect input from user
+	g_Console.readConsoleInput();
 }
 
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
-{    
-    switch (g_eGameState)
-    {
-    case S_SPLASHSCREEN: // don't handle anything for the splash screen
-        break;
-	case S_MENU:
+{
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: // don't handle anything for the splash screen
+		break;
+	case S_BATTLE:
+	case S_MENU:                         // get keyboard input
 		gameplayKBHandler(keyboardEvent);
 		break;
-    case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
-        break;
-    }
+	case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
+		break;
+	}
 }
 
 
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {
-    // here, we map the key to our enums
-    EKEYS key = K_COUNT;
-    switch (keyboardEvent.wVirtualKeyCode)
-    {
-    case VK_UP: key = K_UP; break;
-    case VK_DOWN: key = K_DOWN; break;
-    case VK_LEFT: key = K_LEFT; break; 
-    case VK_RIGHT: key = K_RIGHT; break; 
-    case VK_SPACE: key = K_SPACE; break;
-    case VK_ESCAPE: key = K_ESCAPE; break;
-    case VK_RETURN: key = K_ENTER; break;
-    }
-    if (key != K_COUNT)
-    {
-        g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;//true
-        g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;//false
-    }    
+	// here, we map the key to our enums
+	EKEYS key = K_COUNT;
+	switch (keyboardEvent.wVirtualKeyCode)
+	{
+	case VK_UP: key = K_UP; break;
+	case VK_DOWN: key = K_DOWN; break;
+	case VK_LEFT: key = K_LEFT; break;
+	case VK_RIGHT: key = K_RIGHT; break;
+	case VK_SPACE: key = K_SPACE; break;
+	case VK_ESCAPE: key = K_ESCAPE; break;
+	case VK_RETURN: key = K_ENTER; break;
+	}
+	if (key != K_COUNT)
+	{
+		g_skKeyEvent[key].keyDown = keyboardEvent.bKeyDown;//true
+		g_skKeyEvent[key].keyReleased = !keyboardEvent.bKeyDown;//false
+	}
 }
 
 
@@ -110,53 +114,21 @@ void update(double dt);
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
-        g_eGameState = S_GAME;
+	if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
+		g_eGameState = S_GAME;
 }
 
 void updateGame()       // gameplay logic
 {
-    processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
-    moveCharacter();    // moves the character, collision detection, physics, etc
-                        // sound can be played here too.
+	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+						// sound can be played here too.
 }
 
-void moveCharacter()
-{    
-    // Updating the location of the character based on the key release
-    // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_UP].keyReleased && g_sChar.m_cLocation.Y > 0)
-    {
-        //Beep(1440, 30);
-        g_sChar.m_cLocation.Y--;       
-    }
-    if (g_skKeyEvent[K_LEFT].keyReleased && g_sChar.m_cLocation.X > 0)
-    {
-        //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;        
-    }
-    if (g_skKeyEvent[K_DOWN].keyReleased && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-    {
-        //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;        
-    }
-    if (g_skKeyEvent[K_RIGHT].keyReleased && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-    {
-        //Beep(1440, 30);
-        g_sChar.m_cLocation.X++;        
-    }
-    if (g_skKeyEvent[K_SPACE].keyReleased)
-    {
-        g_sChar.m_bActive = !g_sChar.m_bActive;        
-    }
-
-   
-}
 void processUserInput()
 {
-    // quits the game if player hits the escape key
-    if (g_skKeyEvent[K_ESCAPE].keyReleased)
-        g_bQuitGame = true;    
+	// quits the game if player hits the escape key
+	if (g_skKeyEvent[K_ESCAPE].keyReleased)
+		g_bQuitGame = true;
 	else if (g_skKeyEvent[K_ENTER].keyReleased) {
 
 	}
@@ -164,99 +136,99 @@ void processUserInput()
 
 void render()
 {
-    clearScreen();      // clears the current screen and draw from scratch 
-    switch (g_eGameState)
-    {
-    case S_SPLASHSCREEN: renderSplashScreen();
-        break;
+	clearScreen();      // clears the current screen and draw from scratch 
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: renderSplashScreen();
+		break;
 	case S_MENU: renderMenuEvents(choice, backloop);
 		break;
-
-    case S_GAME: renderGame();
-        break;
-    }
-    renderFramerate();      // renders debug information, frame rate, elapsed time, etc   // renders status of input events
-    renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
+	/*case S_BATTLE: renderBa*/
+	case S_GAME: renderGame();
+		break;
+	}
+	renderFramerate();      // renders debug information, frame rate, elapsed time, etc   // renders status of input events
+	renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
 }
 
 void clearScreen()
 {
-    // Clears the buffer with this colour attribute
-    g_Console.clearBuffer(0x1F);
+	// Clears the buffer with this colour attribute
+	g_Console.clearBuffer(0x1F);
 }
 
 void renderToScreen()
 {
-    // Writes the buffer to the console, hence you will see what you have written
-    g_Console.flushBufferToConsole();
+	// Writes the buffer to the console, hence you will see what you have written
+	g_Console.flushBufferToConsole();
 }
 
 void renderSplashScreen()  // renders the splash screen
 {
-    COORD c = g_Console.getConsoleSize();
-    c.Y /= 3;
-    c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
-    c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 20;
-    g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-    c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+	COORD c = g_Console.getConsoleSize();
+	c.Y /= 3;
+	c.X = c.X / 2 - 9;
+	g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
+	c.Y += 1;
+	c.X = g_Console.getConsoleSize().X / 2 - 20;
+	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
+	c.Y += 1;
+	c.X = g_Console.getConsoleSize().X / 2 - 9;
+	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
 }
 
 void renderGame()
 {
-    renderMap();        // renders the map to the buffer first
-    renderCharacter();  // renders the character into the buffer
+	//renderMap();        // renders the map to the buffer first
+	//renderCharacter();  // renders the character into the buffer
 }
 
 void renderMap()
 {
-    // Set up sample colours, and output shadings
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
+	// Set up sample colours, and output shadings
+	const WORD colors[] = {
+		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+	};
 
-    COORD c;
-    for (int i = 0; i < 12; ++i)
-    {
-        c.X = 5 * i;
-        c.Y = i + 1;
-        colour(colors[i]);
-        g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-    }
+	COORD c;
+	for (int i = 0; i < 12; ++i)
+	{
+		c.X = 5 * i;
+		c.Y = i + 1;
+		colour(colors[i]);
+		g_Console.writeToBuffer(c, " Â°Â±Â²Ã›", colors[i]);
+	}
 }
 
 void renderCharacter()
 {
-    // Draw the location of the character
-    WORD charColor = 0x0C;
-    if (g_sChar.m_bActive)
-    {
-        charColor = 0x0A;
-    }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
+	// Draw the location of the character
+	WORD charColor = 0x0C;
+	if (g_sChar.m_bActive)
+	{
+		charColor = 0x0A;
+	}
+	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
 }
 
 void renderFramerate()
 {
-    COORD c;
-    // displays the framerate
-    std::ostringstream ss;
-    ss << std::fixed << std::setprecision(3);
-    ss << 1.0 / g_dDeltaTime << "fps";
-    c.X = g_Console.getConsoleSize().X - 9;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str());
+	COORD c;
+	// displays the framerate
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(3);
+	ss << 1.0 / g_dDeltaTime << "fps";
+	c.X = g_Console.getConsoleSize().X - 9;
+	c.Y = 0;
+	g_Console.writeToBuffer(c, ss.str());
 
-    // displays the elapsed time
-    ss.str("");
-    ss << g_dElapsedTime << "secs";
-    c.X = 0;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str(), 0x59);
+	// displays the elapsed time
+	ss.str("");
+	ss << g_dElapsedTime << "secs";
+	c.X = 0;
+	c.Y = 0;
+	g_Console.writeToBuffer(c, ss.str(), 0x59);
 }
 
 void renderMenuEvents(int choice, int screen) {
@@ -264,50 +236,71 @@ void renderMenuEvents(int choice, int screen) {
 	std::ostringstream ss;
 	std::string key;
 	ss.str("");
+	g_Console.writeToBuffer(22, 0, " _______  ___      _______  __    _  ______   _______  ______      __   __  _______  __    _  _______  __   __  ______    _______ ", 91, 131);
+	g_Console.writeToBuffer(22, 1, "|  _    ||   |    |       ||  |  | ||      | |       ||    _ |    |  | |  ||       ||  |  | ||       ||  | |  ||    _ |  |       |", 91, 131);
+	g_Console.writeToBuffer(22, 2, "| |_|   ||   |    |    ___||   |_| ||  _    ||    ___||   | ||    |  |_|  ||    ___||   |_| ||_     _||  | |  ||   | ||  |    ___|", 91, 131);
+	g_Console.writeToBuffer(22, 3, "|       ||   |    |   |___ |       || | |   ||   |___ |   |_||_   |       ||   |___ |       |  |   |  |  |_|  ||   |_||_ |   |___ ", 91, 131);
+	g_Console.writeToBuffer(22, 4, "|  _   | |   |___ |    ___||  _    || |_|   ||    ___||    __  |  |       ||    ___||  _    |  |   |  |       ||    __  ||    ___|", 91, 131);
+	g_Console.writeToBuffer(22, 5, "| |_|   ||       ||   |___ | | |   ||       ||   |___ |   |  | |   |     | |   |___ | | |   |  |   |  |       ||   |  | ||   |___ ", 91, 131);
+	g_Console.writeToBuffer(22, 6, "|_______||_______||_______||_|  |__||______| |_______||___|  |_|    |___|  |_______||_|  |__|  |___|  |_______||___|  |_||_______|", 91, 131);
+	getInput();
 	switch (screen) {
-	case 1:
+	case 1://start screen
+
 		ss << "Prompt: " << choice;
-		g_Console.writeToBuffer(0, 1, "-------------------------", 0x17, 26);
-		g_Console.writeToBuffer(0, 2, "1. Start Game", 0x17, 14);
-		g_Console.writeToBuffer(0, 3, "2. Quit", 0x17, 8);
-		g_Console.writeToBuffer(0, 4, ss.str(), 0x17);
+		g_Console.writeToBuffer(78, 10, "1. Start Game", 91, 14);
+		g_Console.writeToBuffer(81, 13, "2. Quit", 91, 8);
+		g_Console.writeToBuffer(80, 15, ss.str(), 91, 9);
 		break;
 	case 99:
-		g_Console.writeToBuffer(0, 5, "See you next time!", 0x17);
+		g_Console.writeToBuffer(78, 18, "See you next time!", 0x17);
 		break;
 	case 2:
-		g_Console.writeToBuffer(0, 1, "-------------------------", 0x17, 26);
-		ss << "Player Level" << p.getplayerinfo(1);
-		g_Console.writeToBuffer(0, 2, ss.str(), 0x17);
-		g_Console.writeToBuffer(0, 3, "1. Stages", 0x17);
-		g_Console.writeToBuffer(0, 4, "2. Party", 0x17);
-		g_Console.writeToBuffer(0, 5, "3. Companions", 0x17);
-		g_Console.writeToBuffer(0, 6, "4. Summon", 0x17);
-		g_Console.writeToBuffer(0, 7, "5. Back", 0x17);
 		ss.str("");
-		ss << "Prompt: " << choice;
-		g_Console.writeToBuffer(0, 8, ss.str(), 0x17);
+		ss << "press esc to go back                                      Player Level: " << p.getplayerinfo(1);
+		g_Console.writeToBuffer(22, 9, ss.str(), 91);
+		g_Console.writeToBuffer(22, 10, "##################################################################################################################################", 91, 131);
+		g_Console.writeToBuffer(22, 11, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 12, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 13, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 14, "#                        1. Stages                             #                                2. Party                         #", 91, 131);
+		g_Console.writeToBuffer(22, 15, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 16, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 17, "#                                                                                                                                #", 91, 131);
+		ss.str("");
+		ss << "############################################################## " << choice << " #################################################################";
+		g_Console.writeToBuffer(22, 18, ss.str(), 91, 131);
+		g_Console.writeToBuffer(22, 19, "#                                                                                                                                #", 91, 131);
+		g_Console.writeToBuffer(22, 20, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 21, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 22, "#                        3. Companions                         #                              4. Summon                          #", 91, 131);
+		g_Console.writeToBuffer(22, 23, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 24, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 25, "#                                                              #                                                                 #", 91, 131);
+		g_Console.writeToBuffer(22, 26, "##################################################################################################################################", 91, 131);
 		break;
-	case 3:
+	case 3://actual menu
 		std::string stages[4] = { "I'm not going to just spin around and leave!", "That went eggcellently well","No time to beet about the bush","Everything at steak" };
-		g_Console.writeToBuffer(0, 1, "-------------------------", 0x17, 26);
-		g_Console.writeToBuffer(0, 2, "Stages:", 0x17);
+		g_Console.writeToBuffer(42, 10, "#####################################################################################", 91);
+		for (int i = 10; i < 26; i++) {
+			g_Console.writeToBuffer(42, 1 + i, "#                                                                                    #", 91);
+		}
+		g_Console.writeToBuffer(42, 26, "#####################################################################################", 91);
+		g_Console.writeToBuffer(82, 12, "Stages:", 0x17);
 		for (int i = 0; i <= p.getplayerinfo(5); i++)
 		{
 			ss.str("");
 			ss << i + 1 << ". " << stages[i];
-			g_Console.writeToBuffer(0, 2+i, ss.str(), 0x17);
+			g_Console.writeToBuffer(52, 15 + (i * 2), ss.str(), 0x17);
 		}
-		ss.str("");
-		ss << p.getplayerinfo(5) + 2 << ". Back";
-		ss.str("");
-		ss << "Prompt: " << choice;
-		g_Console.writeToBuffer(0, 8, ss.str(), 0x17);
 
+	case 4://set up party
+		break;
+	case 5://library
+		break;
+	case 6://gacha
+		break;
 	}
-		//COORD c = { startPos.X, startPos.Y + i };
-		//g_Console.writeToBuffer(0,0, "-------------------------", 0x17);
-
 }
 
 // this is an example of how you would use the input events
@@ -432,7 +425,7 @@ int summon(player p, Companion* cptr[10], std::string namelist[10])
 	int summoned = 0;
 	while (summoned == 0)
 	{
-		std::cout << "Coins: " << p.getplayerinfo(4) << std::endl;
+		std::cout << "Coinss: " << p.getplayerinfo(4) << std::endl;
 		std::cout << "1. Summon a friend (1500 coins)" << std::endl;
 		std::cout << "2. Back" << std::endl;
 		int errorcheck = 0;
@@ -1054,14 +1047,6 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 		}
 		break;
 	case 2://menu choices
-		std::cout << "-------------------------" << std::endl;
-		std::cout << "Player Level: " << p.getplayerinfo(1) << std::endl;
-		std::cout << "1. Stages" << std::endl;
-		std::cout << "2. Party" << std::endl;
-		std::cout << "3. Companions" << std::endl;
-		std::cout << "4. Summon" << std::endl;
-		std::cout << "5. Back" << std::endl;
-		std::cout << "Prompt: ";
 		getInput();
 		if (g_skKeyEvent[K_UP].keyReleased)
 			choice--;
@@ -1070,14 +1055,14 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 		if (choice < 1) {
 			choice = 1;
 		}
-		if (choice > 5) {
-			choice = 5;
+		if (choice > 4) {
+			choice = 4;
 		}
 		if (g_skKeyEvent[K_ENTER].keyReleased) {
-			if (choice == 5)
-				backloop = 1;
-			else
-				backloop = backloop + choice + 1;
+			backloop = backloop + choice;
+		}
+		if (g_skKeyEvent[K_ESCAPE].keyReleased) {
+			backloop = 1;
 		}
 		break;
 	case 3:
@@ -1130,7 +1115,7 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 		}
 	}
 	}
-		return 0;
+	return 0;
 }
 
 void update(double dt)
@@ -1150,6 +1135,3 @@ void update(double dt)
 		break;
 	}
 }
-
-
-
