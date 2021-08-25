@@ -57,15 +57,13 @@ void shutdown    ( void );      // do clean up, free memory
 void splashScreenWait();    // waits for time to pass in splash screen
 void updateGame();          // gameplay logic      // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
-void clearScreen();         // clears the current screen and draw from scratch 
-void renderSplashScreen();  // renders the splash screen
-void renderGame();          // renders the game stuff
-void renderMap();           // renders the map to the buffer first
-void renderCharacter();     // renders the character into the buffer
+void clearScreen();         // clears the current screen and draw from scratch ;
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
-void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Companion* party[3], std::string namelist[10]);
+void renderMenuEvents(int choice, int screen);
+void RenderBattleEvents(int stagepicked);
    // renders the status of input events
+int menu();
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
 
