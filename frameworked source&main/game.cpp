@@ -26,11 +26,14 @@ int gachanum = 99;
 int stageP = 0;//stage picked
 bool battleStart = true;
 //battle data members
+std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
+std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
+int speedlist[6] = { -1,-1,-1,-1,-1,-1 };
 int Cmove[3] = { 0,0,0 }, Ctarget[3] = { 0,0,0 }, Emove[3] = { 0,0,0 }, Etarget[3] = { 0,0,0 };
 int Cturn = 0, Eturn = 0;
 int friendlyAtks = 0, enemyAtks = 0;//counts the number of time the player and enemy has attacked, reset upon reaching alive entities of respective sides
 int aliveC = 3, aliveE = 3;
-bool moveChosen = true, targetChose = true;
+bool moveChosen = true, targetChosen = true;
 int result = 0, checkparty = 0, partysize = 3, enemyno = 0, bossno = 0, minionno = 0, deadcompanion = 0, deadenemies = 0, difficulty = 1, sametype = 0, allgood = 0;
 double dmg = 0;
 std::string e1, e2, e3, c1, c2, c3;
@@ -504,30 +507,41 @@ void RenderBattleEvents(int stagepicked) {
 		ss.str("");
 		ss << "############################################################### " << choice << " ################################################################";
 		g_Console.writeToBuffer(22, 30, ss.str(), 91, 131);
-		g_Console.writeToBuffer(22, 20, "########################################", 91); g_Console.writeToBuffer(110, 20, "########################################", 91);
 		for (int i = 0; i < 19; i++) {
 			g_Console.writeToBuffer(60, 11 + i, "#                                                  #", 91, 131);
 		}
+		for (int i = 0; i < 10; i++) {
+			g_Console.writeToBuffer(85, 11+i, "##", 91);
+		}
+		g_Console.writeToBuffer(60, 20, "##################################################", 91); /*g_Console.writeToBuffer(110, 20, "########################################", 91);*/
+		g_Console.writeToBuffer(63, 15, "1. Attack", 91); g_Console.writeToBuffer(89, 15, "2.defend", 91); g_Console.writeToBuffer(76, 25, "3." + party[Cturn]->getMoveName(3), 91);
+		if (Cturn > 3) {
+			Cturn = 0;
+		}
+		g_Console.writeToBuffer(49, 2 + (Cturn * 2), ">", 91);
+		if (targetChosen == false && moveChosen == true) {
+			g_Console.writeToBuffer(121, choice * 2, "<", 91);
+		}
 		//render enemies and companions
 		ss.str("");
-		ss << c1[0] << "hp: " << party[0]->getcurrentHealth() << " / " << party[0]->getHealth();
+		ss << c1[0] << " hp: " << party[0]->getcurrentHealth() << " / " << party[0]->getHealth();
 		g_Console.writeToBuffer(24, 12, ss.str(), 91);
 		ss.str("");
-		ss << c2[0] << "hp: " << party[1]->getcurrentHealth() << " / " << party[1]->getHealth();
-		g_Console.writeToBuffer(24, 14, ss.str(), 91);
-		ss.str("");
-		ss << c3[0] << "hp: " << party[2]->getcurrentHealth() << " / " << party[2]->getHealth();
+		ss << c2[0] << " hp: " << party[1]->getcurrentHealth() << " / " << party[1]->getHealth();
 		g_Console.writeToBuffer(24, 16, ss.str(), 91);
 		ss.str("");
-		ss << e1[0] << "hp: " << eptr[0]->getcurrentHealth() << " / " << party[0]->getHealth();
+		ss << c3[0] << " hp: " << party[2]->getcurrentHealth() << " / " << party[2]->getHealth();
+		g_Console.writeToBuffer(24, 20, ss.str(), 91);
+		ss.str("");
+		ss << e1[0] << " hp: " << eptr[0]->getcurrentHealth() << " / " << eptr[0]->getHealth();
 		g_Console.writeToBuffer(112, 12, ss.str(), 91);
 		if (stagepicked != 1) {
 			ss.str("");
-			ss << e2[0] << "hp: " << eptr[1]->getcurrentHealth() << " / " << party[1]->getHealth();
-			g_Console.writeToBuffer(112, 14, ss.str(), 91);
+			ss << e2[0] << " hp: " << eptr[1]->getcurrentHealth() << " / " << eptr[1]->getHealth();
+			g_Console.writeToBuffer(112, 16, ss.str(), 91);
 			ss.str("");
-			ss << e3[0] << "hp: " << eptr[2]->getcurrentHealth() << " / " << party[2]->getHealth();
-			g_Console.writeToBuffer(112, 14, ss.str(), 91);
+			ss << e3[0] << " hp: " << eptr[2]->getcurrentHealth() << " / " << eptr[2]->getHealth();
+			g_Console.writeToBuffer(112, 20, ss.str(), 91);
 		}
 		else {
 
@@ -536,9 +550,6 @@ void RenderBattleEvents(int stagepicked) {
 }		
 player battle(int stagepicked)
 {
-	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
-	std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
-	int speedlist[6] = { -1,-1,-1,-1,-1,-1 };
 	for (int i = 0; i < 3; i++)
 	{
 		if (party[i] == nullptr)
@@ -605,21 +616,6 @@ player battle(int stagepicked)
 			}
 		}
 		aliveC = 0; aliveE = 0;
-		switch (stagepicked)
-		{
-		case 1://stage 1
-			eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
-			break;
-		case 2://stage 2
-			eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
-			break;
-		case 3://stage 3
-			eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
-			break;
-		case 4://stage 4
-			eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
-			break;
-		}
 		for (int i = 0; i < 3; i++) {
 			if (party[i]->getcurrentHealth() > 0) {
 				aliveC++;
@@ -640,7 +636,7 @@ player battle(int stagepicked)
 		if (result == 0)//result will become 1 when the battle ends
 		{
 			//companion move
-			if (Cturn < 3)//friendly attack
+			if (Cturn < 2)//friendly attack
 			{
 				if (party[Cturn]->getcurrentHealth() < 1) {
 					Cmove[Cturn] = NULL;
@@ -650,7 +646,7 @@ player battle(int stagepicked)
 				//user chooses move
 				if (party[Cturn]->getcurrentHealth() > 0 && moveChosen == false)
 				{
-					targetChose = true;
+					targetChosen = true;
 					getInput();//choose move
 					if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
 						choice--;
@@ -660,33 +656,36 @@ player battle(int stagepicked)
 					}
 					if (g_skKeyEvent[K_ENTER].keyReleased) {
 						Cmove[Cturn] = choice;
+						choice = 1;
 						moveChosen = true;
-						targetChose = false;
-						if (choice == 3) {
+						targetChosen = false;
+						if (Cmove[Cturn] == 3) {
 							if (party[Cturn]->getskillcd() == 0)
 							{
 								int skillused = party[Cturn]->skill();//triggers buff but returns 1 if choice 3rd move is debuff
 								if (skillused == 1) {//fulfill target condition
 									moveChosen = true;
-									targetChose = false;
+									targetChosen = false;
 								}
 								else {
 									moveChosen = false;//so that after buff, user can pick atk or defend
-									targetChose = true;
+									targetChosen = true;
+								}
+								if (Cmove[Cturn] == 2) {
+									moveChosen = false;
+									targetChosen = true;
+									party[Cturn]->block();
+									Ctarget[Cturn] = NULL;
+									Cturn++;
 								}
 							}
 							party[Cturn]->setskillcd(4);
 						}
 					}
-					//for defend
-					if (Cmove[Cturn] == 2) {
-						moveChosen = true;
-						targetChose = true;
-						Ctarget[Cturn] = NULL;
-					}
 				}
+
 				//user chooses target
-				if (party[Cturn]->getcurrentHealth() > 0 && targetChose == false)
+				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false && Cmove[Cturn] != 2)
 				{
 					getInput();//choose move
 					if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
@@ -695,41 +694,44 @@ player battle(int stagepicked)
 					if (g_skKeyEvent[K_DOWN].keyReleased && choice != 3) {
 						choice++;
 					}
-					if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice] != nullptr && eptr[choice]->getcurrentHealth() > 0) {
+					if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice - 1] != nullptr && eptr[choice - 1]->getcurrentHealth() > 0) {
 
 						if (Cmove[Cturn] == 3) {
 							eptr[choice]->setcurrentDamage(eptr[choice]->getcurrentDamage() * 0.85);
 							eptr[choice]->setcurrentResistance(eptr[choice]->getcurrentResistance() * 0.85);
 							eptr[choice]->setcurrentSpeed(eptr[choice]->getcurrentSpeed() * 0.85);
 							moveChosen = false;
-							targetChose = true;
-							choice = 0;
+							targetChosen = true;
+							choice = 1;
 						}
 						else {
 							Ctarget[Cturn] = choice;
 							moveChosen = true;
-							targetChose = true;
-							choice = 0;
+							targetChosen = true;
+							choice = 1;
 						}
 					}
 				}
 				//move takes effect
-				if (party[Cturn]->getcurrentHealth() > 0 && targetChose == true && moveChosen == true) {
+				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
 					switch (Cmove[Cturn]) {
 					case 1:
 						party[Cturn]->setatktarget(Ctarget[Cturn]);
-						break;
-					case 2:
-						party[Cturn]->block();
-
+						moveChosen = false;
+						targetChosen = true;
+						friendlyAtks++;
+						Cturn++;
 						break;
 					}
-					Cturn++;
-				}
 
+				}
+				if (friendlyAtks == 3) {
+					moveChosen = true;
+					targetChosen = true;
+				}
 			}
 			//enemy moves
-			if (Eturn < 3 && Cturn == 3) {
+			if (Eturn < 2 && Cturn == 2) {
 				//for null or dead enemies
 				if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
 					Emove[Cturn] = NULL;
@@ -763,7 +765,7 @@ player battle(int stagepicked)
 						//for bosses
 						if (Eturn == 0) {
 							do {
-								Etarget[0] = rand() % 3 + 1;
+								Etarget[0] = rand() % 2;
 							} while (party[Etarget[0]] != nullptr && party[Etarget[0]]->getcurrentHealth() < 1);
 							Emove[0] = rand() % 3 + 1;
 							switch (Emove[0])
@@ -857,7 +859,7 @@ player battle(int stagepicked)
 
 			}
 		}
-		if (Cturn == 3 && Eturn == 3) {
+		if (Cturn == 2 && Eturn == 2) {
 			if (result == 0)
 			{
 				for (int i = 0; i < 3; i++)
@@ -986,6 +988,15 @@ player battle(int stagepicked)
 						eptr[i]->resetstats(l);
 				}
 			}
+			if (friendlyAtks == 3 && enemyAtks ==3)
+			{
+				choice = 1;
+				friendlyAtks = 0; enemyAtks = 0;
+				Cturn = 0;
+				Eturn = 0;
+				moveChosen = false;
+				targetChosen = true;
+			}
 			if (result == 2)
 			{
 				for (int i = 0; i < 3; i++)
@@ -1017,6 +1028,7 @@ player battle(int stagepicked)
 						}
 					}
 				}
+				g_eGameState = S_BATTLEN;
 				std::cout << "You won!" << std::endl;
 				int exp = (bossno * 50 + minionno * 25) * difficulty;
 				int coins = (bossno * 500 + minionno * 250) * difficulty;
@@ -1102,6 +1114,7 @@ int menu()
 		}
 		if (g_skKeyEvent[K_ENTER].keyReleased) {
 			stageP = choice;
+
 			result = 0; checkparty = 0; partysize = 0; enemyno = 0; bossno = 0; minionno = 0; deadcompanion = 0; deadenemies = 0; difficulty = 1; sametype = 0; allgood = 0;
 			dmg = 0;
 			//for debugging
@@ -1114,10 +1127,25 @@ int menu()
 				Etarget[i] = 0;
 				party[i]->setcurrentHealth(party[i]->getHealth());
 			}
+			switch (stageP)
+			{
+			case 1://stage 1
+				eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
+				break;
+			case 2://stage 2
+				eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			case 3://stage 3
+				eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			case 4://stage 4
+				eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			}
 			Cturn = 0, Eturn = 0;
 			friendlyAtks = 0, enemyAtks = 0;//counts the number of time the player and enemy has attacked, reset upon reaching alive entities of respective sides
 			aliveC = 3, aliveE = 0;
-			moveChosen = false, targetChose = true;
+			moveChosen = false, targetChosen = true;
 			battleStart = true;
 			g_eGameState = S_BATTLE;
 			choice = 1;
@@ -1170,7 +1198,7 @@ void update(double dt)
 		p = battle(stageP);
 		break;
 	case S_BATTLEN:
-
+		g_eGameState = S_MENU;
 		break;
 	case S_MENU:
 		menu();
