@@ -22,14 +22,22 @@ double  g_dDeltaTime;
 //menu data members
 int choice = 1;
 int backloop = 1;
-int gachanum = 0;
-
+int gachanum = 99;
+int stageP = 0;//stage picked
+bool battleStart = true;
+//battle data members
+int result = 0, checkparty = 0, partysize = 0, enemyno = 0, bossno = 0, minionno = 0, deadcompanion = 0, deadenemies = 0, difficulty = 1, sametype = 0, allgood = 0;
+double dmg = 0;
+std::string e1, e2, e3, c1, c2, c3;
 
 SKeyEvent g_skKeyEvent[K_COUNT];
-std::string namelist[10] = { "Lolipop","Honey","Milk","Yohgurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
+std::string namelist[10] = { "Lolipop","Honey","Cheese","Yohgurt","Rice","Pasta","Fish","Mussels","Grapes","Strawberries" };
 Companion* cptr[10] = { nullptr,nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-player p("Wapples", "Apple");
 Companion* party[3] = { nullptr,nullptr,nullptr };
+Entity* eptr[3] = { nullptr,nullptr,nullptr };
+player p("Wapples", "Apple");
+
+bool newC = false;
 float summonC = 1500;
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
@@ -43,9 +51,16 @@ void init(void)
 	g_dElapsedTime = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_MENU;
-	cptr[p.getplayerinfo(3)] = new Companion(3, "Milk");
+	cptr[2] = new Companion(3, "Cheese");
+	p.newcompanion();
+	//////////////////////////////////////////////////////////////////////////////
+	//for debugging cause part needs to be full
+	cptr[1] = new Companion(2, "Honey");
+	p.newcompanion();
+	cptr[4] = new Companion(5, "Rice");
 	p.newcompanion();
 
+	// /////////////////////////////////////////////////////////////////////////////
 	g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
 	g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
 	g_sChar.m_bActive = true;
@@ -76,13 +91,11 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {
 	switch (g_eGameState)
 	{
-	case S_SPLASHSCREEN: // don't handle anything for the splash screen
-		break;
 	case S_BATTLE:
-	case S_MENU:                         // get keyboard input
 		gameplayKBHandler(keyboardEvent);
 		break;
-	case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
+	case S_MENU:                         // get keyboard input
+		gameplayKBHandler(keyboardEvent);
 		break;
 	}
 }
@@ -143,12 +156,9 @@ void render()
 	clearScreen();      // clears the current screen and draw from scratch 
 	switch (g_eGameState)
 	{
-	case S_SPLASHSCREEN: renderSplashScreen();
+	case S_MENU: renderMenuEvents(choice, backloop);
 		break;
-	case S_MENU: renderMenuEvents(choice, backloop, cptr, p, party, namelist);
-		break;
-	/*case S_BATTLE: renderBa*/
-	case S_GAME: renderGame();
+	case S_BATTLE: RenderBattleEvents(stageP);
 		break;
 	}
 	renderFramerate();      // renders debug information, frame rate, elapsed time, etc   // renders status of input events
@@ -165,55 +175,6 @@ void renderToScreen()
 {
 	// Writes the buffer to the console, hence you will see what you have written
 	g_Console.flushBufferToConsole();
-}
-
-void renderSplashScreen()  // renders the splash screen
-{
-	COORD c = g_Console.getConsoleSize();
-	c.Y /= 3;
-	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 20;
-	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
-}
-
-void renderGame()
-{
-	//renderMap();        // renders the map to the buffer first
-	//renderCharacter();  // renders the character into the buffer
-}
-
-void renderMap()
-{
-	// Set up sample colours, and output shadings
-	const WORD colors[] = {
-		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-	};
-
-	COORD c;
-	for (int i = 0; i < 12; ++i)
-	{
-		c.X = 5 * i;
-		c.Y = i + 1;
-		colour(colors[i]);
-		g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-	}
-}
-
-void renderCharacter()
-{
-	// Draw the location of the character
-	WORD charColor = 0x0C;
-	if (g_sChar.m_bActive)
-	{
-		charColor = 0x0A;
-	}
-	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
 }
 
 void renderFramerate()
@@ -235,7 +196,7 @@ void renderFramerate()
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
 }
 
-void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Companion* party[3], std::string namelist[10]) {
+void renderMenuEvents(int choice, int screen) {
 	COORD startPos = { 0, 1 };
 	std::ostringstream ss;
 	std::string key;
@@ -311,32 +272,40 @@ void renderMenuEvents(int choice, int screen, Companion* cptr[10], player p, Com
 		g_Console.writeToBuffer(42, 14, "############################### press q to summon ###################################", 91);
 		g_Console.writeToBuffer(42, 26, "#####################################################################################", 91);
 		ss << "summon cost: 1500";
-		g_Console.writeToBuffer(78, 12, ss.str(), 91);
+		g_Console.writeToBuffer(72, 12, ss.str(), 91);
+		ss.str("");
+		ss << "Coins: " << p.getplayerinfo(4);
+		g_Console.writeToBuffer(78, 11, ss.str(), 91);
 		if (gachanum == 0) {//for when user does not have enough coins
 			g_Console.writeToBuffer(58, 13, "You do not have enough coins", 91);
 		}
 		if (gachanum > 0 && gachanum < 11) {
-			
-			if (cptr[gachanum] == nullptr) {
-				cptr[p.getplayerinfo(3)] = new Companion(gachanum, namelist[gachanum - 1]);
-				p.gacha();
+			if (cptr[gachanum -  1] == nullptr) {
+				cptr[gachanum - 1 ] = new Companion(gachanum, namelist[gachanum - 1]);
 				p.newcompanion();
-				std::cout << "You summoned " << namelist[gachanum - 1] << "!" << std::endl;
+				newC = true;
+				ss.str("");
+				ss << "You summoned " << namelist[gachanum - 1] << "!";
+				g_Console.writeToBuffer(68, 16, ss.str(), 91);
 			}
-			for (int i = 0; i < 10; i++)//to check for dupes
-			{
-				if (cptr[i] != nullptr)
+			else {
+				newC = false;
+			}
+			if (newC == false) {
+				for (int i = 0; i < 10; i++)//to check for dupes
 				{
-					if (gachanum == cptr[i]->getid())
+					if (cptr[i] != nullptr)
 					{
-						ss.str("");
-						ss << "You summoned another " << namelist[gachanum - 1] << "!";
-						g_Console.writeToBuffer(68, 16, ss.str(), 91);
-						ss.str("");
-						ss << namelist[gachanum - 1] << "'s Enhanced Level has increased";
-						g_Console.writeToBuffer(68, 18, ss.str(), 91);
-						cptr[i]->summonedagain();
-						p.gacha();
+						if (gachanum == cptr[i]->getid())
+						{
+							ss.str("");
+							ss << "You summoned another " << namelist[gachanum - 1] << "!";
+							g_Console.writeToBuffer(68, 16, ss.str(), 91);
+							ss.str("");
+							ss << namelist[gachanum - 1] << "'s Enhanced Level has increased";
+							g_Console.writeToBuffer(68, 18, ss.str(), 91);
+							cptr[i]->summonedagain();
+						}
 					}
 				}
 			}
@@ -464,7 +433,7 @@ int enhancecompanion(player p, Companion* cptr[10])
 	}
 	return 0;
 }
-int summon(player p, Companion* cptr[10], std::string namelist[10])
+int summon()
 {
 	for (int i = 0; i < 17; i++) {
 		if (i != 14) {
@@ -477,19 +446,89 @@ int summon(player p, Companion* cptr[10], std::string namelist[10])
 	}
 	else if (p.getplayerinfo(4) >= summonC)
 	{
+		p.gacha();
 		std::cout << "" << std::endl;
 		int pull = rand() % 10 + 1;
 		return pull;
 	}
+	return 0;
 }
-player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicked)
+void RenderBattleEvents(int stagepicked) {
+	ostringstream ss;
+	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
+	std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
+	if (battleStart == true) {
+		std::string difficulties[5] = { "1. Easy" ,"2. Normal","3. Hard",  "4. Extreme", "5. Death" };
+		g_Console.writeToBuffer(22, 0, " _______  ___      _______  __    _  ______   _______  ______      __   __  _______  __    _  _______  __   __  ______    _______ ", 91, 131);
+		g_Console.writeToBuffer(22, 1, "|  _    ||   |    |       ||  |  | ||      | |       ||    _ |    |  | |  ||       ||  |  | ||       ||  | |  ||    _ |  |       |", 91, 131);
+		g_Console.writeToBuffer(22, 2, "| |_|   ||   |    |    ___||   |_| ||  _    ||    ___||   | ||    |  |_|  ||    ___||   |_| ||_     _||  | |  ||   | ||  |    ___|", 91, 131);
+		g_Console.writeToBuffer(22, 3, "|       ||   |    |   |___ |       || | |   ||   |___ |   |_||_   |       ||   |___ |       |  |   |  |  |_|  ||   |_||_ |   |___ ", 91, 131);
+		g_Console.writeToBuffer(22, 4, "|  _   | |   |___ |    ___||  _    || |_|   ||    ___||    __  |  |       ||    ___||  _    |  |   |  |       ||    __  ||    ___|", 91, 131);
+		g_Console.writeToBuffer(22, 5, "| |_|   ||       ||   |___ | | |   ||       ||   |___ |   |  | |   |     | |   |___ | | |   |  |   |  |       ||   |  | ||   |___ ", 91, 131);
+		g_Console.writeToBuffer(22, 6, "|_______||_______||_______||_|  |__||______| |_______||___|  |_|    |___|  |_______||_|  |__|  |___|  |_______||___|  |_||_______|", 91, 131);
+		g_Console.writeToBuffer(42, 10, "#################################################$####################################", 91);
+		for (int i = 0; i < 16; i++) {
+			g_Console.writeToBuffer(42, 11+i, "#                                                                                    #", 91);
+		}
+		g_Console.writeToBuffer(42, 26, "######################################################################################", 91);
+		g_Console.writeToBuffer(80, 12, "DIFFICULTIES", 91);
+		for (int i = 0; i < 5; i++) {
+			ss.str("");
+			ss << difficulties[i];
+			g_Console.writeToBuffer(81, 15 + (i * 2), ss.str(), 91);
+		}
+		ss.str("");
+		ss << choice;
+		g_Console.writeToBuffer(84, 25, ss.str(), 91);
+	}
+	else if (battleStart == false) {
+		e1 = eptr[0]->getname(); c1 = namelist[party[0]->getid() - 1]; c2 = namelist[party[1]->getid() - 1]; c3 = namelist[party[2]->getid() - 1];
+		if (eptr[1] == nullptr || eptr[2] == nullptr) {
+			eptr[1]->setname("    ");eptr[2]->setname("    ");
+		}
+		e2 = eptr[1]->getname(); e3 = eptr[2]->getname();
+		g_Console.writeToBuffer(50, 2, c1[0], 243); g_Console.writeToBuffer(120, 2, e1[0], 192);
+		g_Console.writeToBuffer(50, 4, c2[0], 243); g_Console.writeToBuffer(120, 4, e2[0], 192);
+		g_Console.writeToBuffer(50, 6, c3[0], 243); g_Console.writeToBuffer(120, 6, e3[0], 192);
+		g_Console.writeToBuffer(22, 10, "##################################################################################################################################", 91, 131);
+		for (int i = 0; i < 19; i++) {
+			g_Console.writeToBuffer(22, 11 + i, "#                                                                                                                                #", 91, 131);
+		}
+		ss.str("");
+		ss << "############################################################### " << choice << " ################################################################";
+		g_Console.writeToBuffer(22, 30, ss.str(), 91, 131);
+		g_Console.writeToBuffer(22, 20, "########################################", 91); g_Console.writeToBuffer(110, 20, "########################################", 91);
+		for (int i = 0; i < 19; i++) {
+			g_Console.writeToBuffer(60, 11 + i, "#                                                  #", 91, 131);
+		}
+		//render enemies and companions
+		ss.str("");
+		ss << c1[0] << "hp: " << party[0]->getcurrentHealth() << " / " << party[0]->getHealth();
+		g_Console.writeToBuffer(24, 12, ss.str(), 91);
+		ss.str("");
+		ss << c2[0] << "hp: " << party[1]->getcurrentHealth() << " / " << party[1]->getHealth();
+		g_Console.writeToBuffer(24, 14, ss.str(), 91);
+		ss.str("");
+		ss << c3[0] << "hp: " << party[2]->getcurrentHealth() << " / " << party[2]->getHealth();
+		g_Console.writeToBuffer(24, 16, ss.str(), 91);
+		ss.str("");
+		ss << e1[0] << "hp: " << eptr[0]->getcurrentHealth() << " / " << party[0]->getHealth();
+		g_Console.writeToBuffer(112, 12, ss.str(), 91);
+		if (stagepicked != 1) {
+			ss.str("");
+			ss << e2[0] << "hp: " << eptr[1]->getcurrentHealth() << " / " << party[1]->getHealth();
+			g_Console.writeToBuffer(112, 14, ss.str(), 91);
+			ss.str("");
+			ss << e3[0] << "hp: " << eptr[2]->getcurrentHealth() << " / " << party[2]->getHealth();
+			g_Console.writeToBuffer(112, 14, ss.str(), 91);
+		}
+	}
+}		
+player battle(int stagepicked)
 {
 	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
 	std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
-	Entity* eptr[3] = { nullptr,nullptr,nullptr };
 	int speedlist[6] = { -1,-1,-1,-1,-1,-1 };
-	int result = 0, checkparty = 0, partysize = 0, enemyno = 0, bossno = 0, minionno = 0, deadcompanion = 0, deadenemies = 0, difficulty = 1, sametype = 0, allgood = 0;
-	double dmg;
 	for (int i = 0; i < 3; i++)
 	{
 		if (party[i] == nullptr)
@@ -499,17 +538,34 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 	}
 	if (checkparty == 3)
 	{
-		std::cout << "-------------------------" << std::endl;
-		std::cout << "Party cannot be empty" << std::endl;
-		setparty(cptr, p, party);
-		std::cout << "" << std::endl;
+		backloop = 4;
+		g_eGameState = S_MENU;
+		menu();
+		return p;
 	}
-	if (stagepicked != 0)
+	else {
+		checkparty = 0;
+	}
+	if (stagepicked != 0)//select difficulty
 	{
-		std::cout << "1. Easy" << std::endl; std::cout << "2. Normal" << std::endl; std::cout << "3. Hard" << std::endl; std::cout << "4. Extreme" << std::endl; std::cout << "5. Death" << std::endl; std::cout << "Prompt: ";
-		std::cin >> difficulty;
+		if (battleStart == true) {
+			getInput();
+			if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
+				choice--;
+			}
+			if (g_skKeyEvent[K_DOWN].keyReleased && choice != 5) {
+				choice++;
+			}
+			if (g_skKeyEvent[K_ENTER].keyReleased) {
+				difficulty = choice;
+				choice = 1;
+				battleStart = false;
+			}
+		}
 	}
-	for (int i = 0; i < 3; i++)
+	
+	if (battleStart == false) {
+	for (int i = 0; i < 3; i++)//resonance buff
 	{
 		if (party[i] != nullptr)
 		{
@@ -535,82 +591,82 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 				party[i]->resonance(sametype);
 			}
 			partysize++;
-			cptr[i]->resetstats(5);
+			party[i]->resetstats(5);
 		}
 	}
 	switch (stagepicked)
 	{
-	case 0:
-		std::cout << "Enemies:" << std::endl;
-		int enemychoice;
-		int enemylvl;
-		for (int i = 0; i < 5; i++)
-		{
-			std::cout << i + 1 << ". " << enemynames[i] << std::endl;
-		}
-		std::cout << "6. None" << std::endl;
-		while (allgood == 0)
-		{
-			int error = 0;
-			for (int i = 0; i < 3; i++)
-			{
-				std::cout << "Enemy " << i + 1 << ": ";
-				std::cin >> enemychoice;
-				if (enemychoice != 6)
-				{
-					std::cout << "Level (1-9999): ";
-					std::cin >> enemylvl;
-				}
-				switch (enemychoice)
-				{
-				case 1:
-					eptr[i] = new SpinachBoss(enemylvl); bossno++; enemyno++;
-					break;
-				case 2:
-					eptr[i] = new Eggplant(enemylvl); bossno++; enemyno++;
-					break;
-				case 3:
-					eptr[i] = new Beet(enemylvl); bossno++; enemyno++;
-					break;
-				case 4:
-					eptr[i] = new Steak(enemylvl); bossno++; enemyno++;
-					break;
-				case 5:
-					eptr[i] = new Minion(enemylvl, minionnames[rand() % 6]); bossno++; enemyno++;
-					break;
-				case 6:
-					error++;
-					break;
-				}
-			}
-			if (error == 3)
-			{
-				std::cout << "Requires at least 1 enemy" << std::endl;
-			}
-			else
-				allgood++;
-		}
-		break;
-	case 1:
+	//case 0://custom stage
+	//	std::cout << "Enemies:" << std::endl;
+	//	int enemychoice;
+	//	int enemylvl;
+	//	for (int i = 0; i < 5; i++)
+	//	{
+	//		std::cout << i + 1 << ". " << enemynames[i] << std::endl;
+	//	}
+	//	std::cout << "6. None" << std::endl;
+	//	while (allgood == 0)
+	//	{
+	//		int error = 0;
+	//		for (int i = 0; i < 3; i++)
+	//		{
+	//			std::cout << "Enemy " << i + 1 << ": ";
+	//			std::cin >> enemychoice;
+	//			if (enemychoice != 6)
+	//			{
+	//				std::cout << "Level (1-9999): ";
+	//				std::cin >> enemylvl;
+	//			}
+	//			switch (enemychoice)
+	//			{
+	//			case 1:
+	//				eptr[i] = new SpinachBoss(enemylvl); bossno++; enemyno++;
+	//				break;
+	//			case 2:
+	//				eptr[i] = new Eggplant(enemylvl); bossno++; enemyno++;
+	//				break;
+	//			case 3:
+	//				eptr[i] = new Beet(enemylvl); bossno++; enemyno++;
+	//				break;
+	//			case 4:
+	//				eptr[i] = new Steak(enemylvl); bossno++; enemyno++;
+	//				break;
+	//			case 5:
+	//				eptr[i] = new Minion(enemylvl, minionnames[rand() % 6]); bossno++; enemyno++;
+	//				break;
+	//			case 6:
+	//				error++;
+	//				break;
+	//			}
+	//		}
+	//		if (error == 3)
+	//		{
+	//			std::cout << "Requires at least 1 enemy" << std::endl;
+	//		}
+	//		else
+	//			allgood++;
+	//	}
+	//	break;
+	case 1://stage 1
 		eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++;
 		break;
-	case 2:
+	case 2://stage 2
 		eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
 		break;
-	case 3:
+	case 3://stage 3
 		eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
 		break;
-	case 4:
+	case 4://stage 4
 		eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
 		break;
 	}
-	while (result == 0)
+	if (result == 0)
 	{
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)//friendly attack
 		{
 			if ((party[i] != nullptr) && (result == 0))
 			{
-				if (party[i]->getcurrentHealth() > 0)
+				if (party[i]->getcurrentHealth() > 0)//gets health
 				{
 					int choice, target, choosemove = 0;
 					std::cout << "-------------------------" << std::endl; std::cout << "Enemies: " << std::endl;
@@ -670,6 +726,9 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 				}
 			}
 		}
+
+
+
 		for (int i = 0; i < 3; i++)
 		{
 			if ((eptr[i] != nullptr) && (result == 0))
@@ -795,6 +854,7 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 							eptr[i]->setskillcd(eptr[i]->getskillcd() - 1);
 					}
 				}
+			}
 			}
 		}
 		if (result == 0)
@@ -965,10 +1025,11 @@ player battle(Companion* party[3], Companion* cptr[10], player p, int stagepicke
 				p.clearednewstage();
 			return p;
 		}
+		return p;
 	}
 	return p;
 }
-int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelist[10])
+int menu()
 {
 	cls();
 	//int menuloop = 0;
@@ -994,6 +1055,7 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 			if (choice == 2)//quit
 			{
 				backloop = 99;
+				g_bQuitGame = true;
 				return 0;
 			}
 			else {
@@ -1018,6 +1080,7 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 		}
 		if (g_skKeyEvent[K_ENTER].keyReleased) {
 			backloop = backloop + choice;
+			choice = 1;
 		}
 		if (g_skKeyEvent[K_ESCAPE].keyReleased) {
 			backloop = 1;
@@ -1036,21 +1099,40 @@ int menu(Companion* cptr[10], player p, Companion* party[3], std::string namelis
 			choice = 1;
 		}
 		if (g_skKeyEvent[K_ENTER].keyReleased) {
-			p = battle(party, cptr, p, choice);
+			stageP = choice;
+			result = 0; checkparty = 0; partysize = 0; enemyno = 0; bossno = 0; minionno = 0; deadcompanion = 0; deadenemies = 0; difficulty = 1; sametype = 0; allgood = 0;
+			dmg = 0;
+			for (int i = 0; i < 3;i ++){///sets all enemy pointers to null when battle first starts
+				eptr[i] = { nullptr };
+			}
+			//for debugging
+			party[0] = cptr[1]; party[1] = cptr[2]; party[2] = cptr[4];
+			battleStart = true;
+			g_eGameState = S_BATTLE;
 			choice = 1;
 		}
+		break;
 	case 4://set up party
 		for (int i = 0; i < 3; i++)
 			party[i] = 0;
 		setparty(cptr, p, party);
 		std::cout << "" << std::endl;
-		backloop--;
+		getInput();
+		if (g_skKeyEvent[K_ESCAPE].keyReleased) {
+			backloop = 2;
+			choice = 1;
+		}
 		break;
 	case 5://library
 		break;
 	case 6://gacha
+		getInput();
+		if (g_skKeyEvent[K_ESCAPE].keyReleased) {
+			backloop = 2;
+			choice = 1;
+		}
 		if (g_skKeyEvent[K_Q].keyReleased) {
-			gachanum = summon(p, cptr, namelist);
+			gachanum = summon();
 		}
 		//if (choice == 3)
 		//{
@@ -1073,17 +1155,14 @@ void update(double dt)
 
 	switch (g_eGameState)
 	{
-	case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
-		break;
 	case S_BATTLE:
+		p = battle(stageP);
 		break;
 	case S_BATTLEN:
 
 		break;
 	case S_MENU:
-		menu(cptr, p, party, namelist);
-		break;
-	case S_GAME: updateGame(); // gameplay logic when we are in the game
+		menu();
 		break;
 	}
 }
