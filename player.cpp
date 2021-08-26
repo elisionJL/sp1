@@ -7,7 +7,7 @@ player::player(std::string a, std::string b)
 	level = 1;
 	charactersowned = 0;
 	coins = 6000;
-	highestclearedstage = 3;
+	highestclearedstage = 0;
 }
 player::~player()
 {
