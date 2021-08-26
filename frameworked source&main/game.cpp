@@ -956,7 +956,7 @@ player battle(int stagepicked)
 				//enemy moves
 				if (Eturn < 3 && Cturn == 3) {
 					//for null or dead enemies
-					if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
+					if (eptr[Eturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
 						Emove[Cturn] = NULL;
 						Etarget[Cturn] = NULL;
 						Eturn++;
