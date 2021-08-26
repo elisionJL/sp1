@@ -64,7 +64,9 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
 Console g_Console(175, 35, "SP1 Framework");
+void story() {
 
+}
 void init(void)
 {
 	// Set precision for floating point output
@@ -178,6 +180,8 @@ void render()
 	{
 	case S_MENU: renderMenuEvents(choice, backloop);
 		break;
+	case S_BATTLEN:
+		RenderBattleEvents(stageP);
 	case S_BATTLE: RenderBattleEvents(stageP);
 		break;
 	}
@@ -279,82 +283,82 @@ void renderMenuEvents(int choice, int screen) {
 			g_Console.writeToBuffer(52, 15 + (i * 2), ss.str(), 0x17);
 		}
 
-			case 4://set up party
-		{
-			ss.str("");
-			ss << "press esc to go back                                      Player Level: " << p.getplayerinfo(1);
-			g_Console.writeToBuffer(28, 10, "                                                           ________________________ MEMEBERS ________________________", 91, 131);
-			g_Console.writeToBuffer(28, 11, "######################## TEAM DECK ########################                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 12, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 13, "#  IN TEAM:                                               #                                                         |", 91, 131);
-			ss.str("");
-			ss << "#                                                         #      " << pos1 << "    " << pos2 << "    " << pos3 << "    " << pos4 << "    " << pos5 << "    " << pos6 << "    " << pos7 << "    " << pos8 << "    " << pos9 << "    " << pos10 << "     |";
-			g_Console.writeToBuffer(28, 14, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 15, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 16, "#           A:                                            #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 17, "#                                                         #_________ type member's alphabet to view member _________|", 91, 131);
-			g_Console.writeToBuffer(28, 18, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 19, "#                                                         #                                                         |", 91, 131);
-			ss.str("");
-			ss << "#           B:                                            #    HP: " << statHP << "                                               |";
-			g_Console.writeToBuffer(28, 20, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 21, "#                                                         #                                                         |", 91, 131);
-			ss.str("");
-			ss << "#                                                         #    ATK: " << statATK << "                                              |";
-			g_Console.writeToBuffer(28, 22, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 23, "#                                                         #                                                         |", 91, 131);
-			ss.str("");
-			ss << "#           C:                                            #    DEF: " << statDEF << "                                              |";
-			g_Console.writeToBuffer(28, 24, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 25, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 26, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 27, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 28, "#                                                         #                                                         |", 91, 131);
-			g_Console.writeToBuffer(28, 29, "################ ...or type 'quit' to exit ################_________________________________________________________|", 91, 131);
+	case 4://set up party
+	{
+		ss.str("");
+		ss << "press esc to go back                                      Player Level: " << p.getplayerinfo(1);
+		g_Console.writeToBuffer(28, 10, "                                                           ________________________ MEMEBERS ________________________", 91, 131);
+		g_Console.writeToBuffer(28, 11, "######################## TEAM DECK ########################                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 12, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 13, "#  IN TEAM:                                               #                                                         |", 91, 131);
+		ss.str("");
+		ss << "#                                                         #      " << pos1 << "    " << pos2 << "    " << pos3 << "    " << pos4 << "    " << pos5 << "    " << pos6 << "    " << pos7 << "    " << pos8 << "    " << pos9 << "    " << pos10 << "     |";
+		g_Console.writeToBuffer(28, 14, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 15, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 16, "#           A:                                            #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 17, "#                                                         #_________ type member's alphabet to view member _________|", 91, 131);
+		g_Console.writeToBuffer(28, 18, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 19, "#                                                         #                                                         |", 91, 131);
+		ss.str("");
+		ss << "#           B:                                            #    HP: " << statHP << "                                               |";
+		g_Console.writeToBuffer(28, 20, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 21, "#                                                         #                                                         |", 91, 131);
+		ss.str("");
+		ss << "#                                                         #    ATK: " << statATK << "                                              |";
+		g_Console.writeToBuffer(28, 22, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 23, "#                                                         #                                                         |", 91, 131);
+		ss.str("");
+		ss << "#           C:                                            #    DEF: " << statDEF << "                                              |";
+		g_Console.writeToBuffer(28, 24, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 25, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 26, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 27, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 28, "#                                                         #                                                         |", 91, 131);
+		g_Console.writeToBuffer(28, 29, "################ ...or type 'quit' to exit ################_________________________________________________________|", 91, 131);
 
 
 
-			break;
-		}
-		case 5://library
-		{
+		break;
+	}
+	case 5://library
+	{
 
-			g_Console.writeToBuffer(28, 10, " _______________________ LIBRARY ________________________ __________________________ INFO __________________________ ", 91, 131);
-			g_Console.writeToBuffer(28, 11, "||                                                       #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 12, "||   - Fish                                              #                                                         ||", 91, 131);
-			ss.str("");
-			ss << "||                                                       #    HP: " << healthUnit << "                                               ||";
-			g_Console.writeToBuffer(28, 13, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 14, "||   - Grapes                                            #                                                         ||", 91, 131);
-			ss.str("");
-			ss << "||                                                       #    ATK: " << attackUnit << "                                               ||";
-			g_Console.writeToBuffer(28, 15, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 16, "||   - Honey                                             #                                                         ||", 91, 131);
-			ss.str("");
-			ss << "||                                                       #    DEF: " << defenceUnit << "                                               ||";
-			g_Console.writeToBuffer(28, 17, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 18, "||   - Mussels                                           #                                                         ||", 91, 131);
-			ss.str("");
-			ss << "||                                                       #    SPD: " << speedUnit << "                                               ||";
-			g_Console.writeToBuffer(28, 19, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 20, "||   - Cheese                                            #                                                         ||", 91, 131);
-			ss.str("");
-			ss << "||                                                       #    BONUS: " << defenceUnit << "                                             ||";
-			g_Console.writeToBuffer(28, 21, ss.str(), 91, 131);
-			g_Console.writeToBuffer(28, 22, "||   - Pasta                                             #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 23, "||                                                       #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 24, "||   - Rice                                              #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 25, "||                                                       #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 26, "||   - Strawberry                                        #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 27, "||                                                       #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 28, "||   - Yoghurt                                           #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 29, "||                                                       #                                                         ||", 91, 131);
-			g_Console.writeToBuffer(28, 30, "||____________________________________________ ...or hit 'esc' to exit ____________________________________________||", 91, 131);
-			
+		g_Console.writeToBuffer(28, 10, " _______________________ LIBRARY ________________________ __________________________ INFO __________________________ ", 91, 131);
+		g_Console.writeToBuffer(28, 11, "||                                                       #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 12, "||   - Fish                                              #                                                         ||", 91, 131);
+		ss.str("");
+		ss << "||                                                       #    HP: " << healthUnit << "                                               ||";
+		g_Console.writeToBuffer(28, 13, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 14, "||   - Grapes                                            #                                                         ||", 91, 131);
+		ss.str("");
+		ss << "||                                                       #    ATK: " << attackUnit << "                                               ||";
+		g_Console.writeToBuffer(28, 15, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 16, "||   - Honey                                             #                                                         ||", 91, 131);
+		ss.str("");
+		ss << "||                                                       #    DEF: " << defenceUnit << "                                               ||";
+		g_Console.writeToBuffer(28, 17, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 18, "||   - Mussels                                           #                                                         ||", 91, 131);
+		ss.str("");
+		ss << "||                                                       #    SPD: " << speedUnit << "                                               ||";
+		g_Console.writeToBuffer(28, 19, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 20, "||   - Cheese                                            #                                                         ||", 91, 131);
+		ss.str("");
+		ss << "||                                                       #    BONUS: " << defenceUnit << "                                             ||";
+		g_Console.writeToBuffer(28, 21, ss.str(), 91, 131);
+		g_Console.writeToBuffer(28, 22, "||   - Pasta                                             #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 23, "||                                                       #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 24, "||   - Rice                                              #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 25, "||                                                       #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 26, "||   - Strawberry                                        #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 27, "||                                                       #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 28, "||   - Yoghurt                                           #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 29, "||                                                       #                                                         ||", 91, 131);
+		g_Console.writeToBuffer(28, 30, "||____________________________________________ ...or hit 'esc' to exit ____________________________________________||", 91, 131);
 
 
-			break;
-		}
+
+		break;
+	}
 	case 6://gacha
 		g_Console.writeToBuffer(80, 9, "> SUMMON <",91);
 		for (int i = 10; i < 25; i++) {
@@ -423,7 +427,7 @@ void setparty(Companion* cptr[10], player p, Companion* party[3])
 	std::cout << p.getplayerinfo(3) + 1 << ". None" << std::endl;
 	int createparty = 0;
 	int companionchoice;
-	while (createparty == 0)
+	if (createparty == 0)
 	{
 		for (int i = 0; i < p.getplayerinfo(3); i++)
 		{
@@ -545,6 +549,12 @@ int summon()
 	}
 	return 0;
 }
+void Renderstory(int stagepicked) {
+	switch (stagepicked) {
+	case 1:
+
+	}
+}
 void RenderBattleEvents(int stagepicked) {
 	ostringstream ss;
 	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
@@ -558,7 +568,7 @@ void RenderBattleEvents(int stagepicked) {
 		g_Console.writeToBuffer(22, 4, "|  _   | |   |___ |    ___||  _    || |_|   ||    ___||    __  |  |       ||    ___||  _    |  |   |  |       ||    __  ||    ___|", 91, 131);
 		g_Console.writeToBuffer(22, 5, "| |_|   ||       ||   |___ | | |   ||       ||   |___ |   |  | |   |     | |   |___ | | |   |  |   |  |       ||   |  | ||   |___ ", 91, 131);
 		g_Console.writeToBuffer(22, 6, "|_______||_______||_______||_|  |__||______| |_______||___|  |_|    |___|  |_______||_|  |__|  |___|  |_______||___|  |_||_______|", 91, 131);
-		g_Console.writeToBuffer(42, 10, "#################################################$####################################", 91);
+		g_Console.writeToBuffer(42, 10, "######################################################################################", 91);
 		for (int i = 0; i < 16; i++) {
 			g_Console.writeToBuffer(42, 11+i, "#                                                                                    #", 91);
 		}
@@ -618,14 +628,14 @@ void RenderBattleEvents(int stagepicked) {
 		g_Console.writeToBuffer(24, 20, ss.str(), 91);
 		ss.str("");
 		ss << e1[0] << " hp: " << eptr[0]->getcurrentHealth() << " / " << eptr[0]->getHealth();
-		g_Console.writeToBuffer(112, 12, ss.str(), 91);
+		g_Console.writeToBuffer(114, 12, ss.str(), 91);
 		if (stagepicked != 1) {
 			ss.str("");
 			ss << e2[0] << " hp: " << eptr[1]->getcurrentHealth() << " / " << eptr[1]->getHealth();
-			g_Console.writeToBuffer(112, 16, ss.str(), 91);
+			g_Console.writeToBuffer(114, 16, ss.str(), 91);
 			ss.str("");
 			ss << e3[0] << " hp: " << eptr[2]->getcurrentHealth() << " / " << eptr[2]->getHealth();
-			g_Console.writeToBuffer(112, 20, ss.str(), 91);
+			g_Console.writeToBuffer(114, 20, ss.str(), 91);
 		}
 		else {
 
@@ -636,12 +646,12 @@ player battle(int stagepicked)
 {
 	for (int i = 0; i < 3; i++)
 	{
-		if (party[i] == nullptr)
+		if (party[i] != nullptr)
 		{
 			checkparty++;
 		}
 	}
-	if (checkparty == 3)
+	if (checkparty != 3)
 	{
 		backloop = 4;
 		g_eGameState = S_MENU;
@@ -661,6 +671,11 @@ player battle(int stagepicked)
 			if (g_skKeyEvent[K_DOWN].keyReleased && choice != 5) {
 				choice++;
 			}
+			if (g_skKeyEvent[K_ESCAPE].keyReleased){
+				g_eGameState = S_MENU;
+				backloop = 1;
+				return p;
+				}
 			if (g_skKeyEvent[K_ENTER].keyReleased) {
 				difficulty = choice;
 				choice = 1;
@@ -700,6 +715,7 @@ player battle(int stagepicked)
 			}
 		}
 		aliveC = 0; aliveE = 0;
+		//gets alive companions and alive enemies
 		for (int i = 0; i < 3; i++) {
 			if (party[i]->getcurrentHealth() > 0) {
 				aliveC++;
@@ -710,17 +726,22 @@ player battle(int stagepicked)
 			if (eptr[i] != nullptr) {
 				if (eptr[i]->getcurrentHealth() > 0) {
 					aliveE++;
-
 				}
 				else {
 					eptr[i]->setcurrentHealth(0);
 				}
 			}
 		}
-		if (result == 0)//result will become 1 when the battle ends
+		if (aliveC == 0) {
+			result = 2;//lose
+		}
+		else if (aliveE == 0) {
+			result = 1;//win
+		}
+		if (result == 0)//result will become 1 or 2 when the battle ends
 		{
 			//companion move
-			if (Cturn < 2)//friendly attack
+			if (Cturn < 3)//friendly attack
 			{
 				if (party[Cturn]->getcurrentHealth() < 1) {
 					Cmove[Cturn] = NULL;
@@ -755,21 +776,21 @@ player battle(int stagepicked)
 									moveChosen = false;//so that after buff, user can pick atk or defend
 									targetChosen = true;
 								}
-								if (Cmove[Cturn] == 2) {
-									moveChosen = false;
-									targetChosen = true;
-									party[Cturn]->block();
-									Ctarget[Cturn] = NULL;
-									Cturn++;
-								}
 							}
 							party[Cturn]->setskillcd(4);
+						}
+						if (Cmove[Cturn] == 2) {
+							moveChosen = false;
+							targetChosen = true;
+							party[Cturn]->block();
+							Ctarget[Cturn] = NULL;
+							Cturn++;
 						}
 					}
 				}
 
 				//user chooses target
-				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false && Cmove[Cturn] != 2)
+				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false)
 				{
 					getInput();//choose move
 					if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
@@ -779,7 +800,6 @@ player battle(int stagepicked)
 						choice++;
 					}
 					if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice - 1] != nullptr && eptr[choice - 1]->getcurrentHealth() > 0) {
-
 						if (Cmove[Cturn] == 3) {
 							eptr[choice]->setcurrentDamage(eptr[choice]->getcurrentDamage() * 0.85);
 							eptr[choice]->setcurrentResistance(eptr[choice]->getcurrentResistance() * 0.85);
@@ -788,8 +808,11 @@ player battle(int stagepicked)
 							targetChosen = true;
 							choice = 1;
 						}
-						else {
-							Ctarget[Cturn] = choice;
+						else {//attack()
+							Ctarget[Cturn] = choice- 1;
+							dmg = party[Cturn]->getcurrentDamage();
+							eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
+
 							moveChosen = true;
 							targetChosen = true;
 							choice = 1;
@@ -797,25 +820,27 @@ player battle(int stagepicked)
 					}
 				}
 				//move takes effect
-				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
-					switch (Cmove[Cturn]) {
-					case 1:
-						party[Cturn]->setatktarget(Ctarget[Cturn]);
-						moveChosen = false;
-						targetChosen = true;
-						friendlyAtks++;
-						Cturn++;
-						break;
-					}
+				if (Cturn < 3) {
+					if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
+						switch (Cmove[Cturn]) {
+						case 1:
+							party[Cturn]->setatktarget(Ctarget[Cturn]);
+							moveChosen = false;
+							targetChosen = true;
+							friendlyAtks++;
+							Cturn++;
+							break;
+						}
 
+					}
+					if (friendlyAtks == 3) {
+						moveChosen = true;
+						targetChosen = true;
+					}
 				}
-				if (friendlyAtks == 3) {
-					moveChosen = true;
-					targetChosen = true;
-				}
-			}
+			}			
 			//enemy moves
-			if (Eturn < 2 && Cturn == 2) {
+			if (Eturn < 3 && Cturn == 3) {
 				//for null or dead enemies
 				if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
 					Emove[Cturn] = NULL;
@@ -828,7 +853,7 @@ player battle(int stagepicked)
 					{
 						//for minions
 						if (Eturn > 0) {
-							Emove[Eturn] = rand() % 3 + 1;
+							Emove[Eturn] = rand() % 2;
 							if (Emove[Eturn] == 2) {
 								eptr[Eturn]->block();
 								Etarget[Eturn] = NULL;
@@ -842,7 +867,8 @@ player battle(int stagepicked)
 								}
 							}
 							else if (Emove[Eturn] == 1) {
-								eptr[Eturn]->setatktarget(Etarget[Eturn]);
+								dmg = eptr[Eturn]->getcurrentDamage();
+								party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
 								Eturn++;
 							}
 						}
@@ -918,13 +944,11 @@ player battle(int stagepicked)
 										{
 											if (party[l] != 0)
 											{
-												int statdecrease = rand() % 3 + 1;
+												int statdecrease = rand() % 2 + 1;
 												if (statdecrease == 1)
 													party[Etarget[0]]->setcurrentDamage(party[Etarget[0]]->getcurrentDamage() * 0.8);
 												if (statdecrease == 2)
 													party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.8);
-												if (statdecrease == 1)
-													party[Etarget[0]]->setcurrentSpeed(party[Etarget[0]]->getcurrentSpeed() * 0.8);
 											}
 										}
 										break;
@@ -943,187 +967,70 @@ player battle(int stagepicked)
 
 			}
 		}
-		if (Cturn == 2 && Eturn == 2) {
-			if (result == 0)
+		for (int i = 0; i < 3; i++)
+		{
+			if (party[i] != nullptr)
 			{
-				for (int i = 0; i < 3; i++)
+				for (int l = 1; l < 5; l++)
+					party[i]->resetstats(l);
+			}
+			if (eptr[i] != nullptr)
+			{
+				for (int l = 1; l < 5; l++)
+					eptr[i]->resetstats(l);
+			}
+		}
+		if (friendlyAtks == 3 && enemyAtks == 3)
+		{
+			choice = 1;
+			friendlyAtks = 0; enemyAtks = 0;
+			Cturn = 0;
+			Eturn = 0;
+			moveChosen = false;
+			targetChosen = true;
+		}
+		if (result == 2)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (sametype != 0)
 				{
 					if (party[i] != nullptr)
 					{
-						if (party[i]->getatktarget() != -1)
-						{
-							speedlist[i] = int(party[i]->getcurrentSpeed());
-						}
-					}
-					if (eptr[i] != nullptr)
-					{
-						if (eptr[i]->getatktarget() != -1)
-						{
-							speedlist[i + 3] = int(eptr[i]->getcurrentSpeed());
-						}
-					}
-
-				}
-				std::sort(speedlist, speedlist + 6, greater<int>());//sort array according to speed
-				for (int i = 0; i < 6; i++)
-				{
-					if (speedlist[i] != -1)
-					{
-						for (int l = 0; l < 3; l++)
-						{
-							if ((eptr[l] != nullptr) && (result == 0))
-							{
-								if ((speedlist[i] == int(eptr[l]->getcurrentSpeed())) && (eptr[l]->getatktarget() != -1) && (eptr[l]->getcurrentHealth() > 0))
-								{
-									for (int f = 0; f < 3; f++)
-									{
-										if (party[f] != nullptr)
-										{
-											if ((f == eptr[l]->getatktarget()) && (party[f]->getcurrentHealth() > 0))
-											{
-												dmg = eptr[l]->attack(party[f]->getcurrentResistance());
-												party[f]->takedmg(dmg);
-												std::cout << eptr[l]->getname() << " attacked " << party[f]->getname() << " for " << int(dmg) << std::endl;
-												eptr[l]->setatktarget(-1);
-												if (party[f]->getcurrentHealth() == 0)
-												{
-													deadcompanion++;
-													std::cout << party[f]->getname() << " has died" << std::endl;
-												}
-											}
-											else if ((f == eptr[l]->getatktarget()) && (party[f]->getcurrentHealth() <= 0))
-											{
-												int difftarget = 0;
-												while (difftarget == 0)
-												{
-													int newtarget = rand() % 3;
-													if ((newtarget != f) && (party[newtarget] != nullptr))
-													{
-														eptr[l]->setatktarget(newtarget);
-														difftarget++;
-													}
-													f--;
-												}
-											}
-										}
-									}
-									if (deadcompanion == partysize)
-									{
-										result = 2;
-									}
-								}
-							}
-							if ((party[l] != nullptr) && (result == 0))
-							{
-								if ((speedlist[i] == int(party[l]->getcurrentSpeed())) && (party[l]->getatktarget() != -1) && (party[l]->getcurrentHealth() > 0))
-								{
-									for (int f = 0; f < 3; f++)
-									{
-										if (eptr[f] != nullptr)
-										{
-											if ((f == party[l]->getatktarget()) && (eptr[f]->getcurrentHealth() > 0))
-											{
-												dmg = party[l]->attack(eptr[f]->getcurrentResistance());
-												eptr[f]->takedmg(dmg);
-												std::cout << party[l]->getname() << " attacked " << eptr[f]->getname() << " for " << int(dmg) << std::endl;
-												party[l]->setatktarget(-1);
-												if (eptr[f]->getcurrentHealth() == 0)
-												{
-													deadenemies++;
-													std::cout << eptr[f]->getname() << " has died" << std::endl;
-												}
-											}
-											else if ((f == party[l]->getatktarget()) && (eptr[f]->getcurrentHealth() <= 0))
-											{
-												int difftarget = 0;
-												while (difftarget == 0)
-												{
-													int newtarget = rand() % 3;
-													if ((newtarget != f) && (eptr[newtarget] != nullptr))
-													{
-														party[l]->setatktarget(newtarget);
-														difftarget++;
-													}
-													f--;
-												}
-											}
-										}
-									}
-									if (deadenemies == enemyno)
-									{
-										result = 1;
-									}
-								}
-							}
-						}
+						party[i]->removeresonace(sametype);
+						party[i]->resetstats(5);
 					}
 				}
 			}
-			for (int i = 0; i < 3; i++)
-			{
-				if (party[i] != nullptr)
-				{
-					for (int l = 1; l < 5; l++)
-						party[i]->resetstats(l);
-				}
-				if (eptr[i] != nullptr)
-				{
-					for (int l = 1; l < 5; l++)
-						eptr[i]->resetstats(l);
-				}
-			}
-			if (friendlyAtks == 3 && enemyAtks ==3)
-			{
-				choice = 1;
-				friendlyAtks = 0; enemyAtks = 0;
-				Cturn = 0;
-				Eturn = 0;
-				moveChosen = false;
-				targetChosen = true;
-			}
-			if (result == 2)
-			{
-				for (int i = 0; i < 3; i++)
-				{
-					if (sametype != 0)
-					{
-						if (party[i] != nullptr)
-						{
-							party[i]->removeresonace(sametype);
-							party[i]->resetstats(5);
-						}
-					}
-				}
-				std::cout << "You lost!" << std::endl;
-				std::cout << "Tip: Upgrade your companions" << std::endl;
-				std::cout << "" << std::endl;
-				return p;
-			}
-			if (result == 1)
-			{
-				for (int i = 0; i < 3; i++)
-				{
-					if (sametype != 0)
-					{
-						if (party[i] != nullptr)
-						{
-							party[i]->removeresonace(sametype);
-							party[i]->resetstats(5);
-						}
-					}
-				}
-				g_eGameState = S_BATTLEN;
-				std::cout << "You won!" << std::endl;
-				int exp = (bossno * 50 + minionno * 25) * difficulty;
-				int coins = (bossno * 500 + minionno * 250) * difficulty;
-				p.stagecleared(coins, exp);
-				p.checklevelup();
-				if (p.getplayerinfo(5) + 1 == stagepicked)
-					p.clearednewstage();
-				return p;
-			}
+			std::cout << "You lost!" << std::endl;
+			std::cout << "Tip: Upgrade your companions" << std::endl;
+			std::cout << "" << std::endl;
 			return p;
 		}
+		if (result == 1)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				if (sametype != 0)
+				{
+					if (party[i] != nullptr)
+					{
+						party[i]->removeresonace(sametype);
+						party[i]->resetstats(5);
+					}
+				}
+			}
+			g_eGameState = S_BATTLEN;
+			std::cout << "You won!" << std::endl;
+			int exp = (bossno * 50 + minionno * 25) * difficulty;
+			int coins = (bossno * 500 + minionno * 250) * difficulty;
+			p.stagecleared(coins, exp);
+			p.checklevelup();
+			if (p.getplayerinfo(5) + 1 == stagepicked)
+				p.clearednewstage();
+			return p;
+		}
+		return p;
 	}
 	return p;
 }
@@ -1282,7 +1189,7 @@ void update(double dt)
 		p = battle(stageP);
 		break;
 	case S_BATTLEN:
-		g_eGameState = S_MENU;
+		story();
 		break;
 	case S_MENU:
 		menu();
