@@ -946,8 +946,8 @@ player battle(int stagepicked)
 							}
 							else {//attack()
 								Ctarget[Cturn] = choice - 1;
-								dmg = party[Cturn]->getcurrentDamage();
-								eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
+								dmg = party[Cturn]->attack(eptr[Ctarget[Cturn]]->getcurrentResistance());
+								eptr[Ctarget[Cturn]]->takedmg(dmg);
 								moveChosen = true;
 								targetChosen = true;
 								choice = 1;
@@ -1000,6 +1000,7 @@ player battle(int stagepicked)
 								if (Emove[Eturn] == 2) {
 									eptr[Eturn]->block();
 									Etarget[Eturn] = NULL;
+									Eturn++;
 								}
 								else if (Emove[Eturn] == 3) {
 									if (eptr[Eturn]->getskillcd() == 0) {
@@ -1009,8 +1010,9 @@ player battle(int stagepicked)
 									}
 								}
 								else if (Emove[Eturn] == 1) {
-									dmg = eptr[Eturn]->getcurrentDamage();
-									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
+									dmg = eptr[Eturn]->attack(party[Etarget[Eturn]]->getcurrentResistance());
+									(party[Etarget[Eturn]]->takedmg(dmg));
+									Eturn++;
 								}
 							}
 							//for bosses
@@ -1022,11 +1024,13 @@ player battle(int stagepicked)
 								switch (Emove[0])
 								{
 								case 1://attack
-									dmg = eptr[Eturn]->getcurrentDamage();
-									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
+									dmg = eptr[Eturn]->attack(party[Etarget[Eturn]]->getcurrentResistance());
+									(party[Etarget[Eturn]]->takedmg(dmg));
+									Eturn++;
 									break;
 								case 2://defend
 									eptr[Eturn]->block();
+									Eturn++;
 									break;
 								case 3:
 									if (eptr[Eturn]->getskillcd() == 0)
@@ -1075,6 +1079,7 @@ player battle(int stagepicked)
 											{
 												result = 2;
 											}
+											eptr[Eturn]->resetstats(2);
 											break;
 										case 3:
 											party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.3);
@@ -1104,11 +1109,6 @@ player battle(int stagepicked)
 							}
 						}
 					}
-					getInput();
-					if (g_skKeyEvent[K_ENTER].keyReleased) {
-						Eturn++;
-					}
-
 				}
 			}
 			if (friendlyAtks == 3 && enemyAtks == 3)
