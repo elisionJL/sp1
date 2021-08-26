@@ -6,32 +6,30 @@ Eggplant::Eggplant(int x)
 	setHealth(100 * (x * 0.05 + 1));
 	setDamage(30 * (x * 0.05 + 1));
 	setResistance(30 * (x * 0.05 + 1));
-	setSpeed(40 * (x * 0.05 + 1));
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
-	setcurrentSpeed(getSpeed());
 	setname("Eggplant");
 	setskillcd(0);
-	setatktarget("0");
+	setatktarget(-1);
 }
 
 string Eggplant::getMoveName(int MoveNo)
 {
 	switch (MoveNo)
 	{
-	
+
 	case 1:
 		return "Rollout, damaging all Companions";
 		//Low damage on all
 	case 2:
-		return "SQUASH, highly damaging ";
+		return "SQUASH, dealing ";
 		//Basic damage ability
 	case 3:
 		return "Nightshade, decreasing Defence of ";
 		//Decrease 1 of player's party member's resistance
 	case 4:
-		return "Purple plague, decreasing a stat of all Companions";
+		return "Purple plague, decreasing a random stat of all Companions";
 		//Decrease a stat of all player's party members by a little
 	default:
 		return "NOTHING";

@@ -12,7 +12,6 @@ private:
     double bonusHealth;
     double bonusDamage;
     double bonusResistance;
-    double bonusSpeed;
     double bonushealing;
 
 public:

@@ -3,12 +3,10 @@ Entity::Entity()
 {
 	Health = 0;
 	Damage = 0;
-	Speed = 0;
 	Resistance = 0;
 	currentHealth = Health;
 	currentDamage = Damage;
 	currentResistance = Resistance;
-	currentSpeed = Speed;
 	skillcd = 0;
 }
 
@@ -42,15 +40,6 @@ void Entity::setResistance(double resistance)
 	this->Resistance = resistance;
 }
 
-double Entity::getSpeed()
-{
-	return Speed;
-}
-
-void Entity::setSpeed(double speed)
-{
-	this->Speed = speed;
-}
 double Entity::getcurrentHealth()
 {
 	return currentHealth;
@@ -75,20 +64,13 @@ void Entity::setcurrentResistance(double resistance)
 {
 	this->currentResistance = resistance;
 }
-double Entity::getcurrentSpeed()
-{
-	return currentSpeed;
-}
-void Entity::setcurrentSpeed(double speed)
-{
-	this->currentSpeed = speed;
-}
+
 void Entity::resetstats(int x)
 {
 	switch (x)
 	{
 	case 1:
-		setatktarget("0");
+		setatktarget(-1);
 		break;
 	case 2:
 		currentDamage = Damage;
@@ -97,14 +79,10 @@ void Entity::resetstats(int x)
 		currentResistance = Resistance;
 		break;
 	case 4:
-		currentSpeed = Speed;
-		break;
-	case 5:
 		currentHealth = Health;
 		currentDamage = Damage;
 		currentResistance = Resistance;
-		currentSpeed = Speed;
-		setatktarget("0");
+		setatktarget(-1);
 		setskillcd(0);
 		break;
 	}
@@ -130,12 +108,12 @@ int Entity::skill(int x)
 	return 0;
 }
 
-std::string Entity::getatktarget()
+int Entity::getatktarget()
 {
 	return atktarget;
 }
 
-void Entity::setatktarget(std::string x)
+void Entity::setatktarget(int x)
 {
 	atktarget = x;
 }

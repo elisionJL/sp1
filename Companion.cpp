@@ -7,14 +7,13 @@ Companion::Companion()
 	lvl = 0;
 	upgradecost = 0;
 	timespulled = 0;
-	bonusHealth=0;
-	bonusDamage=0;
-	bonusResistance=0;
-	bonusSpeed=0;
-	bonushealing=0;
+	bonusHealth = 0;
+	bonusDamage = 0;
+	bonusResistance = 0;
+	bonushealing = 0;
 }
 
-Companion::Companion(int companionsID,std::string x)
+Companion::Companion(int companionsID, std::string x)
 {
 	companionId = companionsID;
 	setHealth((rand() % 50) + 50.0);
@@ -31,13 +30,17 @@ Companion::Companion(int companionsID,std::string x)
 	lvl = 1;
 	timespulled = 1;
 	setskillcd(0);
-	setatktarget("0");
+	setatktarget(-1);
+	bonusDamage = 0;
+	bonushealing = 0;
+	bonusHealth = 0;
+	bonusResistance = 0;
 }
 
 Companion::~Companion()
 {
 }
-int Companion::buff() 
+int Companion::buff()
 {
 	if (companionId == 1 || companionId == 2) {
 		return 1;
@@ -59,17 +62,17 @@ int Companion::buff()
 
 string Companion::getMoveName(int MoveNo)
 {
-	switch (MoveNo) 
+	switch (MoveNo)
 	{
 	case 1:
 		return "Attack";
 	case 2:
 		return "Defend";
 	case 3:
-		switch (buff()) 
+		switch (buff())
 		{
 		case 1:
-			return "Buff Speed";
+			return "Minor buff to Defence and Attack";
 		case 2:
 			return "Debuff";
 		case 3:
@@ -89,7 +92,8 @@ int Companion::skill()
 	switch (buff())
 	{
 	case 1:
-		setcurrentSpeed(getSpeed() * 2);
+		setcurrentDamage(getDamage() * 2);
+		setcurrentResistance(getResistance() * 2);
 		return 0;
 	case 2:
 		return 1;
@@ -100,7 +104,7 @@ int Companion::skill()
 		setcurrentResistance(getResistance() * 2);
 		return 0;
 	case 5:
-		setcurrentHealth(getcurrentHealth() + getHealth() * (0.15+bonushealing));
+		setcurrentHealth(getcurrentHealth() + getHealth() * (0.15 + bonushealing));
 		if (getcurrentHealth() > getHealth())
 			setcurrentHealth(getHealth());
 		return 0;
@@ -114,7 +118,6 @@ void Companion::summonedagain()
 	setHealth(getHealth() * 1.1);
 	setDamage(getDamage() * 1.1);
 	setResistance(getResistance() * 1.1);
-	setSpeed(getSpeed() * 1.1);
 	upgradecost += upgradecost * 1;
 	timespulled++;
 }
@@ -123,10 +126,9 @@ void Companion::lvlup()
 {
 	lvl++;
 	upgradecost += upgradecost * 0.5;
-	setHealth(getHealth()*1.05);
+	setHealth(getHealth() * 1.05);
 	setDamage(getDamage() * 1.05);
 	setResistance(getResistance() * 1.05);
-	setSpeed(getSpeed() * 1.05);
 }
 
 int Companion::getlvl()
@@ -151,20 +153,24 @@ void Companion::resonance(int x)
 	switch (x)
 	{
 	case 1:
-		bonusSpeed = getSpeed() * 0.2;
-		setSpeed(getSpeed() * 1.2);
+		bonusHealth = getHealth() * 0.2;
+		setHealth(getHealth() * 1.1);
+		bonusDamage = getDamage() * 0.2;
+		setDamage(getDamage() * 1.1);
+		bonusResistance = getResistance() * 0.2;
+		setResistance(getResistance() * 1.1);
 		break;
 	case 2:
 		bonusHealth = getHealth() * 0.2;
-		setHealth(getHealth() * 1.2);
+		setHealth(getHealth() * 1.3);
 		break;
 	case 3:
 		bonusDamage = getDamage() * 0.2;
-		setDamage(getDamage() * 1.2);
+		setDamage(getDamage() * 1.3);
 		break;
 	case 4:
 		bonusResistance = getResistance() * 0.2;
-		setResistance(getResistance() * 1.2);
+		setResistance(getResistance() * 1.3);
 		break;
 	case 5:
 		bonushealing = 0.1;
@@ -176,19 +182,23 @@ void Companion::removeresonace(int x)
 	switch (x)
 	{
 	case 1:
-		setSpeed(getSpeed() -bonusSpeed);
-		bonusSpeed = 0;
+		setHealth(getHealth() - bonusHealth);
+		bonusHealth = 0;
+		setDamage(getDamage() - bonusDamage);
+		bonusDamage = 0;
+		setResistance(getResistance() - bonusResistance);
+		bonusResistance = 0;
 		break;
 	case 2:
-		setHealth(getHealth()-bonusHealth);
-		bonusHealth =0;
+		setHealth(getHealth() - bonusHealth);
+		bonusHealth = 0;
 		break;
 	case 3:
-		setDamage(getDamage()-bonusDamage);
+		setDamage(getDamage() - bonusDamage);
 		bonusDamage = 0;
 		break;
 	case 4:
-		setResistance(getResistance() -bonusResistance);
+		setResistance(getResistance() - bonusResistance);
 		bonusResistance = 0;
 		break;
 	case 5:

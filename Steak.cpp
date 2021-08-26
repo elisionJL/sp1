@@ -6,14 +6,12 @@ Steak::Steak(int x)
 	setHealth(100 * (x * 0.05 + 1));
 	setDamage(30 * (x * 0.05 + 1));
 	setResistance(30 * (x * 0.05 + 1));
-	setSpeed(40 * (x * 0.05 + 1));
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
-	setcurrentSpeed(getSpeed());
 	setname("Steak");
 	setskillcd(0);
-	setatktarget ("0");
+	setatktarget(-1);
 }
 
 string Steak::getMoveName(int MoveNo)
@@ -21,10 +19,10 @@ string Steak::getMoveName(int MoveNo)
 	switch (MoveNo)
 	{
 	case 1:
-		return "Tender Loving Care, dealing damage to all Companions";
+		return "Tender Loving Care, damaging all Companions";
 		//Deals slight damage to all
 	case 2:
-		return "Beef Up, highly damaging ";
+		return "Beef Up, dealing ";
 		//Deals moderate damage to 1 
 	case 3:
 		return "Well Done, slightly increasing all stats";
@@ -33,7 +31,7 @@ string Steak::getMoveName(int MoveNo)
 		return "Misteak, healing slightly";
 		//Heal a little
 	case 5:
-		return "Steak Out, sacrificing Defence for Attack and Speed";
+		return "Steak Out, sacrificing Defence for Attack";
 		//Decrease resistance,increase speed and attack
 	default:
 		return "NOTHING";
@@ -50,12 +48,11 @@ double Steak::getMovePower(int MoveNo)
 		setcurrentDamage(getDamage() * 1.75);
 		return 2;
 	case 3:
-		setcurrentHealth( getcurrentHealth()+getHealth() * 0.05);
+		setcurrentHealth(getcurrentHealth() + getHealth() * 0.05);
 		if (getcurrentHealth() > getHealth())
 			setcurrentHealth(getHealth());
 		setcurrentDamage(getDamage() * 1.5);
-		setcurrentResistance(getResistance()* 1.5);
-		setcurrentSpeed(getSpeed() * 1.5);
+		setcurrentResistance(getResistance() * 1.5);
 		return 0;
 	case 4:
 		setcurrentHealth(getcurrentHealth() + getHealth() * 0.15);
@@ -63,9 +60,8 @@ double Steak::getMovePower(int MoveNo)
 			setcurrentHealth(getHealth());
 		return 0;
 	case 5:
-		setcurrentDamage(getDamage() * 2);
+		setcurrentDamage(getDamage() * 3);
 		setcurrentResistance(getResistance() * 0.25);
-		setcurrentSpeed(getSpeed() * 2);
 		return 0;
 	default:
 		return 0;

@@ -7,14 +7,12 @@ private:
 	double Health;
 	double Damage;
 	double Resistance;
-	double Speed;
 	double currentHealth;
 	double currentDamage;
 	double currentResistance;
-	double currentSpeed;
 	std::string name;
 	int skillcd;
-	std::string atktarget;
+	int atktarget;
 
 public:
 	Entity();
@@ -26,22 +24,18 @@ public:
 	void setDamage(double dmg);
 	double getResistance();
 	void setResistance(double resistance);
-	double getSpeed();
-	void setSpeed(double speed);
 	double getcurrentHealth();
 	void setcurrentHealth(double health);
 	double getcurrentDamage();
 	void setcurrentDamage(double dmg);
 	double getcurrentResistance();
 	void setcurrentResistance(double resistance);
-	double getcurrentSpeed();
-	void setcurrentSpeed(double speed);
 	void resetstats(int x);
 	void setname(std::string x);
 	int getskillcd();
 	void setskillcd(int x);
-	std::string getatktarget();
-	void setatktarget(std::string x);
+	int getatktarget();
+	void setatktarget(int x);
 	std::string getname();
 	virtual string getMoveName(int MoveNo) = 0;
 	virtual int skill(int x);
