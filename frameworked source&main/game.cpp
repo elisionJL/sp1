@@ -1385,9 +1385,9 @@ void renderstorylinetutorialact2(int x, int y)
 	g_Console.writeToBuffer(x, y + 3, "I'm sure you'll be able to handle it yourself. Besides, you probably can’t contain your excitement to leave right now.", 0x02, 119);
 	g_Console.writeToBuffer(x, y + 4, "Then, it's time for you to begin your journey. I'm afraid this will be the last time we are together.", 0x02, 102);
 	g_Console.writeToBuffer(x, y + 5, "Good luck out there. I'll miss you.", 0x02, 36);
-	g_Console.writeToBuffer(x, y + 5, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 6, "Likewise, BYE ORANGE!", 0x03, 22);
-	g_Console.writeToBuffer(x, y + 7, "With his new companion, he bolted out of the mansion.", 0x06, 54);
+	g_Console.writeToBuffer(x, y + 6, "PLAYER:", 0x03, 8);
+	g_Console.writeToBuffer(x, y + 7, "Likewise, BYE ORANGE!", 0x03, 22);
+	g_Console.writeToBuffer(x, y + 8, "With his new companion, he bolted out of the mansion.", 0x06, 54);
 }
 
 void renderstorylinestage1act1part1(int x, int y)
