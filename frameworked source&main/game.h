@@ -38,7 +38,8 @@ enum EGAMESTATES
     S_BATTLE,
     S_BATTLEN,
     S_GAME,
-    S_COUNT
+    S_COUNT,
+    S_BEFOREBATTLEN
 };
 
 // struct for the game character
@@ -48,11 +49,11 @@ struct SGameChar
     bool  m_bActive;
 };
 
-void init        ( void );      // initialize your variables, allocate memory, etc
-void getInput    ( void );      // get input from player
-void update      ( double dt ); // update the game and the state of the game
-void render      ( void );      // renders the current state of the game to the console
-void shutdown    ( void );      // do clean up, free memory
+void init(void);      // initialize your variables, allocate memory, etc
+void getInput(void);      // get input from player
+void update(double dt); // update the game and the state of the game
+void render(void);      // renders the current state of the game to the console
+void shutdown(void);      // do clean up, free memory
 
 void splashScreenWait();    // waits for time to pass in splash screen
 void updateGame();          // gameplay logic      // moves the character, collision detection, physics, etc
@@ -62,7 +63,7 @@ void renderFramerate();     // renders debug information, frame rate, elapsed ti
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderMenuEvents(int choice, int screen);
 void RenderBattleEvents(int stagepicked);
-   // renders the status of input events
+// renders the status of input events
 int menu();
 // keyboard and mouse input event managers
 void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this function for the console to call when there are keyboard events
@@ -86,5 +87,4 @@ void renderstorylinestage4act2(int x, int y);
 void renderstorylineend(int x, int y);
 void renderstorylinetutorialact1(int x, int y);
 void renderstorylinetutorialact2(int x, int y);
-
 #endif // _GAME_H
