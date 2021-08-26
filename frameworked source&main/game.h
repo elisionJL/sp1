@@ -69,5 +69,22 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent);  // define this fun
 
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyboard events for gameplay 
 
+//render storyline narration
+
+void renderstorylinestage1act1part1(int x, int y);
+void renderstorylinestage1act1part2(int x, int y);
+void renderstorylinestage1act2(int x, int y);
+void renderstorylinestage2act1part1(int x, int y);
+void renderstorylinestage2act1part2(int x, int y);
+void renderstorylinestage2act2(int x, int y);
+void renderstorylinestage3act1part1(int x, int y);
+void renderstorylinestage3act1part2(int x, int y);
+void renderstorylinestage3act2(int x, int y);
+void renderstorylinestage4act1part1(int x, int y);
+void renderstorylinestage4act1part2(int x, int y);
+void renderstorylinestage4act2(int x, int y);
+void renderstorylineend(int x, int y);
+void renderstorylinetutorialact1(int x, int y);
+void renderstorylinetutorialact2(int x, int y);
 
 #endif // _GAME_H
