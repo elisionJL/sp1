@@ -497,10 +497,6 @@ void renderMenuEvents(int choice, int screen) {
 
 // this is an example of how you would use the input events
 
-void story(int x, int y)
-{
-
-}
 void setparty(Companion* cptr[10], player p, Companion* party[3])
 {
 	for (int i = 0; i < 10; i++)
