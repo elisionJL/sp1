@@ -630,12 +630,7 @@ int summon()
 	}
 	return 0;
 }
-void Renderstory(int stagepicked) {
-	switch (stagepicked) {
-	case 1:
-		break;
-	}
-}
+
 void RenderBattleEvents(int stagepicked) {
 	ostringstream ss;
 	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
