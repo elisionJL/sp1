@@ -282,6 +282,7 @@ void renderMenuEvents(int choice, int screen) {
 			ss << i + 1 << ". " << stages[i];
 			g_Console.writeToBuffer(52, 15 + (i * 2), ss.str(), 0x17);
 		}
+		break;
 
 	case 4://set up party
 	{
@@ -493,7 +494,6 @@ int enhancecompanion(player p, Companion* cptr[10])
 			std::cout << "Health: " << int(cptr[choice]->getHealth()) << std::endl;
 			std::cout << "Attack: " << int(cptr[choice]->getDamage()) << std::endl;
 			std::cout << "Defence: " << int(cptr[choice]->getResistance()) << std::endl;
-			std::cout << "Speed: " << int(cptr[choice]->getSpeed()) << std::endl;
 			std::cout << "Skill: " << cptr[choice]->getMoveName(3) << std::endl;
 			std::cout << "Enhanced Level: " << cptr[choice]->gettimespulled() - 1 << std::endl;
 			std::cout << "" << std::endl;
@@ -552,7 +552,7 @@ int summon()
 void Renderstory(int stagepicked) {
 	switch (stagepicked) {
 	case 1:
-
+		break;
 	}
 }
 void RenderBattleEvents(int stagepicked) {
@@ -608,7 +608,16 @@ void RenderBattleEvents(int stagepicked) {
 			g_Console.writeToBuffer(85, 11+i, "##", 91);
 		}
 		g_Console.writeToBuffer(60, 20, "##################################################", 91); /*g_Console.writeToBuffer(110, 20, "########################################", 91);*/
-		g_Console.writeToBuffer(63, 15, "1. Attack", 91); g_Console.writeToBuffer(89, 15, "2.defend", 91); g_Console.writeToBuffer(76, 25, "3." + party[Cturn]->getMoveName(3), 91);
+		g_Console.writeToBuffer(63, 15, "1. Attack", 91); g_Console.writeToBuffer(89, 15, "2.defend", 91);
+		if (Cturn == 3) {
+			g_Console.writeToBuffer(76, 25, "3." + party[0]->getMoveName(3), 91);
+		}
+		else {
+			g_Console.writeToBuffer(76, 25, "3." + party[Cturn]->getMoveName(3), 91);
+		}
+		//if (Eturn < 3) {
+		//	g_Console.writeToBuffer(76, 25, "3." + party[0]->getMoveName(3), 91);
+		//}
 		if (Cturn > 3) {
 			Cturn = 0;
 		}
@@ -637,8 +646,11 @@ void RenderBattleEvents(int stagepicked) {
 			ss << e3[0] << " hp: " << eptr[2]->getcurrentHealth() << " / " << eptr[2]->getHealth();
 			g_Console.writeToBuffer(114, 20, ss.str(), 91);
 		}
-		else {
-
+		if (Cturn > 0) {
+			ss.str("");
+			std::string partyname[3] = { c1,c2,c3 };
+			ss << partyname[Cturn - 1] << " used " << party[Cturn - 1]->getMoveName(Cmove[Cturn - 1]);
+			g_Console.writeToBuffer(70, 9, ss.str(), 91);
 		}
 	}
 }		
@@ -679,356 +691,392 @@ player battle(int stagepicked)
 			if (g_skKeyEvent[K_ENTER].keyReleased) {
 				difficulty = choice;
 				choice = 1;
-				battleStart = false;
 			}
-		}
-	}
-	
-	if (battleStart == false) {
-		for (int i = 0; i < 3; i++)//resonance buff
-		{
-			if (party[i] != nullptr)
+			switch (stageP)
 			{
-				for (int l = 0; l < 3; l++)
+			case 1://stage 1
+				battleStart = false;
+				eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
+				break;
+			case 2://stage 2
+				battleStart = false;
+				eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			case 3://stage 3
+				battleStart = false;
+				eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			case 4://stage 4
+				battleStart = false;
+				eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
+				break;
+			}
+	}
+		if (battleStart == false) {
+			for (int i = 0; i < 3; i++)//resonance buff
+			{
+				if (party[i] != nullptr)
 				{
-					if ((party[l] != nullptr) && (party[l] != party[i]))
+					for (int l = 0; l < 3; l++)
 					{
-						if (party[l]->buff() == party[i]->buff())
+						if ((party[l] != nullptr) && (party[l] != party[i]))
 						{
-							sametype = party[l]->buff();
-							l += 3; i += 3;
+							if (party[l]->buff() == party[i]->buff())
+							{
+								sametype = party[l]->buff();
+								l += 3; i += 3;
+							}
 						}
 					}
 				}
 			}
-		}
-		for (int i = 0; i < 3; i++)
-		{
-			if (party[i] != nullptr)
+			for (int i = 0; i < 3; i++)
 			{
-				if (sametype != 0)
+				if (party[i] != nullptr)
 				{
-					party[i]->resonance(sametype);
+					if (sametype != 0)
+					{
+						party[i]->resonance(sametype);
+					}
+					partysize++;
+					party[i]->resetstats(5);
 				}
-				partysize++;
-				party[i]->resetstats(5);
 			}
-		}
-		aliveC = 0; aliveE = 0;
-		//gets alive companions and alive enemies
-		for (int i = 0; i < 3; i++) {
-			if (party[i]->getcurrentHealth() > 0) {
-				aliveC++;
-			}
-			else {
-				party[i]->setcurrentHealth(0);
-			}
-			if (eptr[i] != nullptr) {
-				if (eptr[i]->getcurrentHealth() > 0) {
-					aliveE++;
+			aliveC = 0; aliveE = 0;
+			//gets alive companions and alive enemies
+			for (int i = 0; i < 3; i++) {
+				if (party[i]->getcurrentHealth() > 0) {
+					aliveC++;
 				}
 				else {
-					eptr[i]->setcurrentHealth(0);
+					party[i]->setcurrentHealth(0);
+				}
+				if (eptr[i] != nullptr) {
+					if (eptr[i]->getcurrentHealth() > 0) {
+						aliveE++;
+					}
+					else {
+						eptr[i]->setcurrentHealth(0);
+					}
 				}
 			}
-		}
-		if (aliveC == 0) {
-			result = 2;//lose
-		}
-		else if (aliveE == 0) {
-			result = 1;//win
-		}
-		if (result == 0)//result will become 1 or 2 when the battle ends
-		{
-			//companion move
-			if (Cturn < 3)//friendly attack
+			if (aliveC == 0) {
+				result = 2;//lose
+			}
+			else if (aliveE == 0) {
+				result = 1;//win
+			}
+			if (result == 0)//result will become 1 or 2 when the battle ends
 			{
-				if (party[Cturn]->getcurrentHealth() < 1) {
-					Cmove[Cturn] = NULL;
-					Ctarget[Cturn] = NULL;
-					Cturn++;
-				}
-				//user chooses move
-				if (party[Cturn]->getcurrentHealth() > 0 && moveChosen == false)
+				//companion move
+				if (Cturn < 3)//friendly attack
 				{
-					targetChosen = true;
-					getInput();//choose move
-					if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
-						choice--;
+					if (party[Cturn]->getcurrentHealth() < 1) {
+						Cmove[Cturn] = NULL;
+						Ctarget[Cturn] = NULL;
+						Cturn++;
 					}
-					if (g_skKeyEvent[K_DOWN].keyReleased && choice != 3) {
-						choice++;
-					}
-					if (g_skKeyEvent[K_ENTER].keyReleased) {
-						Cmove[Cturn] = choice;
-						choice = 1;
-						moveChosen = true;
-						targetChosen = false;
-						if (Cmove[Cturn] == 3) {
-							if (party[Cturn]->getskillcd() == 0)
-							{
-								int skillused = party[Cturn]->skill();//triggers buff but returns 1 if choice 3rd move is debuff
-								if (skillused == 1) {//fulfill target condition
-									moveChosen = true;
-									targetChosen = false;
-								}
-								else {
-									moveChosen = false;//so that after buff, user can pick atk or defend
-									targetChosen = true;
-								}
-							}
-							party[Cturn]->setskillcd(4);
+					//user chooses move
+					if (party[Cturn]->getcurrentHealth() > 0 && moveChosen == false)
+					{
+						targetChosen = true;
+						getInput();//choose move
+						if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
+							choice--;
 						}
-						if (Cmove[Cturn] == 2) {
-							moveChosen = false;
-							targetChosen = true;
-							party[Cturn]->block();
-							Ctarget[Cturn] = NULL;
-							Cturn++;
+						if (g_skKeyEvent[K_DOWN].keyReleased && choice != 3) {
+							choice++;
 						}
-					}
-				}
-
-				//user chooses target
-				if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false)
-				{
-					getInput();//choose move
-					if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
-						choice--;
-					}
-					if (g_skKeyEvent[K_DOWN].keyReleased && choice != 3) {
-						choice++;
-					}
-					if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice - 1] != nullptr && eptr[choice - 1]->getcurrentHealth() > 0) {
-						if (Cmove[Cturn] == 3) {
-							eptr[choice]->setcurrentDamage(eptr[choice]->getcurrentDamage() * 0.85);
-							eptr[choice]->setcurrentResistance(eptr[choice]->getcurrentResistance() * 0.85);
-							eptr[choice]->setcurrentSpeed(eptr[choice]->getcurrentSpeed() * 0.85);
-							moveChosen = false;
-							targetChosen = true;
+						if (g_skKeyEvent[K_ENTER].keyReleased) {
+							Cmove[Cturn] = choice;
 							choice = 1;
+							moveChosen = true;
+							targetChosen = false;
+							if (Cmove[Cturn] == 3) {
+								if (party[Cturn]->getskillcd() == 0)
+								{
+									int skillused = party[Cturn]->skill();//triggers buff but returns 1 if choice 3rd move is debuff
+									if (skillused == 1) {//fulfill target condition
+										moveChosen = true;
+										targetChosen = false;
+									}
+									else {
+										moveChosen = false;//so that after buff, user can pick atk or defend
+										targetChosen = true;
+									}
+								}
+								party[Cturn]->setskillcd(4);
+							}
+							if (Cmove[Cturn] == 2) {
+								moveChosen = false;
+								targetChosen = true;
+								party[Cturn]->block();
+								Ctarget[Cturn] = NULL;
+								Cturn++;
+							}
 						}
-						else {//attack()
-							Ctarget[Cturn] = choice- 1;
-							dmg = party[Cturn]->getcurrentDamage();
-							eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
+					}
 
+					//user chooses target
+					if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false)
+					{
+						getInput();//choose move
+						if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
+							choice--;
+						}
+						if (g_skKeyEvent[K_DOWN].keyReleased && choice != 3) {
+							choice++;
+						}
+						if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice - 1] != nullptr && eptr[choice - 1]->getcurrentHealth() > 0) {
+							if (Cmove[Cturn] == 3) {
+								eptr[choice]->setcurrentDamage(eptr[choice]->getcurrentDamage() * 0.85);
+								eptr[choice]->setcurrentResistance(eptr[choice]->getcurrentResistance() * 0.85);
+								moveChosen = false;
+								targetChosen = true;
+								choice = 1;
+							}
+							else {//attack()
+								Ctarget[Cturn] = choice - 1;
+								dmg = party[Cturn]->getcurrentDamage();
+								eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
+
+								moveChosen = true;
+								targetChosen = true;
+								choice = 1;
+							}
+						}
+					}
+					//move takes effect
+					if (Cturn < 3) {
+						if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
+							switch (Cmove[Cturn]) {
+							case 1:
+								party[Cturn]->setatktarget(Ctarget[Cturn]);
+								moveChosen = false;
+								targetChosen = true;
+								friendlyAtks++;
+								Cturn++;
+								break;
+							}
+
+						}
+						if (friendlyAtks == 3) {
 							moveChosen = true;
 							targetChosen = true;
 							choice = 1;
-						}
-					}
-				}
-				//move takes effect
-				if (Cturn < 3) {
-					if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
-						switch (Cmove[Cturn]) {
-						case 1:
-							party[Cturn]->setatktarget(Ctarget[Cturn]);
-							moveChosen = false;
-							targetChosen = true;
-							friendlyAtks++;
-							Cturn++;
-							break;
-						}
-
-					}
-					if (friendlyAtks == 3) {
-						moveChosen = true;
-						targetChosen = true;
-					}
-				}
-			}			
-			//enemy moves
-			if (Eturn < 3 && Cturn == 3) {
-				//for null or dead enemies
-				if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
-					Emove[Cturn] = NULL;
-					Etarget[Cturn] = NULL;
-					Eturn++;
-				}
-				if ((eptr[Eturn] != nullptr) && (result == 0))
-				{
-					if (eptr[Eturn]->getcurrentHealth() > 0)
-					{
-						//for minions
-						if (Eturn > 0) {
-							Emove[Eturn] = rand() % 2;
-							if (Emove[Eturn] == 2) {
-								eptr[Eturn]->block();
-								Etarget[Eturn] = NULL;
-								Eturn++;
-							}
-							else if (Emove[Eturn] == 3) {
-								if (eptr[Eturn]->getskillcd() == 0) {
-									int skillused = rand() % 4 + 1;
-									eptr[Eturn]->skill(skillused);
-									eptr[Eturn]->setskillcd(4);
+							for (int i = 0; i < 3; i++) {
+								if (eptr[i] != nullptr) {
+									eptr[i]->resetstats(1);
+									eptr[i]->resetstats(2);
+									eptr[i]->resetstats(3);
 								}
 							}
-							else if (Emove[Eturn] == 1) {
-								dmg = eptr[Eturn]->getcurrentDamage();
-								party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
-								Eturn++;
-							}
 						}
-						//for bosses
-						if (Eturn == 0) {
-							do {
-								Etarget[0] = rand() % 2;
-							} while (party[Etarget[0]] != nullptr && party[Etarget[0]]->getcurrentHealth() < 1);
-							Emove[0] = rand() % 3 + 1;
-							switch (Emove[0])
-							{
-							case 1://attack
-								eptr[Eturn]->setatktarget(Etarget[0]);
-								Eturn++;
-								break;
-							case 2://defend
-								eptr[Eturn]->block();
-								Eturn++;
-								break;
-							case 3:
-								if (eptr[Eturn]->getskillcd() == 0)
+					}
+				}
+				//enemy moves
+				if (Eturn < 3 && Cturn == 3) {
+					//for null or dead enemies
+					if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
+						Emove[Cturn] = NULL;
+						Etarget[Cturn] = NULL;
+						Eturn++;
+					}
+					if ((eptr[Eturn] != nullptr) && (result == 0))
+					{
+						if (eptr[Eturn]->getcurrentHealth() > 0)
+						{
+							//for minions
+							if (Eturn > 0) {
+								Emove[Eturn] = rand() % 2;
+								if (Emove[Eturn] == 2) {
+									eptr[Eturn]->block();
+									Etarget[Eturn] = NULL;
+								}
+								else if (Emove[Eturn] == 3) {
+									if (eptr[Eturn]->getskillcd() == 0) {
+										int skillused = rand() % 4 + 1;
+										eptr[Eturn]->skill(skillused);
+										eptr[Eturn]->setskillcd(4);
+									}
+								}
+								else if (Emove[Eturn] == 1) {
+									dmg = eptr[Eturn]->getcurrentDamage();
+									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
+								}
+							}
+							//for bosses
+							if (Eturn == 0) {
+								do {
+									Etarget[0] = rand() % 2;
+								} while (party[Etarget[0]] != nullptr && party[Etarget[0]]->getcurrentHealth() < 1);
+								Emove[0] = rand() % 3 + 1;
+								switch (Emove[0])
 								{
-									int whichskill;
-									int skillused;
-									if (eptr[Eturn]->getname() == "Steak")
-										whichskill = rand() % 5 + 1;
-									else
-										whichskill = rand() % 4 + 1;
-									skillused = eptr[Eturn]->skill(whichskill);
-									switch (skillused)
+								case 1://attack
+									dmg = eptr[Eturn]->getcurrentDamage();
+									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
+									break;
+								case 2://defend
+									eptr[Eturn]->block();
+									break;
+								case 3:
+									if (eptr[Eturn]->getskillcd() == 0)
 									{
-									case 1:
-										std::cout << eptr[Eturn]->getname() << " used " << eptr[Eturn]->getMoveName(1) << std::endl;
-										for (int l = 0; l < 3; l++)
+										int whichskill;
+										int skillused;
+										if (eptr[Eturn]->getname() == "Steak")
+											whichskill = rand() % 5 + 1;
+										else
+											whichskill = rand() % 4 + 1;
+										skillused = eptr[Eturn]->skill(whichskill);
+										switch (skillused)
 										{
-											if (party[l] != nullptr)
+										case 1:
+											std::cout << eptr[Eturn]->getname() << " used " << eptr[Eturn]->getMoveName(1) << std::endl;
+											for (int l = 0; l < 3; l++)
 											{
-												if (party[l]->getcurrentHealth() > 0)
+												if (party[l] != nullptr)
 												{
-													dmg = eptr[Eturn]->attack(party[l]->getcurrentResistance());
-													party[l]->takedmg(dmg);
-													if (party[l]->getcurrentHealth() < 1)
+													if (party[l]->getcurrentHealth() > 0)
 													{
-														deadcompanion++;
-														party[l]->setcurrentHealth(-1);
+														dmg = eptr[Eturn]->attack(party[l]->getcurrentResistance());
+														party[l]->takedmg(dmg);
+														if (party[l]->getcurrentHealth() < 1)
+														{
+															deadcompanion++;
+															party[l]->setcurrentHealth(-1);
+														}
 													}
 												}
 											}
-										}
-										if (deadcompanion == partysize)
-										{
-											result = 2;//lose
-										}
-										break;
-									case 2:
-										dmg = eptr[Eturn]->attack(party[Etarget[0]]->getcurrentResistance());
-										party[Etarget[0]]->takedmg(dmg);
-										if (party[Etarget[0]]->getcurrentHealth() < 0)
-										{
-											deadcompanion++;
-											party[Etarget[0]]->setcurrentHealth(0);
-										}
-										if (deadcompanion == partysize)
-										{
-											result = 2;
-										}
-										break;
-									case 3:
-										party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.3);
-										break;
-									case 4:
-										for (int l = 0; l < 3; l++)
-										{
-											if (party[l] != 0)
+											if (deadcompanion == partysize)
 											{
-												int statdecrease = rand() % 2 + 1;
-												if (statdecrease == 1)
-													party[Etarget[0]]->setcurrentDamage(party[Etarget[0]]->getcurrentDamage() * 0.8);
-												if (statdecrease == 2)
-													party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.8);
+												result = 2;//lose
 											}
+											break;
+										case 2:
+											dmg = eptr[Eturn]->attack(party[Etarget[0]]->getcurrentResistance());
+											party[Etarget[0]]->takedmg(dmg);
+											if (party[Etarget[0]]->getcurrentHealth() < 0)
+											{
+												deadcompanion++;
+												party[Etarget[0]]->setcurrentHealth(0);
+											}
+											if (deadcompanion == partysize)
+											{
+												result = 2;
+											}
+											break;
+										case 3:
+											party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.3);
+											break;
+										case 4:
+											for (int l = 0; l < 3; l++)
+											{
+												if (party[l] != 0)
+												{
+													int statdecrease = rand() % 2 + 1;
+													if (statdecrease == 1)
+														party[Etarget[0]]->setcurrentDamage(party[Etarget[0]]->getcurrentDamage() * 0.8);
+													if (statdecrease == 2)
+														party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.8);
+												}
+											}
+											break;
+										case 5:
+											party[Etarget[0]]->setcurrentDamage(cptr[Etarget[0]]->getcurrentDamage() * 0.3);
+											break;
+										case 0:
+											break;
 										}
-										break;
-									case 5:
-										party[Etarget[0]]->setcurrentDamage(cptr[Etarget[0]]->getcurrentDamage() * 0.3);
-										break;
-									case 0:
-										break;
 									}
+									eptr[Eturn]->setskillcd(4);
 								}
-								eptr[Eturn]->setskillcd(4);
 							}
 						}
 					}
-				}
+					getInput();
+					if (g_skKeyEvent[K_ENTER].keyReleased) {
+						Eturn++;
+					}
 
-			}
-		}
-		for (int i = 0; i < 3; i++)
-		{
-			if (party[i] != nullptr)
-			{
-				for (int l = 1; l < 5; l++)
-					party[i]->resetstats(l);
-			}
-			if (eptr[i] != nullptr)
-			{
-				for (int l = 1; l < 5; l++)
-					eptr[i]->resetstats(l);
-			}
-		}
-		if (friendlyAtks == 3 && enemyAtks == 3)
-		{
-			choice = 1;
-			friendlyAtks = 0; enemyAtks = 0;
-			Cturn = 0;
-			Eturn = 0;
-			moveChosen = false;
-			targetChosen = true;
-		}
-		if (result == 2)
-		{
-			for (int i = 0; i < 3; i++)
-			{
-				if (sametype != 0)
-				{
-					if (party[i] != nullptr)
-					{
-						party[i]->removeresonace(sametype);
-						party[i]->resetstats(5);
-					}
 				}
 			}
-			std::cout << "You lost!" << std::endl;
-			std::cout << "Tip: Upgrade your companions" << std::endl;
-			std::cout << "" << std::endl;
-			return p;
-		}
-		if (result == 1)
-		{
 			for (int i = 0; i < 3; i++)
 			{
-				if (sametype != 0)
+				if (party[i] != nullptr)
 				{
-					if (party[i] != nullptr)
-					{
-						party[i]->removeresonace(sametype);
-						party[i]->resetstats(5);
-					}
+					for (int l = 1; l < 5; l++)
+						party[i]->resetstats(l);
 				}
 			}
-			g_eGameState = S_BATTLEN;
-			std::cout << "You won!" << std::endl;
-			int exp = (bossno * 50 + minionno * 25) * difficulty;
-			int coins = (bossno * 500 + minionno * 250) * difficulty;
-			p.stagecleared(coins, exp);
-			p.checklevelup();
-			if (p.getplayerinfo(5) + 1 == stagepicked)
-				p.clearednewstage();
-			return p;
+			if (friendlyAtks == 3 && enemyAtks == 3)
+			{
+				for (int i = 0; i < 3; i++) {
+					if (party[i]->getcurrentHealth() > 1 && party[i]->getskillcd() > 0){
+						party[i]->setskillcd(party[i]->getskillcd() - 1);
+					}
+					if (eptr[i] != nullptr) {
+						if (eptr[i]->getcurrentHealth() > 1 && eptr[i]->getskillcd() > 0) {
+							eptr[i]->setskillcd(party[i]->getskillcd() - 1);
+						}
+					}
+				}
+				choice = 1;
+				friendlyAtks = 0; enemyAtks = 0;
+				Cturn = 0;
+				Eturn = 0;
+				moveChosen = false;
+				targetChosen = true;
+			}
+			if (result == 2)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					if (sametype != 0)
+					{
+						if (party[i] != nullptr)
+						{
+							party[i]->removeresonace(sametype);
+							party[i]->resetstats(5);
+						}
+					}
+				}
+				g_Console.writeToBuffer(81, 4, "YOU LOST", 91);
+				g_Console.writeToBuffer(77, 5, "press Enter to go back to menu", 91);
+				getInput();
+				if (g_skKeyEvent[K_ENTER].keyReleased) {
+					g_eGameState = S_MENU;
+					choice = 1;
+				}			
+				return p;
+			}
+			if (result == 1)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					if (sametype != 0)
+					{
+						if (party[i] != nullptr)
+						{
+							party[i]->removeresonace(sametype);
+							party[i]->resetstats(5);
+						}
+					}
+				}
+				if (g_skKeyEvent[K_ENTER].keyReleased) {
+					g_eGameState = S_BATTLEN;
+					int exp = (bossno * 50 + minionno * 25) * difficulty;
+					int coins = (bossno * 500 + minionno * 250) * difficulty;
+					p.stagecleared(coins, exp);
+					p.checklevelup();
+					return p;
+				}
+				if (p.getplayerinfo(5) + 1 == stagepicked)
+					p.clearednewstage();
+				return p;
+			}
 		}
 		return p;
 	}
@@ -1117,21 +1165,6 @@ int menu()
 				Emove[i] = 0;
 				Etarget[i] = 0;
 				party[i]->setcurrentHealth(party[i]->getHealth());
-			}
-			switch (stageP)
-			{
-			case 1://stage 1
-				eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
-				break;
-			case 2://stage 2
-				eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
-				break;
-			case 3://stage 3
-				eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
-				break;
-			case 4://stage 4
-				eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
-				break;
 			}
 			Cturn = 0, Eturn = 0;
 			friendlyAtks = 0, enemyAtks = 0;//counts the number of time the player and enemy has attacked, reset upon reaching alive entities of respective sides
