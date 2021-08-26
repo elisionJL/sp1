@@ -19,11 +19,9 @@ Companion::Companion(int companionsID, std::string x)
 	setHealth((rand() % 50) + 50.0);
 	setDamage((rand() % 15) + 15.0);
 	setResistance((rand() % 15) + 15.0);
-	setSpeed((rand() % 20) + 20.0);
 	setcurrentHealth(getHealth());
 	setcurrentDamage(getDamage());
 	setcurrentResistance(getResistance());
-	setcurrentSpeed(getSpeed());
 	MovePower = 0;
 	setname(x);
 	upgradecost = 200;
@@ -72,7 +70,7 @@ string Companion::getMoveName(int MoveNo)
 		switch (buff())
 		{
 		case 1:
-			return "Minor buff to Defence and Attack";
+			return "Slight stat buff";
 		case 2:
 			return "Debuff";
 		case 3:
