@@ -63,11 +63,10 @@ float summonC = 1500;
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
+bool nextstoryline;
+bool gottobattle;
 // Console object
 Console g_Console(175, 35, "SP1 Framework");
-void story() {
-
-}
 void init(void)
 {
 	// Set precision for floating point output
@@ -114,15 +113,18 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {
 	switch (g_eGameState)
 	{
+	case S_BATTLEN:
+		gameplayKBHandler(keyboardEvent);
 	case S_BATTLE:
 		gameplayKBHandler(keyboardEvent);
 		break;
 	case S_MENU:                         // get keyboard input
 		gameplayKBHandler(keyboardEvent);
 		break;
+	case S_BEFOREBATTLEN:
+		gameplayKBHandler(keyboardEvent);
 	}
 }
-
 
 void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {
@@ -146,11 +148,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
 	}
 }
 
-
-
 void update(double dt);
-
-
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
@@ -202,59 +200,94 @@ void storyafter(int stageP)
 
 void storypart2(int Stage)
 {
-	getInput();
-	if (g_skKeyEvent[K_ENTER].keyReleased)
+	switch (Stage)
 	{
-		switch (Stage)
-		{
-		case 1:
-			renderstorylinestage1act1part2(20, 13);
-			g_Console.flushBufferToConsole();
-			break;
-		case 2:
-			renderstorylinestage2act1part2(20, 13);
-			g_Console.flushBufferToConsole();
-			break;
-		case 3:
-			renderstorylinestage3act1part2(20, 13);
-			g_Console.flushBufferToConsole();
-			break;
-		case 4:
-			renderstorylinestage4act1part2(20, 13);
-			g_Console.flushBufferToConsole();
-			break;
-		default:
-			renderstorylinestage1act1part2(20, 13);
-			break;
-		}
+	case 1:
+		renderstorylinestage1act1part2(20, 10);
+		break;
+	case 2:
+		renderstorylinestage2act1part2(20, 10);
+		break;
+	case 3:
+		renderstorylinestage3act1part2(20, 10);
+		break;
+	case 4:
+		renderstorylinestage4act1part2(20, 10);
+		break;
+	default:
+		renderstorylinestage1act1part2(20, 10);
+		break;
 	}
 }
 
 void Renderstory(int stagepicked) {
+	for (int i =5;i<40;i++)
+	{
+		g_Console.writeToBuffer(5, i, "#", 91);
+		g_Console.writeToBuffer(145, i, "#", 91);
+	}
+	for (int i = 5;i < 146;i++)
+	{
+		g_Console.writeToBuffer(i, 5, "#", 91);
+	}
 	switch (stagepicked) {
 	case 1:
-		renderstorylinestage1act1part1(20, 13);
-		g_Console.flushBufferToConsole();
-		storypart2(stagepicked);
+		if (nextstoryline == true)
+		{
+			storypart2(1);
+			gottobattle = true;
+		}
+		else
+		{
+			renderstorylinestage1act1part1(20, 10);
+		}
 		break;
 	case 2:
-		renderstorylinestage2act1part1(20, 13);
-		g_Console.flushBufferToConsole();
-		storypart2(stagepicked);
+		if (nextstoryline == true)
+		{
+			storypart2(2);
+			gottobattle = true;
+		}
+		else
+		{
+			renderstorylinestage2act1part1(20, 10);
+		}
 		break;
 	case 3:
-		renderstorylinestage3act1part1(20, 13);
-		g_Console.flushBufferToConsole();
-		storypart2(stagepicked);
+		if (nextstoryline == true)
+		{
+			storypart2(3);
+			gottobattle = true;
+		}
+		else
+		{
+			renderstorylinestage3act1part1(20, 10);
+		}
 		break;
 	case 4:
-		renderstorylinestage4act1part1(20, 13);
-		g_Console.flushBufferToConsole();
-		storypart2(stagepicked);
+		if (nextstoryline == true)
+		{
+			storypart2(4);
+			gottobattle = true;
+		}
+		else
+		{
+			renderstorylinestage4act1part1(20, 10);
+		}
 		break;
 	default:
-		renderstorylinestage1act1part1(20, 13);
+		renderstorylinestage1act1part1(20,10);
 		break;
+	}
+	getInput();
+	g_Console.writeToBuffer(50, 33, "Press enter to continue", 0x06, 91);
+	if (g_skKeyEvent[K_ENTER].keyReleased)
+	{
+		nextstoryline = true;
+	}
+	if ((g_skKeyEvent[K_ENTER].keyReleased) && (nextstoryline == true) && (gottobattle ==true) )
+	{
+		g_eGameState = S_BATTLE;
 	}
 }
 
@@ -266,9 +299,12 @@ void render()
 	case S_MENU: renderMenuEvents(choice, backloop);
 		break;
 	case S_BATTLEN:
-		Renderstory(stageP);
+		storyafter(stageP);
 		break;
 	case S_BATTLE: RenderBattleEvents(stageP);
+		break;
+	case S_BEFOREBATTLEN:
+		Renderstory(stageP);
 		break;
 	}
 	renderFramerate();      // renders debug information, frame rate, elapsed time, etc   // renders status of input events
@@ -490,13 +526,6 @@ void renderMenuEvents(int choice, int screen) {
 			Qpressed = false;
 		}
 	}
-}
-
-// this is an example of how you would use the input events
-
-void story(int x, int y)
-{
-
 }
 void setparty(Companion* cptr[10], player p, Companion* party[3])
 {
@@ -917,8 +946,8 @@ player battle(int stagepicked)
 							}
 							else {//attack()
 								Ctarget[Cturn] = choice - 1;
-								dmg = party[Cturn]->attack(eptr[Ctarget[Cturn]]->getcurrentResistance());
-								eptr[Ctarget[Cturn]]->takedmg(dmg);
+								dmg = party[Cturn]->getcurrentDamage();
+								eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
 								moveChosen = true;
 								targetChosen = true;
 								choice = 1;
@@ -956,7 +985,7 @@ player battle(int stagepicked)
 				//enemy moves
 				if (Eturn < 3 && Cturn == 3) {
 					//for null or dead enemies
-					if (eptr[Eturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
+					if (party[Cturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
 						Emove[Cturn] = NULL;
 						Etarget[Cturn] = NULL;
 						Eturn++;
@@ -971,7 +1000,6 @@ player battle(int stagepicked)
 								if (Emove[Eturn] == 2) {
 									eptr[Eturn]->block();
 									Etarget[Eturn] = NULL;
-									Eturn++;
 								}
 								else if (Emove[Eturn] == 3) {
 									if (eptr[Eturn]->getskillcd() == 0) {
@@ -981,9 +1009,8 @@ player battle(int stagepicked)
 									}
 								}
 								else if (Emove[Eturn] == 1) {
-									dmg = eptr[Eturn]->attack(party[Etarget[Eturn]]->getcurrentResistance());
-									(party[Etarget[Eturn]]->takedmg(dmg));
-									Eturn++;
+									dmg = eptr[Eturn]->getcurrentDamage();
+									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
 								}
 							}
 							//for bosses
@@ -995,13 +1022,11 @@ player battle(int stagepicked)
 								switch (Emove[0])
 								{
 								case 1://attack
-									dmg = eptr[Eturn]->attack(party[Etarget[Eturn]]->getcurrentResistance());
-									(party[Etarget[Eturn]]->takedmg(dmg));
-									Eturn++;
+									dmg = eptr[Eturn]->getcurrentDamage();
+									party[Etarget[Eturn]]->setcurrentHealth(party[Etarget[Eturn]]->getcurrentHealth() - dmg);
 									break;
 								case 2://defend
 									eptr[Eturn]->block();
-									Eturn++;
 									break;
 								case 3:
 									if (eptr[Eturn]->getskillcd() == 0)
@@ -1050,7 +1075,6 @@ player battle(int stagepicked)
 											{
 												result = 2;
 											}
-											eptr[Eturn]->resetstats(2);
 											break;
 										case 3:
 											party[Etarget[0]]->setcurrentResistance(party[Etarget[0]]->getcurrentResistance() * 0.3);
@@ -1080,6 +1104,11 @@ player battle(int stagepicked)
 							}
 						}
 					}
+					getInput();
+					if (g_skKeyEvent[K_ENTER].keyReleased) {
+						Eturn++;
+					}
+
 				}
 			}
 			if (friendlyAtks == 3 && enemyAtks == 3)
@@ -1245,7 +1274,9 @@ int menu()
 			aliveC = 3, aliveE = 0;
 			moveChosen = false, targetChosen = true;
 			battleStart = true;
-			g_eGameState = S_BATTLE;
+			g_eGameState = S_BEFOREBATTLEN;
+			nextstoryline = false;
+			gottobattle = false;
 			choice = 1;
 		}
 		break;
@@ -1317,6 +1348,9 @@ void update(double dt)
 	case S_MENU:
 		menu();
 		break;
+	case S_BEFOREBATTLEN:
+		Renderstory(stageP);
+		break;
 	}
 }
 
@@ -1325,28 +1359,32 @@ void update(double dt)
 void renderstorylinetutorialact1(int X, int Y)
 {
 	g_Console.writeToBuffer(X, Y, "ORANGE:", 0x02, 8);
-	g_Console.writeToBuffer(X, Y + 1, "Eh!? You want to turn into juice!? Why? Is staying in this mansion as a decorative fruit not better? You won't be consumed by humans here.", 0x02, 139);
+	g_Console.writeToBuffer(X, Y + 1, "Eh!? You want to turn into juice!? Why? Is staying in this mansion as a decorative fruit not better?", 0x02, 101);
+	g_Console.writeToBuffer(X, Y + 2, "You won't be consumed by humans here.", 0x02, 38);
 	g_Console.writeToBuffer(X, Y + 3, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(X, Y + 4, "But I want to be consumed by humans! I'm a fruit, not some painting. What point is there in being a fruit if your purpose is just to be a decoration until you rot?", 0x03, 164);
+	g_Console.writeToBuffer(X, Y + 4, "But I want to be consumed by humans! I'm a fruit, not some painting.", 0x03, 69);
+	g_Console.writeToBuffer(X, Y + 5, "What point is there in being a fruit if your purpose is just to be a decoration until you rot ?", 0x03, 96);
 	g_Console.writeToBuffer(X, Y + 6, "ORANGE:", 0x02, 8);
 	g_Console.writeToBuffer(X, Y + 7, "Y-you make a point. Are you sure this is what you want?", 0x02, 56);
 	g_Console.writeToBuffer(X, Y + 8, "Then, as your only friend, I'll help you achieve your goal. You have always been alone so you probably won't survive alone. ", 0x02, 190);
-	g_Console.writeToBuffer(X, Y + 9, " As long as you have enough coins, you can summon new friends. I'll provide the coins to you this time. But, it looks like someone already wants to join you.", 0x02, 158);
-	g_Console.writeToBuffer(X, Y + 10, "Cheese comes out from behind Orange.", 0x05);
-	g_Console.writeToBuffer(X, Y + 11, "ORANGE:", 0x02, 8);
-	g_Console.writeToBuffer(X, Y + 12, "This is Cheese. He will be 1 of the many companions who will help you on your journey", 0x02, 84);
-	g_Console.writeToBuffer(X, Y + 13, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(X, Y + 14, "Hi, I'm (player fruit). Thank you for joining me on my journey.", 0x03, 64);
-	g_Console.writeToBuffer(X, Y + 15, "Cheese nods in reply.", 0x05, 20);
+	g_Console.writeToBuffer(X, Y + 9, " As long as you have enough coins, you can summon new friends. I'll provide the coins to you this time.", 0x02, 104);
+	g_Console.writeToBuffer(X, Y + 10, " But, it looks like someone already wants to join you.", 0x02, 55);
+	g_Console.writeToBuffer(X, Y + 11, "Cheese comes out from behind Orange.", 0x05);
+	g_Console.writeToBuffer(X, Y + 12, "ORANGE:", 0x02, 8);
+	g_Console.writeToBuffer(X, Y + 13, "This is Cheese. He will be 1 of the many companions who will help you on your journey", 0x02, 84);
+	g_Console.writeToBuffer(X, Y + 14, "PLAYER:", 0x03, 8);
+	g_Console.writeToBuffer(X, Y + 15, "Hi, nice to meet you. Thank you for joining me on my journey.", 0x03, 62);
+	g_Console.writeToBuffer(X, Y + 16, "Cheese nods in reply.", 0x05, 20);
 }
 
 void renderstorylinetutorialact2(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "ORANGE:", 0x02, 8);
-	g_Console.writeToBuffer(x, y + 1, "Well,would you look at that. You've already made a new friend,(player's fruit). Now I'll teach you why friends are important. Since you want to turn into juice, you must make sure to not damage your body.", 0x02, 205);
-	g_Console.writeToBuffer(x, y + 2, "Therefore, friends are here to protect you and ensure your safety. However, you will have to lead them properly. I’m sure you'll be able to handle it yourself. Besides, you probably can’t contain your excitement to leave right now.", 0x02, 232);
-	g_Console.writeToBuffer(x, y + 3, "ORANGE:", 0x02, 8);
-	g_Console.writeToBuffer(x, y + 4, "Then, it's time for you to begin your journey. I'm afraid this will be the last time we are together.Good luck out there (player's fruit). I'll miss you.", 0x02, 200);
+	g_Console.writeToBuffer(x, y + 1, "Well,would you look at that. You've already made a new friend. Now I'll teach you why friends are important. Since you want to turn into juice, you must make sure to not damage your body.", 0x02, 205);
+	g_Console.writeToBuffer(x, y + 2, "Therefore, friends are here to protect you and ensure your safety. However, you will have to lead them properly.", 0x02, 113);
+	g_Console.writeToBuffer(x, y + 3, "I'm sure you'll be able to handle it yourself. Besides, you probably canâ€™t contain your excitement to leave right now.", 0x02, 119);
+	g_Console.writeToBuffer(x, y + 4, "Then, it's time for you to begin your journey. I'm afraid this will be the last time we are together.", 0x02, 102);
+	g_Console.writeToBuffer(x, y + 5, "Good luck out there. I'll miss you.", 0x02, 36);
 	g_Console.writeToBuffer(x, y + 5, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 6, "Likewise, BYE ORANGE!", 0x03, 22);
 	g_Console.writeToBuffer(x, y + 7, "With his new companion, he bolted out of the mansion.", 0x06, 54);
@@ -1369,7 +1407,7 @@ void renderstorylinestage1act1part1(int x, int y)
 	g_Console.writeToBuffer(x, y + 12, "SPINACH:", 0x08, 9);
 	g_Console.writeToBuffer(x, y + 13, "Hello there. I don't recognise you guys. Are you guys new around here?", 0x08, 71);
 	g_Console.writeToBuffer(x, y + 14, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 15, "Hi. Yes, we’re not from around here.", 0x03, 37);
+	g_Console.writeToBuffer(x, y + 15, "Hi. Yes, we're not from around here.", 0x03, 37);
 	g_Console.writeToBuffer(x, y + 16, "SPINACH:", 0x08, 9);
 	g_Console.writeToBuffer(x, y + 17, "Then,why are you here?", 0x08, 23);
 }
@@ -1379,45 +1417,50 @@ void renderstorylinestage1act1part2(int x, int y)
 	g_Console.writeToBuffer(x, y, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 1, "I'm trying to turn into juice for the humans.", 0x03, 46);
 	g_Console.writeToBuffer(x, y + 2, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 3, "What a coincidence. I am trying to turn into juice for humans too. I feel so excited just thinking about how young humans would throw up after their parents feed me to them.", 0x08, 174);
-	g_Console.writeToBuffer(x, y + 4, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 5, "Wait, so you are trying to turn into juice to make humans suffer?", 0x03, 66);
-	g_Console.writeToBuffer(x, y + 6, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 7, "Are you not?", 0x08, 13);
-	g_Console.writeToBuffer(x, y + 8, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 9, "No! I want to make humans happy after they consume me. Isn’t that our purpose? To help humanity?", 0x03, 97);
-	g_Console.writeToBuffer(x, y + 10, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 11, "That’s what I thought too. However, the world is harsh and cruel.", 0x08, 66);
-	g_Console.writeToBuffer(x, y + 12, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 13, "What do you mean?", 0x03, 18);
-	g_Console.writeToBuffer(x, y + 14, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 15, "Nevermind. Your goal is different from mine so I won’t let you pass.", 0x08, 69);
-	g_Console.writeToBuffer(x, y + 16, "Cheese takes a defensive stance in front of (player's fruit)", 0x05, 59);
+	g_Console.writeToBuffer(x, y + 3, "What a coincidence. I am trying to turn into juice for humans too.", 0x08, 67);
+	g_Console.writeToBuffer(x, y + 4, "I feel so excited just thinking about how young humans would throw up after their parents feed me to them.", 0x08, 107);
+	g_Console.writeToBuffer(x, y + 5, "PLAYER:", 0x03, 8);
+	g_Console.writeToBuffer(x, y + 6, "Wait, so you are trying to turn into juice to make humans suffer?", 0x03, 66);
+	g_Console.writeToBuffer(x, y + 7, "SPINACH:", 0x08, 9);
+	g_Console.writeToBuffer(x, y + 8, "Are you not?", 0x08, 13);
+	g_Console.writeToBuffer(x, y + 9, "PLAYER:", 0x03, 8);
+	g_Console.writeToBuffer(x, y + 10, "No! I want to make humans happy after they consume me. Isnâ€™t that our purpose? To help humanity?", 0x03, 97);
+	g_Console.writeToBuffer(x, y + 11, "SPINACH:", 0x08, 9);
+	g_Console.writeToBuffer(x, y + 12, "Thatâ€™s what I thought too. However, the world is harsh and cruel.", 0x08, 66);
+	g_Console.writeToBuffer(x, y + 13, "PLAYER:", 0x03, 8);
+	g_Console.writeToBuffer(x, y + 14, "What do you mean?", 0x03, 18);
+	g_Console.writeToBuffer(x, y + 15, "SPINACH:", 0x08, 9);
+	g_Console.writeToBuffer(x, y + 16, "Nevermind. Your goal is different from mine so I wonâ€™t let you pass.", 0x08, 69);
+	g_Console.writeToBuffer(x, y + 17, "Cheese takes a defensive stance in front of you.", 0x05, 59);
 }
 
 void renderstorylinestage1act2(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 1, "I don't believe it. How could I have lost? The world really is terrible isn’t it.", 0x08, 82);
+	g_Console.writeToBuffer(x, y + 1, "I don't believe it. How could I have lost? The world really is terrible isn't it.", 0x08, 82);
 	g_Console.writeToBuffer(x, y + 2, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 3, "Why do you keep calling the world cruel?", 0x03, 41);
 	g_Console.writeToBuffer(x, y + 4, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 5, "When I was young, I was like you. I wanted to be useful to humans, as they were the ones who gave us life. So when I was brought to this supermarket, I was very happy. I believed I could finally be useful to humans. However, no one ever bought me. Eventually, I turned bad and was thrown away. Ever since then, I had always hated humans. Thus, I tried many times to get back into the supermarket. Each time, I was always thrown out right away. And here I a---", 0x08, 460);
-	g_Console.writeToBuffer(x, y + 8, "--SPLAT--", 0x06, 10);
-	g_Console.writeToBuffer(x, y + 9, "Before Spinach could even finish speaking, a car parked on where Spinach was, squashing him.", 0x06, 93);
-	g_Console.writeToBuffer(x, y + 10, "SPINACH:", 0x08, 9);
-	g_Console.writeToBuffer(x, y + 11, "I TOLD YOU!!! THE WORLD IS CRUEL!!! I may be flat so it won't kill me, but it still hurts!", 0x08, 91);
-	g_Console.writeToBuffer(x, y + 12, "While Spinach was stuck under the car, Cheese and you rushed into the supermarket.", 0x06, 81);
+	g_Console.writeToBuffer(x, y + 5, "When I was young, I was like you. I wanted to be useful to humans, as they were the ones who gave us life.", 0x08, 107);
+	g_Console.writeToBuffer(x, y + 6, "So when I was brought to this supermarket, I was very happy.", 0x08, 61);
+	g_Console.writeToBuffer(x, y + 7, "I believed I could finally be useful to humans. However, no one ever bought me.", 0x08, 80);
+	g_Console.writeToBuffer(x, y + 8, "Eventually, I turned bad and was thrown away. Ever since then, I had always hated humans.", 0x08, 90);
+	g_Console.writeToBuffer(x, y + 9, "Thus, I tried many times to get back into the supermarket. Each time, I was always thrown out right away. And here I a---", 0x08, 122);
+	g_Console.writeToBuffer(x, y + 10, "--SPLAT--", 0x06, 10);
+	g_Console.writeToBuffer(x, y + 11, "Before Spinach could even finish speaking, a car parked on where Spinach was, squashing him.", 0x06, 93);
+	g_Console.writeToBuffer(x, y + 12, "SPINACH:", 0x08, 9);
+	g_Console.writeToBuffer(x, y + 13, "I TOLD YOU!!! THE WORLD IS CRUEL!!! I may be flat so it won't kill me, but it still hurts!", 0x08, 91);
+	g_Console.writeToBuffer(x, y + 14, "While Spinach was stuck under the car, Cheese and you rushed into the supermarket.", 0x06, 81);
 }
 
 void renderstorylinestage2act1part1(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 1, "Look there!", 0x03, 12);
-	g_Console.writeToBuffer(x, y + 2, "He looks at a group of (player’s fruit) on sale.", 0x06, 49);
+	g_Console.writeToBuffer(x, y + 2, "He looks at a group of fruits on sale.", 0x06, 39);
 	g_Console.writeToBuffer(x, y + 3, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 4, "Great, I’ll blend in on top and someone will hopefully buy me soon.", 0x03, 68);
-	g_Console.writeToBuffer(x, y + 5, "For now, take a break, friends. I will call when I need you once again.", 0x03, 72);
+	g_Console.writeToBuffer(x, y + 4, "Great, Iâ€™ll blend in on top and someone will hopefully buy me soon.", 0x03, 68);
+	g_Console.writeToBuffer(x, y + 5, "For now, take a break, my friends. I will call when I need you once again.", 0x03, 75);
 	g_Console.writeToBuffer(x, y + 6, "A few moments later", 0x06, 20);
 	g_Console.writeToBuffer(x, y + 7, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 8, "Why is no one buying me?", 0x03, 25);
@@ -1444,7 +1487,7 @@ void renderstorylinestage2act2(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "EGGPLANT:", 0x07, 10);
 	g_Console.writeToBuffer(x, y + 1, "Simple, our teamwork and willpower was better than yours which allowed us to-- HEY!", 0x07, 84);
-	g_Console.writeToBuffer(x, y + 2, "(the player's fruit) is picked up.", 0x06, 35);
+	g_Console.writeToBuffer(x, y + 2, "You are picked up.", 0x06, 19);
 	g_Console.writeToBuffer(x, y + 3, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 4, "It's happening,I'm being bought by a new owner!", 0x03, 48);
 	g_Console.writeToBuffer(x, y + 5, "EGGPLANT:", 0x07, 10);
@@ -1455,7 +1498,7 @@ void renderstorylinestage2act2(int x, int y)
 
 void renderstorylinestage3act1part1(int x, int y)
 {
-	g_Console.writeToBuffer(x, y, "After (the player's fruit) is put in a bag", 0x06, 43);
+	g_Console.writeToBuffer(x, y, "After you're put in a bag", 0x06, 43);
 	g_Console.writeToBuffer(x, y + 1, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 2, "Yay, I can't believe I will soon have my chance to serve humanity!", 0x03, 67);
 	g_Console.writeToBuffer(x, y + 3, "UNKNOWN:", 0x07, 9);
@@ -1491,9 +1534,9 @@ void renderstorylinestage3act2(int x, int y)
 	g_Console.writeToBuffer(x, y + 2, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 3, "No, I don't see it that way. We are all equals as food.", 0x03, 56);
 	g_Console.writeToBuffer(x, y + 4, "BEET:", 0x07, 6);
-	g_Console.writeToBuffer(x, y + 5, "I see the error of my ways. Thank you, (the player's fruit). I will forever remember th--AHHHH!", 0x07, 96);
+	g_Console.writeToBuffer(x, y + 5, "I see the error of my ways. Thank you. I will forever remember th--AHHHH!", 0x07, 74);
 	g_Console.writeToBuffer(x, y + 6, "Beet was picked up and placed on the chopping board out of earshot.", 0x06, 68);
-	g_Console.writeToBuffer(x, y + 7, "(the player's fruit) was then taken out and placed on the kitchen counter.", 0x06, 75);
+	g_Console.writeToBuffer(x, y + 7, "You were then taken out and placed on the kitchen counter.", 0x06, 59);
 	g_Console.writeToBuffer(x, y + 8, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 9, "Time to find a blender now, I guess.", 0x03, 37);
 }
@@ -1502,11 +1545,11 @@ void renderstorylinestage4act1part1(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 1, "YES! A blender!", 0x03, 16);
-	g_Console.writeToBuffer(x, y + 2, "(the player's fruit) runs towards the blender.", 0x06, 47);
+	g_Console.writeToBuffer(x, y + 2, "You run towards the blender.", 0x06, 29);
 	g_Console.writeToBuffer(x, y + 3, "UNKNOWN:", 0x07, 9);
 	g_Console.writeToBuffer(x, y + 4, "HALT! Who goes there?", 0x07, 22);
 	g_Console.writeToBuffer(x, y + 5, "PLAYER:", 0x03, 8);
-	g_Console.writeToBuffer(x, y + 6, "(player's fruit)", 0x03, 17);
+	g_Console.writeToBuffer(x, y + 6, "A fruit?", 0x03, 9);
 	g_Console.writeToBuffer(x, y + 7, "STEAK:", 0x07, 7);
 	g_Console.writeToBuffer(x, y + 8, "I haven't seen you here before? Did you come with the new groceries?", 0x07, 69);
 	g_Console.writeToBuffer(x, y + 9, "PLAYER:", 0x03, 8);
@@ -1536,7 +1579,8 @@ void renderstorylinestage4act1part2(int x, int y)
 void renderstorylinestage4act2(int x, int y)
 {
 	g_Console.writeToBuffer(x, y, "STEAK:", 0x07, 7);
-	g_Console.writeToBuffer(x, y + 1, "(the player's fruit), you are a worthy contender. You may use the blender as you wish. However, I recommend you to not be so optimistic. The process to turn into juice is not for the faint of heart.", 0x07, 199);
+	g_Console.writeToBuffer(x, y + 1, "You have proven that you are a worthy contender.You may use the blender as you wish.", 0x07, 85);
+	g_Console.writeToBuffer(x, y + 2, "However, I recommend you to not be so optimistic. The process to turn into juice is not for the faint of heart.", 0x07, 112);
 	g_Console.writeToBuffer(x, y + 3, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 4, "I understand, but I have travelled too far to stop now.", 0x03, 56);
 	g_Console.writeToBuffer(x, y + 5, "STEAK:", 0x07, 7);
@@ -1545,14 +1589,14 @@ void renderstorylinestage4act2(int x, int y)
 
 void renderstorylineend(int x, int y)
 {
-	g_Console.writeToBuffer(x, y, "(the player's fruit) stares down at the blender ready to jump in.", 0x06, 66);
+	g_Console.writeToBuffer(x, y, "You stares down at the blender ready to jump in.", 0x06, 49);
 	g_Console.writeToBuffer(x, y + 1, "Steak presses the on button and walks away.", 0x06, 44);
 	g_Console.writeToBuffer(x, y + 2, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 3, "I guess this is it, my friends. You have all helped me in my journey. It is time to bid farewell. ", 0x03, 99);
-	g_Console.writeToBuffer(x, y + 4, "All of (the player's fruit)'s companions go their own ways.", 0x05, 60);
+	g_Console.writeToBuffer(x, y + 4, "All of your companions go their own ways.", 0x05, 42);
 	g_Console.writeToBuffer(x, y + 5, "PLAYER:", 0x03, 8);
 	g_Console.writeToBuffer(x, y + 6, "Now, I shall finally give myself up for the sake of humanity", 0x03, 61);
-	g_Console.writeToBuffer(x, y + 7, "(the players fruit) falls into the blender.", 0x06, 45);
+	g_Console.writeToBuffer(x, y + 7, "You fall into the blender.", 0x06, 27);
 	g_Console.writeToBuffer(x, y + 8, "Silence followed by the crunching and slicing of the blender.", 0x06, 62);
 	g_Console.writeToBuffer(x, y + 9, "The owner comes to the kitchen and sees the freshly made juice.", 0x06, 64);
 	g_Console.writeToBuffer(x, y + 10, "He takes a sip,smiles and leaves the rest on the counter as he walks away.", 0x06, 75);
