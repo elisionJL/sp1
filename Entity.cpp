@@ -88,7 +88,7 @@ void Entity::resetstats(int x)
 	switch (x)
 	{
 	case 1:
-		setatktarget(-1);
+		setatktarget("0");
 		break;
 	case 2:
 		currentDamage = Damage;
@@ -104,7 +104,7 @@ void Entity::resetstats(int x)
 		currentDamage = Damage;
 		currentResistance = Resistance;
 		currentSpeed = Speed;
-		setatktarget(-1);
+		setatktarget("0");
 		setskillcd(0);
 		break;
 	}
@@ -130,12 +130,12 @@ int Entity::skill(int x)
 	return 0;
 }
 
-int Entity::getatktarget()
+std::string Entity::getatktarget()
 {
 	return atktarget;
 }
 
-void Entity::setatktarget(int x)
+void Entity::setatktarget(std::string x)
 {
 	atktarget = x;
 }

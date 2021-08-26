@@ -11,7 +11,7 @@ Minion::Minion(int x,std::string y)
     setcurrentSpeed(getSpeed());
     setname(y);
     setskillcd(0);
-    setatktarget(-1);
+    setatktarget("0");
 }
 Minion::~Minion()
 {

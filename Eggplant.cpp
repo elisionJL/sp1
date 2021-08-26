@@ -13,7 +13,7 @@ Eggplant::Eggplant(int x)
 	setcurrentSpeed(getSpeed());
 	setname("Eggplant");
 	setskillcd(0);
-	setatktarget(-1);
+	setatktarget("0");
 }
 
 string Eggplant::getMoveName(int MoveNo)
@@ -25,7 +25,7 @@ string Eggplant::getMoveName(int MoveNo)
 		return "Rollout, damaging all Companions";
 		//Low damage on all
 	case 2:
-		return "SQUASH, dealing ";
+		return "SQUASH, highly damaging ";
 		//Basic damage ability
 	case 3:
 		return "Nightshade, decreasing Defence of ";

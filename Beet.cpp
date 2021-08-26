@@ -11,7 +11,7 @@ Beet::Beet(int x)
 	setcurrentSpeed(getSpeed());
 	setname("Beet");
 	setskillcd(0);
-	setatktarget(-1);
+	setatktarget("0");
 }
 
 string Beet::getMoveName(int MoveNo)
@@ -22,7 +22,7 @@ string Beet::getMoveName(int MoveNo)
 		return "Beetbox, damaging all Companions";
 		//Low dmg affects all player's party members
 	case 2:
-		return "Can you beet this, dealing ";
+		return "Can you beet this, highly damaging ";
 		//Big dmg
 	case 3:
 		return "Beauty and a beet, sacrificing Speed for Attack";

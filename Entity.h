@@ -14,7 +14,7 @@ private:
 	double currentSpeed;
 	std::string name;
 	int skillcd;
-	int atktarget;
+	std::string atktarget;
 
 public:
 	Entity();
@@ -40,8 +40,8 @@ public:
 	void setname(std::string x);
 	int getskillcd();
 	void setskillcd(int x);
-	int getatktarget();
-	void setatktarget(int x);
+	std::string getatktarget();
+	void setatktarget(std::string x);
 	std::string getname();
 	virtual string getMoveName(int MoveNo) = 0;
 	virtual int skill(int x);

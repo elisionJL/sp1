@@ -31,12 +31,7 @@ Companion::Companion(int companionsID,std::string x)
 	lvl = 1;
 	timespulled = 1;
 	setskillcd(0);
-	setatktarget(-1);
-	bonusDamage = 0;
-	bonushealing = 0;
-	bonusHealth = 0;
-	bonusResistance = 0;
-	bonusSpeed = 0;
+	setatktarget("0");
 }
 
 Companion::~Companion()

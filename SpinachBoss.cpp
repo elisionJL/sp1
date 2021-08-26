@@ -13,7 +13,7 @@ SpinachBoss::SpinachBoss(int x)
 	setcurrentSpeed(getSpeed());
 	setname("Spinach");
 	setskillcd(0);
-	setatktarget(-1);
+	setatktarget("0");
 }
 
 string SpinachBoss::getMoveName(int MoveNo)
@@ -24,7 +24,7 @@ string SpinachBoss::getMoveName(int MoveNo)
 		return " Salty, decreasing Attack of ";
 		//Decrease 1 of player's party member's attack
 	case 2:
-		return "SPIN-ACH, dealing ";
+		return "SPIN-ACH, highly damaging ";
 		//Basic damage ability
 	case 3:
 		return "Greens are good, increasing Defence";
