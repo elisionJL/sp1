@@ -25,6 +25,18 @@ int backloop = 1;
 int gachanum = 99;
 int stageP = 0;//stage picked
 bool battleStart = true;
+/////////////////////////////////////////////// vv library/deck data members vv ///////////////////////////////////////////////
+
+std::string  pos1, pos2, pos3, pos4, pos5, pos6, pos7, pos8, pos9, pos10;
+int healthUnit = 42;
+int attackUnit;
+std::string foodChar[11] = { "L", "H", "C", "Y", "R", "P", "F", "M", "G", "S", "?" };
+int defenceUnit;
+int speedUnit;
+std::string bonus;
+int statHP, statDEF, statATK;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //battle data members
 std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
 std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
