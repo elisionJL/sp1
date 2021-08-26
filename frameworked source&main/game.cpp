@@ -45,9 +45,11 @@ bool upgradeConfirm = false;
 //battle data members
 std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
 std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
+bool resonanceOn = false;
 int speedlist[6] = { -1,-1,-1,-1,-1,-1 };
 int Cmove[3] = { 0,0,0 }, Ctarget[3] = { 0,0,0 }, Emove[3] = { 0,0,0 }, Etarget[3] = { 0,0,0 };
 int Cturn = 0, Eturn = 0;
+bool finishCturn = 0, finishEturn = 0;
 int friendlyAtks = 0, enemyAtks = 0;//counts the number of time the player and enemy has attacked, reset upon reaching alive entities of respective sides
 int aliveC = 3, aliveE = 3;
 bool moveChosen = true, targetChosen = true;
@@ -410,6 +412,9 @@ void renderMenuEvents(int choice, int screen) {
 		g_Console.writeToBuffer(22, 24, "#                                                              #                                                                 #", 91, 131);
 		g_Console.writeToBuffer(22, 25, "#                                                              #                                                                 #", 91, 131);
 		g_Console.writeToBuffer(22, 26, "##################################################################################################################################", 91, 131);
+		ss.str("");
+		ss << "stages cleared: " << p.getplayerinfo(5) << "/4";
+		g_Console.writeToBuffer(45, 15, ss.str(), 91);
 		break;
 	case 3://stages
 		g_Console.writeToBuffer(42, 10, "#####################################################################################", 91);
@@ -522,10 +527,10 @@ void renderMenuEvents(int choice, int screen) {
 			g_Console.writeToBuffer(87, 24, "press Q to upgrade", 91);
 			if (upgradeConfirm == true) {
 				g_Console.writeToBuffer(87, 25, "press E to upgrade", 91);
-				if (p.getplayerinfo(4) < cptr[choice]->getupgradecost()) {
+				if (p.getplayerinfo(4) < cptr[nameChoice]->getupgradecost()) {
 					g_Console.writeToBuffer(87, 27, "You do not have enough coins", 91);
 				}
-				else if (p.getplayerinfo(1) == cptr[choice]->getlvl()) {
+				else if (p.getplayerinfo(1) == cptr[nameChoice]->getlvl()) {
 					g_Console.writeToBuffer(87, 27, "Companion level cannot exceed your level", 91);
 				}
 			}
@@ -577,126 +582,13 @@ void renderMenuEvents(int choice, int screen) {
 // this is an example of how you would use the input events
 
 void levelup() {
-	if (p.getplayerinfo(4) < cptr[choice]->getupgradecost()){}
-	else if (p.getplayerinfo(1) == cptr[choice]->getlvl()){}
+	if (p.getplayerinfo(4) < cptr[nameChoice]->getupgradecost()){}
+	else if (p.getplayerinfo(1) == cptr[nameChoice]->getlvl()){}
 	else
 	{
-		p.companionupgrade(int(cptr[choice]->getupgradecost()));
+		p.companionupgrade(int(cptr[nameChoice]->getupgradecost()));
 		cptr[nameChoice]->lvlup();
 	}
-}
-void setparty(Companion* cptr[10], player p, Companion* party[3])
-{
-	for (int i = 0; i < 10; i++)
-	{
-		if (cptr[i] != nullptr)
-		{
-			std::cout << i + 1 << ". " << cptr[i]->getname() << std::endl;
-		}
-	}
-	std::cout << p.getplayerinfo(3) + 1 << ". None" << std::endl;
-	int createparty = 0;
-	int companionchoice;
-	if (createparty == 0)
-	{
-		for (int i = 0; i < p.getplayerinfo(3); i++)
-		{
-			std::cout << "Choose Companion " << i + 1 << ": ";
-			std::cin >> companionchoice;
-			int errorcheck = 0;
-			for (int l = 0; l < 3; l++)
-			{
-				if ((party[l] == cptr[companionchoice - 1]) && (companionchoice != p.getplayerinfo(3) + 1))
-				{
-					std::cout << "Cannot use the same party members" << std::endl;
-					i--;
-					errorcheck++;
-				}
-			}
-			if ((errorcheck == 0) && (companionchoice != p.getplayerinfo(3) + 1))
-			{
-				party[i] = cptr[companionchoice - 1];
-			}
-		}
-		int checkmembers = 0;
-		for (int i = 0; i < 3; i++)
-		{
-			if (party[i] != nullptr)
-				checkmembers++;
-		}
-		if (checkmembers != 0)
-			createparty = 1;
-		else
-			std::cout << "Party cannot be empty" << std::endl;
-	}
-}
-int enhancecompanion(player p, Companion* cptr[10])
-{
-	int backloop = 0;
-	int done = 0;
-	int choice;
-	while (done == 0)
-	{
-		while (backloop == 0)
-		{
-			for (int i = 0; i < 10; i++)
-			{
-				if (cptr[i] != nullptr)
-				{
-					std::cout << i + 1 << ". " << cptr[i]->getname() << std::endl;
-				}
-			}
-			std::cout << p.getplayerinfo(3) + 1 << ". Back" << std::endl;
-			std::cout << "Prompt: ";
-			std::cin >> choice;
-			std::cout << "" << std::endl;
-			if (choice == p.getplayerinfo(3) + 1)
-				return 0;
-			backloop++;
-			choice--;
-		}
-		while (backloop == 1)
-		{
-			std::cout << "Coins: " << p.getplayerinfo(4) << std::endl;
-			std::cout << "Name: " << cptr[choice]->getname() << std::endl;
-			std::cout << "Level: " << cptr[choice]->getlvl() << std::endl;
-			std::cout << "Health: " << int(cptr[choice]->getHealth()) << std::endl;
-			std::cout << "Attack: " << int(cptr[choice]->getDamage()) << std::endl;
-			std::cout << "Defence: " << int(cptr[choice]->getResistance()) << std::endl;
-			std::cout << "Skill: " << cptr[choice]->getMoveName(3) << std::endl;
-			std::cout << "Enhanced Level: " << cptr[choice]->gettimespulled() - 1 << std::endl;
-			std::cout << "" << std::endl;
-			std::cout << "1. Upgrade (" << cptr[choice]->getupgradecost() << " coins)" << std::endl;
-			std::cout << "2. Back" << std::endl;
-			int choice2;
-			int errorcheck = 0;
-			while (errorcheck == 0)
-			{
-				std::cout << "Prompt: ";
-				std::cin >> choice2;
-				if (choice2 == 2)
-				{
-					backloop--;
-					errorcheck++;
-				}
-				if (choice2 == 1)
-				{
-					if (p.getplayerinfo(4) < cptr[choice]->getupgradecost())
-						std::cout << "You do not have enough coins" << std::endl;
-					else if (p.getplayerinfo(1) == cptr[choice]->getlvl())
-						std::cout << "Companion level cannot exceed your level" << std::endl;
-					else
-					{
-						p.companionupgrade(int(cptr[choice]->getupgradecost()));
-						cptr[choice]->lvlup();
-						errorcheck++;
-					}
-				}
-			}
-			std::cout << "" << std::endl;
-		}
-	}
-	return 0;
 }
 int summon()
 {
@@ -773,6 +665,7 @@ void RenderBattleEvents(int stagepicked) {
 		}
 		g_Console.writeToBuffer(60, 20, "##################################################", 91); /*g_Console.writeToBuffer(110, 20, "########################################", 91);*/
 		g_Console.writeToBuffer(63, 15, "1. Attack", 91); g_Console.writeToBuffer(89, 15, "2.defend", 91);
+		ss.str("");
 		if (Cturn == 3) {
 			g_Console.writeToBuffer(76, 25, "3." + party[0]->getMoveName(3), 91);
 		}
@@ -880,35 +773,6 @@ player battle(int stagepicked)
 			}
 		}
 		if (battleStart == false) {
-			for (int i = 0; i < 3; i++)//resonance buff
-			{
-				if (party[i] != nullptr)
-				{
-					for (int l = 0; l < 3; l++)
-					{
-						if ((party[l] != nullptr) && (party[l] != party[i]))
-						{
-							if (party[l]->buff() == party[i]->buff())
-							{
-								sametype = party[l]->buff();
-								l += 3; i += 3;
-							}
-						}
-					}
-				}
-			}
-			for (int i = 0; i < 3; i++)
-			{
-				if (party[i] != nullptr)
-				{
-					if (sametype != 0)
-					{
-						party[i]->resonance(sametype);
-					}
-					partysize++;
-					party[i]->resetstats(5);
-				}
-			}
 			aliveC = 0; aliveE = 0;
 			//gets alive companions and alive enemies
 			for (int i = 0; i < 3; i++) {
@@ -936,7 +800,7 @@ player battle(int stagepicked)
 			if (result == 0)//result will become 1 or 2 when the battle ends
 			{
 				//companion move
-				if (Cturn < 3)//friendly attack
+				if (finishCturn == false)//friendly attack
 				{
 					if (party[Cturn]->getcurrentHealth() < 1) {
 						Cmove[Cturn] = NULL;
@@ -983,7 +847,6 @@ player battle(int stagepicked)
 							}
 						}
 					}
-
 					//user chooses target
 					if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == false)
 					{
@@ -996,8 +859,8 @@ player battle(int stagepicked)
 						}
 						if (g_skKeyEvent[K_ENTER].keyReleased && eptr[choice - 1] != nullptr && eptr[choice - 1]->getcurrentHealth() > 0) {
 							if (Cmove[Cturn] == 3) {
-								eptr[choice]->setcurrentDamage(eptr[choice]->getcurrentDamage() * 0.85);
-								eptr[choice]->setcurrentResistance(eptr[choice]->getcurrentResistance() * 0.85);
+								eptr[choice-1]->setcurrentDamage(eptr[choice-1]->getcurrentDamage() * 0.85);
+								eptr[choice-1]->setcurrentResistance(eptr[choice-1]->getcurrentResistance() * 0.85);
 								moveChosen = false;
 								targetChosen = true;
 								choice = 1;
@@ -1006,47 +869,44 @@ player battle(int stagepicked)
 								Ctarget[Cturn] = choice - 1;
 								dmg = party[Cturn]->attack(eptr[Ctarget[Cturn]]->getcurrentResistance());
 								eptr[Ctarget[Cturn]]->takedmg(dmg);
-								moveChosen = true;
-								targetChosen = true;
-								choice = 1;
-							}
-						}
-					}
-					//move takes effect
-					if (Cturn < 3) {
-						if (party[Cturn]->getcurrentHealth() > 0 && targetChosen == true && moveChosen == true) {
-							switch (Cmove[Cturn]) {
-							case 1:
-								party[Cturn]->setatktarget(Ctarget[Cturn]);
 								moveChosen = false;
 								targetChosen = true;
-								friendlyAtks++;
+								choice = 1;
 								Cturn++;
-								break;
-							}
-
-						}
-						if (friendlyAtks == 3) {
-							moveChosen = true;
-							targetChosen = true;
-							choice = 1;
-							for (int i = 0; i < 3; i++) {
-								if (eptr[i] != nullptr) {
-									eptr[i]->resetstats(1);
-									eptr[i]->resetstats(2);
-									eptr[i]->resetstats(3);
-								}
 							}
 						}
 					}
 				}
+				if (Cturn == 3) {
+					Cturn = 0;
+					finishCturn = true;
+					finishEturn = false;
+					moveChosen = true;
+					targetChosen = true;
+					choice = 1;
+					for (int i = 0; i < 3; i++) {
+						if (eptr[i] != nullptr) {
+							eptr[i]->resetstats(1);
+							eptr[i]->resetstats(2);
+							eptr[i]->resetstats(3);
+						}
+					}
+				}
 				//enemy moves
-				if (Eturn < 3 && Cturn == 3) {
+				if (finishEturn == false) {
 					//for null or dead enemies
-					if (eptr[Eturn]->getcurrentHealth() < 1 || eptr[Eturn] == nullptr) {
-						Emove[Cturn] = NULL;
-						Etarget[Cturn] = NULL;
+					if (eptr[Eturn] != nullptr) {
+						if (eptr[Eturn]->getcurrentHealth() < 1) {
+							Emove[Cturn] = NULL;
+							Etarget[Cturn] = NULL;
+							Eturn++;
+						}
+					}
+					else if (eptr[Eturn] == nullptr) {
 						Eturn++;
+					}
+					if (Eturn == 3) {
+						result = 3;
 					}
 					if ((eptr[Eturn] != nullptr) && (result == 0))
 					{
@@ -1169,8 +1029,14 @@ player battle(int stagepicked)
 					}
 				}
 			}
-			if (friendlyAtks == 3 && enemyAtks == 3)
-			{
+			if (Eturn == 3) {
+				finishEturn = true;
+			}
+			if (finishCturn == true && finishEturn == true) {
+				if (result < 1 || result > 2) {
+					result = 0;
+				}
+				finishCturn = false;
 				for (int i = 0; i < 3; i++) {
 					if (party[i]->getcurrentHealth() > 1 && party[i]->getskillcd() > 0) {
 						party[i]->setskillcd(party[i]->getskillcd() - 1);
@@ -1183,10 +1049,16 @@ player battle(int stagepicked)
 				}
 				choice = 1;
 				friendlyAtks = 0; enemyAtks = 0;
-				Cturn = 0;
-				Eturn = 0;
 				moveChosen = false;
 				targetChosen = true;
+				Cturn = 0; Eturn = 0;
+				for (int i = 0; i < 3; i++) {
+					if (party[i] != nullptr) {
+						party[i]->resetstats(1);
+						party[i]->resetstats(2);
+						party[i]->resetstats(3);
+					}
+				}
 			}
 			if (result == 2)
 			{
@@ -1331,7 +1203,46 @@ int menu()
 					aliveC = 3, aliveE = 0;
 					moveChosen = false, targetChosen = true;
 					battleStart = true;
-					g_eGameState = S_BATTLE;
+					nextstoryline = false; gottobattle = false;
+					finishCturn = false; finishEturn = true;
+					g_eGameState = S_BEFOREBATTLEN;
+					for (int i = 0; i < 3; i++)//resonance buff
+					{
+						if (party[i] != nullptr)
+						{
+							for (int l = 0; l < 3; l++)
+							{
+								if ((party[l] != nullptr) && (party[l] != party[i]))
+								{
+									if (party[l]->buff() == party[i]->buff())
+									{
+										sametype = party[l]->buff();
+										l += 3; i += 3;
+									}
+								}
+							}
+						}
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (party[i] != nullptr)
+						{
+							if (sametype != 0)
+							{
+								party[i]->resonance(sametype);
+							}
+							partysize++;
+							party[i]->resetstats(5);
+						}
+					}
+					for (int i = 0; i < 3; i++)
+					{
+						if (party[i] != nullptr)
+						{
+							party[i]->setcurrentHealth(party[i]->getHealth());
+							party[i]->setskillcd(0);
+						}
+					}
 					choice = 1;
 				}
 			}
@@ -1358,7 +1269,7 @@ int menu()
 			for (int i = 0; i < 3; i++) {
 				if (party[i] != nullptr) {
 					if (party[pick] == party[i] && pick != i) {
-						party[pick] == nullptr;
+						party[pick] = nullptr;
 
 					}
 				}
