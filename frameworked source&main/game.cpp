@@ -267,10 +267,82 @@ void renderMenuEvents(int choice, int screen) {
 			g_Console.writeToBuffer(52, 15 + (i * 2), ss.str(), 0x17);
 		}
 
-	case 4://set up party
-		break;
-	case 5://library
-		break;
+			case 4://set up party
+		{
+			ss.str("");
+			ss << "press esc to go back                                      Player Level: " << p.getplayerinfo(1);
+			g_Console.writeToBuffer(28, 10, "                                                           ________________________ MEMEBERS ________________________", 91, 131);
+			g_Console.writeToBuffer(28, 11, "######################## TEAM DECK ########################                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 12, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 13, "#  IN TEAM:                                               #                                                         |", 91, 131);
+			ss.str("");
+			ss << "#                                                         #      " << pos1 << "    " << pos2 << "    " << pos3 << "    " << pos4 << "    " << pos5 << "    " << pos6 << "    " << pos7 << "    " << pos8 << "    " << pos9 << "    " << pos10 << "     |";
+			g_Console.writeToBuffer(28, 14, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 15, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 16, "#           A:                                            #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 17, "#                                                         #_________ type member's alphabet to view member _________|", 91, 131);
+			g_Console.writeToBuffer(28, 18, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 19, "#                                                         #                                                         |", 91, 131);
+			ss.str("");
+			ss << "#           B:                                            #    HP: " << statHP << "                                               |";
+			g_Console.writeToBuffer(28, 20, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 21, "#                                                         #                                                         |", 91, 131);
+			ss.str("");
+			ss << "#                                                         #    ATK: " << statATK << "                                              |";
+			g_Console.writeToBuffer(28, 22, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 23, "#                                                         #                                                         |", 91, 131);
+			ss.str("");
+			ss << "#           C:                                            #    DEF: " << statDEF << "                                              |";
+			g_Console.writeToBuffer(28, 24, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 25, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 26, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 27, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 28, "#                                                         #                                                         |", 91, 131);
+			g_Console.writeToBuffer(28, 29, "################ ...or type 'quit' to exit ################_________________________________________________________|", 91, 131);
+
+
+
+			break;
+		}
+		case 5://library
+		{
+
+			g_Console.writeToBuffer(28, 10, " _______________________ LIBRARY ________________________ __________________________ INFO __________________________ ", 91, 131);
+			g_Console.writeToBuffer(28, 11, "||                                                       #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 12, "||   - Fish                                              #                                                         ||", 91, 131);
+			ss.str("");
+			ss << "||                                                       #    HP: " << healthUnit << "                                               ||";
+			g_Console.writeToBuffer(28, 13, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 14, "||   - Grapes                                            #                                                         ||", 91, 131);
+			ss.str("");
+			ss << "||                                                       #    ATK: " << attackUnit << "                                               ||";
+			g_Console.writeToBuffer(28, 15, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 16, "||   - Honey                                             #                                                         ||", 91, 131);
+			ss.str("");
+			ss << "||                                                       #    DEF: " << defenceUnit << "                                               ||";
+			g_Console.writeToBuffer(28, 17, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 18, "||   - Mussels                                           #                                                         ||", 91, 131);
+			ss.str("");
+			ss << "||                                                       #    SPD: " << speedUnit << "                                               ||";
+			g_Console.writeToBuffer(28, 19, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 20, "||   - Cheese                                            #                                                         ||", 91, 131);
+			ss.str("");
+			ss << "||                                                       #    BONUS: " << defenceUnit << "                                             ||";
+			g_Console.writeToBuffer(28, 21, ss.str(), 91, 131);
+			g_Console.writeToBuffer(28, 22, "||   - Pasta                                             #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 23, "||                                                       #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 24, "||   - Rice                                              #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 25, "||                                                       #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 26, "||   - Strawberry                                        #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 27, "||                                                       #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 28, "||   - Yoghurt                                           #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 29, "||                                                       #                                                         ||", 91, 131);
+			g_Console.writeToBuffer(28, 30, "||____________________________________________ ...or hit 'esc' to exit ____________________________________________||", 91, 131);
+			
+
+
+			break;
+		}
 	case 6://gacha
 		g_Console.writeToBuffer(80, 9, "> SUMMON <",91);
 		for (int i = 10; i < 25; i++) {
