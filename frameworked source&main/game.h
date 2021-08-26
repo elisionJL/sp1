@@ -27,6 +27,7 @@ enum EKEYS
     K_SPACE,
     K_ENTER,
     K_Q,
+    K_E,
     K_COUNT
 };
 
@@ -37,9 +38,9 @@ enum EGAMESTATES
     S_MENU,
     S_BATTLE,
     S_BATTLEN,
+    S_BEFOREBATTLEN,
     S_GAME,
-    S_COUNT,
-    S_BEFOREBATTLEN
+    S_COUNT
 };
 
 // struct for the game character
@@ -87,4 +88,5 @@ void renderstorylinestage4act2(int x, int y);
 void renderstorylineend(int x, int y);
 void renderstorylinetutorialact1(int x, int y);
 void renderstorylinetutorialact2(int x, int y);
+
 #endif // _GAME_H
