@@ -23,6 +23,7 @@ double  g_dDeltaTime;
 int choice = 1;
 int backloop = 1;
 int gachanum = 99;
+bool Qpressed;
 int stageP = 0;//stage picked
 bool battleStart = true;
 /////////////////////////////////////////////// vv library/deck data members vv ///////////////////////////////////////////////
@@ -308,7 +309,6 @@ void renderFramerate()
 void renderMenuEvents(int choice, int screen) {
 	COORD startPos = { 0, 1 };
 	std::ostringstream ss;
-	std::string key;
 	ss.str("");
 	std::string stages[4] = { "I'm not going to just spin around and leave!", "That went eggcellently well","No time to beet about the bush","Everything at steak" };
 	g_Console.writeToBuffer(22, 0, " _______  ___      _______  __    _  ______   _______  ______      __   __  _______  __    _  _______  __   __  ______    _______ ", 91, 131);
@@ -367,6 +367,9 @@ void renderMenuEvents(int choice, int screen) {
 			ss << i + 1 << ". " << stages[i];
 			g_Console.writeToBuffer(52, 15 + (i * 2), ss.str(), 0x17);
 		}
+		ss.str("");
+		ss << choice;
+		g_Console.writeToBuffer(85, 24,ss.str(), 91);
 		break;
 
 	case 4://set up party
@@ -462,16 +465,10 @@ void renderMenuEvents(int choice, int screen) {
 			g_Console.writeToBuffer(58, 13, "You do not have enough coins", 91);
 		}
 		if (gachanum > 0 && gachanum < 11) {
-			if (cptr[gachanum - 1] == nullptr) {
-				cptr[gachanum - 1] = new Companion(gachanum, namelist[gachanum - 1]);
-				p.newcompanion();
-				newC = true;
+			if(newC ==true){
 				ss.str("");
 				ss << "You summoned " << namelist[gachanum - 1] << "!";
 				g_Console.writeToBuffer(68, 16, ss.str(), 91);
-			}
-			else {
-				newC = false;
 			}
 			if (newC == false) {
 				for (int i = 0; i < 10; i++)//to check for dupes
@@ -486,11 +483,11 @@ void renderMenuEvents(int choice, int screen) {
 							ss.str("");
 							ss << namelist[gachanum - 1] << "'s Enhanced Level has increased";
 							g_Console.writeToBuffer(68, 18, ss.str(), 91);
-							cptr[i]->summonedagain();
 						}
 					}
 				}
 			}
+			Qpressed = false;
 		}
 	}
 }
@@ -671,9 +668,9 @@ void RenderBattleEvents(int stagepicked) {
 		else {
 			e2 = " "; e3 = " ";
 		}
-		g_Console.writeToBuffer(50, 2, c1[0], 243); g_Console.writeToBuffer(120, 2, e1[0], 192);
-		g_Console.writeToBuffer(50, 4, c2[0], 243); g_Console.writeToBuffer(120, 4, e2[0], 192);
-		g_Console.writeToBuffer(50, 6, c3[0], 243); g_Console.writeToBuffer(120, 6, e3[0], 192);
+		g_Console.writeToBuffer(50, 2, c1[0], 14); g_Console.writeToBuffer(120, 2, e1[0], 75);
+		g_Console.writeToBuffer(50, 4, c2[0], 14); g_Console.writeToBuffer(120, 4, e2[0], 75);
+		g_Console.writeToBuffer(50, 6, c3[0], 14); g_Console.writeToBuffer(120, 6, e3[0], 75);
 		g_Console.writeToBuffer(22, 10, "##################################################################################################################################", 91, 131);
 		for (int i = 0; i < 19; i++) {
 			g_Console.writeToBuffer(22, 11 + i, "#                                                                                                                                #", 91, 131);
@@ -756,6 +753,7 @@ player battle(int stagepicked)
 	if (stagepicked != 0)//select difficulty
 	{
 		if (battleStart == true) {
+			difficulty = 0;
 			getInput();
 			if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
 				choice--;
@@ -772,24 +770,26 @@ player battle(int stagepicked)
 				difficulty = choice;
 				choice = 1;
 			}
-			switch (stageP)
-			{
-			case 1://stage 1
-				battleStart = false;
-				eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
-				break;
-			case 2://stage 2
-				battleStart = false;
-				eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
-				break;
-			case 3://stage 3
-				battleStart = false;
-				eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
-				break;
-			case 4://stage 4
-				battleStart = false;
-				eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
-				break;
+			if (difficulty != 0) {
+				switch (stageP)
+				{
+				case 1://stage 1
+					battleStart = false;
+					eptr[0] = new SpinachBoss(5 * difficulty); enemyno++; bossno++; eptr[1] = nullptr; eptr[2] = nullptr;
+					break;
+				case 2://stage 2
+					battleStart = false;
+					eptr[0] = new Eggplant(10 * difficulty); eptr[1] = new Minion(10 * difficulty, minionnames[0]); eptr[2] = new Minion(10 * difficulty, minionnames[1]); enemyno += 3; bossno++; minionno += 2;
+					break;
+				case 3://stage 3
+					battleStart = false;
+					eptr[0] = new Beet(15 * difficulty); eptr[1] = new Minion(15 * difficulty, minionnames[2]); eptr[2] = new Minion(15 * difficulty, minionnames[3]); enemyno += 3; bossno++; minionno += 2;
+					break;
+				case 4://stage 4
+					battleStart = false;
+					eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
+					break;
+				}
 			}
 		}
 		if (battleStart == false) {
@@ -919,7 +919,6 @@ player battle(int stagepicked)
 								Ctarget[Cturn] = choice - 1;
 								dmg = party[Cturn]->getcurrentDamage();
 								eptr[Ctarget[Cturn]]->setcurrentHealth(eptr[Ctarget[Cturn]]->getcurrentHealth() - dmg);
-
 								moveChosen = true;
 								targetChosen = true;
 								choice = 1;
@@ -1083,14 +1082,6 @@ player battle(int stagepicked)
 
 				}
 			}
-			for (int i = 0; i < 3; i++)
-			{
-				if (party[i] != nullptr)
-				{
-					for (int l = 1; l < 5; l++)
-						party[i]->resetstats(l);
-				}
-			}
 			if (friendlyAtks == 3 && enemyAtks == 3)
 			{
 				for (int i = 0; i < 3; i++) {
@@ -1227,7 +1218,7 @@ int menu()
 		if (g_skKeyEvent[K_UP].keyReleased && choice != 1) {
 			choice--;
 		}
-		else if (g_skKeyEvent[K_DOWN].keyReleased && choice != p.getplayerinfo(5)) {
+		else if (g_skKeyEvent[K_DOWN].keyReleased && choice != p.getplayerinfo(5) + 1) {
 			choice++;
 		}
 		if (g_skKeyEvent[K_ESCAPE].keyReleased) {
@@ -1278,9 +1269,33 @@ int menu()
 			choice = 1;
 		}
 		if (g_skKeyEvent[K_Q].keyReleased) {
+			newC = false;
+			Qpressed = true;
 			gachanum = summon();
+			if (gachanum == 0) {//for when user does not have enough coins
+				g_Console.writeToBuffer(58, 13, "You do not have enough coins", 91);
+			}
+			if (gachanum > 0 && gachanum < 11) {
+				if (cptr[gachanum - 1] == nullptr) {//check for new companion only if q was pressed
+					cptr[gachanum - 1] = new Companion(gachanum, namelist[gachanum - 1]);
+					p.newcompanion();
+					newC = true;
+				}
+				else {
+					newC = false;
+					for (int i = 0; i < 10; i++)//to check for dupes
+					{
+						if (cptr[i] != nullptr)
+						{
+							if (gachanum == cptr[i]->getid())
+							{
+								cptr[i]->summonedagain();
+							}
+						}
+					}
+				}
+			}
 		}
-
 	}
 	return 0;
 }
