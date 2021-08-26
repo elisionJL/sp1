@@ -190,8 +190,7 @@ void storyafter(int stageP)
 		renderstorylinestage4act2(20, 13);
 		break;
 	}
-	g_Console.writeToBuffer(50, 45, "Press enter to go back to main menu");
-	g_Console.flushBufferToConsole();
+	g_Console.writeToBuffer(50, 10, "Press enter to go back to main menu", 91);
 	getInput();
 	if (g_skKeyEvent[K_ENTER].keyReleased)
 	{
@@ -266,7 +265,8 @@ void render()
 	case S_MENU: renderMenuEvents(choice, backloop);
 		break;
 	case S_BATTLEN:
-		RenderBattleEvents(stageP);
+		Renderstory(stageP);
+		break;
 	case S_BATTLE: RenderBattleEvents(stageP);
 		break;
 	}
@@ -446,7 +446,7 @@ void renderMenuEvents(int choice, int screen) {
 		break;
 	}
 	case 6://gacha
-		g_Console.writeToBuffer(80, 9, "> SUMMON <",91);
+		g_Console.writeToBuffer(80, 9, "> SUMMON <", 91);
 		for (int i = 10; i < 25; i++) {
 			g_Console.writeToBuffer(42, 1 + i, "#                                                                                    #", 91);
 		}
@@ -462,8 +462,8 @@ void renderMenuEvents(int choice, int screen) {
 			g_Console.writeToBuffer(58, 13, "You do not have enough coins", 91);
 		}
 		if (gachanum > 0 && gachanum < 11) {
-			if (cptr[gachanum -  1] == nullptr) {
-				cptr[gachanum - 1 ] = new Companion(gachanum, namelist[gachanum - 1]);
+			if (cptr[gachanum - 1] == nullptr) {
+				cptr[gachanum - 1] = new Companion(gachanum, namelist[gachanum - 1]);
 				p.newcompanion();
 				newC = true;
 				ss.str("");
@@ -497,6 +497,10 @@ void renderMenuEvents(int choice, int screen) {
 
 // this is an example of how you would use the input events
 
+void story(int x, int y)
+{
+
+}
 void setparty(Companion* cptr[10], player p, Companion* party[3])
 {
 	for (int i = 0; i < 10; i++)
@@ -630,8 +634,8 @@ int summon()
 	}
 	return 0;
 }
-
 void RenderBattleEvents(int stagepicked) {
+	cls();
 	ostringstream ss;
 	std::string minionnames[6] = { "Cabbage" ,"Garlic","Onion","Peas","Mutton","Venison" };
 	std::string enemynames[5] = { "Spinach","Eggplant","Beet","Steak","Minion" };
@@ -646,7 +650,7 @@ void RenderBattleEvents(int stagepicked) {
 		g_Console.writeToBuffer(22, 6, "|_______||_______||_______||_|  |__||______| |_______||___|  |_|    |___|  |_______||_|  |__|  |___|  |_______||___|  |_||_______|", 91, 131);
 		g_Console.writeToBuffer(42, 10, "######################################################################################", 91);
 		for (int i = 0; i < 16; i++) {
-			g_Console.writeToBuffer(42, 11+i, "#                                                                                    #", 91);
+			g_Console.writeToBuffer(42, 11 + i, "#                                                                                    #", 91);
 		}
 		g_Console.writeToBuffer(42, 26, "######################################################################################", 91);
 		g_Console.writeToBuffer(80, 12, "DIFFICULTIES", 91);
@@ -681,7 +685,7 @@ void RenderBattleEvents(int stagepicked) {
 			g_Console.writeToBuffer(60, 11 + i, "#                                                  #", 91, 131);
 		}
 		for (int i = 0; i < 10; i++) {
-			g_Console.writeToBuffer(85, 11+i, "##", 91);
+			g_Console.writeToBuffer(85, 11 + i, "##", 91);
 		}
 		g_Console.writeToBuffer(60, 20, "##################################################", 91); /*g_Console.writeToBuffer(110, 20, "########################################", 91);*/
 		g_Console.writeToBuffer(63, 15, "1. Attack", 91); g_Console.writeToBuffer(89, 15, "2.defend", 91);
@@ -729,7 +733,7 @@ void RenderBattleEvents(int stagepicked) {
 			g_Console.writeToBuffer(70, 9, ss.str(), 91);
 		}
 	}
-}		
+}
 player battle(int stagepicked)
 {
 	for (int i = 0; i < 3; i++)
@@ -759,11 +763,11 @@ player battle(int stagepicked)
 			if (g_skKeyEvent[K_DOWN].keyReleased && choice != 5) {
 				choice++;
 			}
-			if (g_skKeyEvent[K_ESCAPE].keyReleased){
+			if (g_skKeyEvent[K_ESCAPE].keyReleased) {
 				g_eGameState = S_MENU;
 				backloop = 1;
 				return p;
-				}
+			}
 			if (g_skKeyEvent[K_ENTER].keyReleased) {
 				difficulty = choice;
 				choice = 1;
@@ -787,7 +791,7 @@ player battle(int stagepicked)
 				eptr[0] = new Steak(20 * difficulty); eptr[1] = new Minion(20 * difficulty, minionnames[4]); eptr[2] = new Minion(20 * difficulty, minionnames[5]); enemyno += 3; bossno++; minionno += 2;
 				break;
 			}
-	}
+		}
 		if (battleStart == false) {
 			for (int i = 0; i < 3; i++)//resonance buff
 			{
@@ -1090,7 +1094,7 @@ player battle(int stagepicked)
 			if (friendlyAtks == 3 && enemyAtks == 3)
 			{
 				for (int i = 0; i < 3; i++) {
-					if (party[i]->getcurrentHealth() > 1 && party[i]->getskillcd() > 0){
+					if (party[i]->getcurrentHealth() > 1 && party[i]->getskillcd() > 0) {
 						party[i]->setskillcd(party[i]->getskillcd() - 1);
 					}
 					if (eptr[i] != nullptr) {
@@ -1125,7 +1129,7 @@ player battle(int stagepicked)
 				if (g_skKeyEvent[K_ENTER].keyReleased) {
 					g_eGameState = S_MENU;
 					choice = 1;
-				}			
+				}
 				return p;
 			}
 			if (result == 1)
@@ -1141,6 +1145,9 @@ player battle(int stagepicked)
 						}
 					}
 				}
+				getInput();
+				g_Console.writeToBuffer(81, 4, "YOU WON!", 91);
+				g_Console.writeToBuffer(77, 5, "press Enter to Continue", 91);
 				if (g_skKeyEvent[K_ENTER].keyReleased) {
 					g_eGameState = S_BATTLEN;
 					int exp = (bossno * 50 + minionno * 25) * difficulty;
@@ -1234,7 +1241,7 @@ int menu()
 			dmg = 0;
 			//for debugging
 			party[0] = cptr[1]; party[1] = cptr[2]; party[2] = cptr[4];
-			for (int i = 0; i < 3;i ++){///sets all enemy pointers to null when battle first starts
+			for (int i = 0; i < 3; i++) {///sets all enemy pointers to null when battle first starts
 				eptr[i] = { nullptr };
 				Cmove[i] = 0;
 				Ctarget[i] = 0;
@@ -1273,14 +1280,6 @@ int menu()
 		if (g_skKeyEvent[K_Q].keyReleased) {
 			gachanum = summon();
 		}
-		//if (choice == 3)
-		//{
-		//	int upgrademenu = enhancecompanion(p, cptr);
-		//	if (upgrademenu == 0)
-		//	{
-		//		backloop--;
-		//	}
-		//}
 
 	}
 	return 0;
@@ -1298,7 +1297,7 @@ void update(double dt)
 		p = battle(stageP);
 		break;
 	case S_BATTLEN:
-		story();
+		storyafter(stageP);
 		break;
 	case S_MENU:
 		menu();
