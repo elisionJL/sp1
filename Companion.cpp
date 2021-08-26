@@ -4,7 +4,7 @@ Companion::Companion()
 {
 	companionId = 0;
 	MovePower = 0;
-	lvl = 0;
+	lvl = 1;
 	upgradecost = 0;
 	timespulled = 0;
 	bonusHealth = 0;
@@ -70,7 +70,7 @@ string Companion::getMoveName(int MoveNo)
 		switch (buff())
 		{
 		case 1:
-			return "Slight stat buff";
+			return "Minor atk def buff";
 		case 2:
 			return "Debuff";
 		case 3:
